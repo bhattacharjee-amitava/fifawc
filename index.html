@@ -67,7 +67,7 @@
         <p class="text-xs text-slate-500">Search a country &bull; Browse fixtures &bull; Filter by date</p>
       </div>
       <!-- Trophy watermark -->
-      <div class="mt-4 flex justify-center opacity-[0.18] pointer-events-none select-none">
+      <div class="mt-4 flex justify-center opacity-[0.55] pointer-events-none select-none">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300" width="240" height="320" aria-hidden="true">
           <defs>
             <linearGradient id="tg1" x1="0%" y1="0%" x2="60%" y2="100%"><stop offset="0%" style="stop-color:#fcd34d"/><stop offset="100%" style="stop-color:#b45309"/></linearGradient>
@@ -615,7 +615,7 @@
       // Group matches by group label (e.g. "Group A")
       const groups = {};
       allMatchesList.forEach(m => {
-        const label = m.group || 'Knockout';
+        const label = m.group ? m.group.replace('GROUP_', 'Group ') : 'Knockout';
         if (!groups[label]) groups[label] = [];
         groups[label].push(m);
       });
