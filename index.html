@@ -18,7 +18,6 @@
     <div class="flex items-center gap-2">
       <span id="liveIndicator" class="hidden bg-red-600 text-white text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase animate-pulse">LIVE</span>
       <span class="bg-slate-700 text-amber-400 text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase">IST</span>
-      <button id="musicBtn" title="Play theme" class="text-slate-400 hover:text-amber-400 transition text-lg">&#127925;</button>
       <button id="refreshBtn" title="Refresh fixtures" class="text-slate-400 hover:text-amber-400 transition text-lg ml-1">&#128260;</button>
     </div>
   </header>
@@ -457,7 +456,7 @@
     // &#9472;&#9472; Favourites &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
     function updateFavStar() {
       const favs = safeJSON(FAV_KEY, '[]');
-      favoriteBtn.textContent = favs.includes(currentKey) ? '&#65533;&#144;' : '&#9734;';
+      favoriteBtn.innerHTML = favs.includes(currentKey) ? '&#11088;' : '&#9734;';
     }
 
     favoriteBtn.addEventListener('click', () => {
@@ -687,114 +686,106 @@
     }
 
 
-    // -- Generated royalty-free theme (Web Audio API) ----------------------
-    // A simple upbeat march in C major, loops forever. No external files.
-    let audioCtx     = null;
-    let musicOn      = false;
-    let musicTimer   = null;
-    let nextLoopAt   = 0;
 
-    // Melody: [frequency_Hz, duration_in_beats]
-    // C5 E5 G5 E5 | G5 A5 G5 - | E5 D5 E5 C5 | C5 - - -
-    const BPM    = 126;
-    const BEAT   = 60 / BPM;
-    const NOTES  = [
-      [523,1],[659,1],[784,1],[659,1],
-      [784,1],[880,1],[784,2],
-      [659,1],[587,1],[659,1],[523,1],
-      [523,4]
-    ];
-    const BASS = [
-      [262,2],[294,2],
-      [330,2],[294,2],
-      [262,2],[294,2],
-      [262,4]
-    ];
+    // -- Royalty-free melodious tune (Web Audio API, auto-plays on first touch) --
+    // Original composition in C major, 92 BPM, sine-wave voices with ADSR
+    (function() {
+      var ctx = null, timer = null, nextAt = 0;
+      var BPM = 92, Q = 60 / 92;
 
-    function getCtx() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      return audioCtx;
-    }
+      // Frequencies
+      var C3=130.81, F3=174.61, G3=196.00, A3=220.00,
+          B3=246.94, C4=261.63, D4=293.66, E4=329.63,
+          F4=349.23, G4=392.00, A4=440.00, B4=493.88,
+          C5=523.25, D5=587.33, E5=659.25, E3=164.81;
 
-    function tone(ctx, freq, t, beats, vol, type) {
-      const osc  = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.type = type || 'triangle';
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(vol, t);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t + beats * BEAT * 0.82);
-      osc.start(t); osc.stop(t + beats * BEAT);
-    }
+      // Melody [freq, beats]: gentle 8-bar tune
+      var MEL = [
+        [E4,1],[G4,1],[A4,1],[G4,1],
+        [E4,2],[D4,1],[C4,1],
+        [D4,1],[F4,1],[G4,1],[A4,1],
+        [G4,3],[E4,1],
+        [C5,1],[B4,1],[A4,1],[G4,1],
+        [A4,1],[G4,1],[E4,2],
+        [F4,1],[E4,1],[D4,1],[C4,1],
+        [C4,4]
+      ];
+      // Harmony (a third below)
+      var HAR = [
+        [C4,1],[E4,1],[F4,1],[E4,1],
+        [C4,2],[B3,1],[A3,1],
+        [B3,1],[D4,1],[E4,1],[F4,1],
+        [E4,3],[C4,1],
+        [A4,1],[G4,1],[F4,1],[E4,1],
+        [F4,1],[E4,1],[C4,2],
+        [D4,1],[C4,1],[B3,1],[A3,1],
+        [A3,4]
+      ];
+      // Bass (one note per 2 beats)
+      var BAS = [
+        [C3,2],[C3,2],
+        [C3,2],[G3,2],
+        [G3,2],[G3,2],
+        [G3,2],[G3,2],
+        [A3,2],[A3,2],
+        [A3,2],[E3,2],
+        [F3,2],[F3,2],
+        [C3,2],[C3,2]
+      ];
 
-    function drum(ctx, t) {
-      const o = ctx.createOscillator(), g = ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-      o.type = 'sine';
-      o.frequency.setValueAtTime(120, t);
-      o.frequency.exponentialRampToValueAtTime(28, t + 0.18);
-      g.gain.setValueAtTime(0.55, t);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
-      o.start(t); o.stop(t + 0.2);
-    }
-
-    function scheduleLoop() {
-      if (!musicOn) return;
-      const ctx = getCtx();
-      let t = nextLoopAt;
-
-      // melody voice
-      NOTES.forEach(([f, b]) => { tone(ctx, f, t, b, 0.18, 'triangle'); t += b * BEAT; });
-      const loopLen = NOTES.reduce((s,[,b]) => s + b*BEAT, 0);
-
-      // bass voice (offset half a beat for feel)
-      let tb = nextLoopAt + BEAT * 0.5;
-      BASS.forEach(([f, b]) => { tone(ctx, f, tb, b, 0.10, 'sine'); tb += b * BEAT; });
-
-      // kick drum on every 2 beats
-      for (let i = 0; i < loopLen; i += BEAT * 2) {
-        drum(ctx, nextLoopAt + i);
+      function note(freq, t, beats, vol, type) {
+        var dur = beats * Q;
+        var o = ctx.createOscillator(), g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.type = type || 'sine';
+        o.frequency.value = freq;
+        // soft ADSR
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(vol, t + 0.025);
+        g.gain.setValueAtTime(vol * 0.78, t + 0.1);
+        g.gain.setValueAtTime(vol * 0.78, t + dur - 0.08);
+        g.gain.linearRampToValueAtTime(0.0001, t + dur + 0.06);
+        o.start(t); o.stop(t + dur + 0.1);
       }
 
-      nextLoopAt += loopLen;
-      const msLeft = (nextLoopAt - ctx.currentTime) * 1000 - 150;
-      musicTimer = setTimeout(scheduleLoop, Math.max(msLeft, 0));
-    }
+      function scheduleLoop() {
+        var t = nextAt;
+        // Melody (sine, louder)
+        MEL.forEach(function(n) { note(n[0], t, n[1], 0.22, 'sine'); t += n[1]*Q; });
+        var len = MEL.reduce(function(s,n){return s+n[1]*Q;}, 0);
 
-    function startMusic() {
-      const ctx = getCtx();
-      nextLoopAt = ctx.currentTime + 0.08;
-      scheduleLoop();
-    }
+        // Harmony (sine, softer, slight offset for warmth)
+        var th = nextAt + 0.01;
+        HAR.forEach(function(n) { note(n[0], th, n[1], 0.10, 'sine'); th += n[1]*Q; });
 
-    function stopMusic() {
-      clearTimeout(musicTimer);
-      musicTimer = null;
-    }
+        // Bass (sine, very soft)
+        var tb = nextAt;
+        BAS.forEach(function(n) { note(n[0], tb, n[1], 0.08, 'sine'); tb += n[1]*Q; });
 
-    function toggleMusic() {
-      musicOn = !musicOn;
-      const btn = document.getElementById('musicBtn');
-      if (musicOn) {
-        startMusic();
-        btn.textContent = '&#128264;';
-        btn.title = 'Mute music';
-        btn.classList.add('text-amber-400');
-        btn.classList.remove('text-slate-400');
-      } else {
-        stopMusic();
-        btn.textContent = '&#127925;';
-        btn.title = 'Play theme';
-        btn.classList.remove('text-amber-400');
-        btn.classList.add('text-slate-400');
+        nextAt += len;
+        var ms = (nextAt - ctx.currentTime) * 1000 - 200;
+        timer = setTimeout(scheduleLoop, Math.max(ms, 0));
       }
-    }
+
+      function start() {
+        if (ctx) return;
+        ctx = new (window.AudioContext || window.webkitAudioContext)();
+        nextAt = ctx.currentTime + 0.15;
+        scheduleLoop();
+      }
+
+      // Start on first interaction (browser autoplay policy)
+      ['touchstart','click','keydown'].forEach(function(ev) {
+        document.addEventListener(ev, function handler() {
+          start();
+          document.removeEventListener(ev, handler);
+        });
+      });
+    })();
 
     // &#9472;&#9472; Entry point &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('allFixturesBtn').addEventListener('click', renderAllFixtures);
-      document.getElementById('musicBtn').addEventListener('click', toggleMusic);
 
 
       // Date filter
