@@ -37,18 +37,21 @@
       <p class="text-xs text-red-400">Showing cached data if available. Tap 🔄 to retry.</p>
     </div>
 
-    <!-- Search Bar -->
-    <div id="searchSection" class="relative hidden">
-      <input id="teamSearch" type="text" placeholder="Search any team (e.g., Brazil, England, USA)..."
-             class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl p-4 pl-12 text-slate-200 focus:border-amber-500 focus:outline-none transition shadow-inner placeholder-slate-500">
-      <span class="absolute left-4 top-4 text-xl">🔍</span>
-      <div id="suggestionsBox" class="hidden absolute z-10 w-full bg-slate-800 border border-slate-600 rounded-xl mt-1 shadow-xl overflow-hidden"></div>
-    </div>
+    <!-- Sticky Search + All Fixtures panel -->
+    <div id="stickyControls" class="hidden sticky top-[73px] z-40 bg-slate-900 pt-1 pb-2 -mx-4 px-4 space-y-2 border-b border-slate-800 shadow-lg">
+      <!-- Search Bar -->
+      <div id="searchSection" class="relative">
+        <input id="teamSearch" type="text" placeholder="Search any team (e.g., Brazil, England, USA)..."
+               class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl p-4 pl-12 text-slate-200 focus:border-amber-500 focus:outline-none transition shadow-inner placeholder-slate-500">
+        <span class="absolute left-4 top-4 text-xl">🔍</span>
+        <div id="suggestionsBox" class="hidden absolute z-10 w-full bg-slate-800 border border-slate-600 rounded-xl mt-1 shadow-xl overflow-hidden"></div>
+      </div>
 
-    <!-- All Fixtures Button -->
-    <button id="allFixturesBtn" class="hidden w-full bg-slate-800 border border-slate-600 hover:border-amber-500 text-slate-300 hover:text-amber-400 font-semibold py-3 rounded-xl text-sm transition flex items-center justify-center gap-2">
-      <span>📋</span> All 2026 Fixtures — Groups A to L
-    </button>
+      <!-- All Fixtures Button -->
+      <button id="allFixturesBtn" class="w-full bg-slate-800 border border-slate-600 hover:border-amber-500 text-slate-300 hover:text-amber-400 font-semibold py-3 rounded-xl text-sm transition flex items-center justify-center gap-2">
+        <span>📋</span> All 2026 Fixtures — Groups A to L
+      </button>
+    </div>
 
     <!-- Welcome State -->
     <div id="welcomeState" class="hidden text-center py-12 text-slate-500 space-y-4">
@@ -593,6 +596,7 @@
     const errorBanner      = $('errorBanner');
     const errorMsg         = $('errorMsg');
     const searchSection    = $('searchSection');
+    const stickyControls   = $('stickyControls');
     const dataStatus       = $('dataStatus');
     const refreshBtn       = $('refreshBtn');
     const liveIndicator    = $('liveIndicator');
@@ -899,8 +903,7 @@
         };
       });
       dataStatus.textContent = 'Demo mode — historical data only';
-      searchSection.classList.remove('hidden');
-      allFixturesBtn.classList.remove('hidden');
+      stickyControls.classList.remove('hidden');
       welcomeState.classList.remove('hidden');
       loadingState.classList.add('hidden');
     }
@@ -908,7 +911,7 @@
     // ── Boot sequence ──────────────────────────────────────────────────────────
     async function boot() {
       loadingState.classList.remove('hidden');
-      searchSection.classList.add('hidden');
+      stickyControls.classList.add('hidden');
       welcomeState.classList.add('hidden');
       resultsWrapper.classList.add('hidden');
       errorBanner.classList.add('hidden');
@@ -929,8 +932,7 @@
           : `${finished} / ${total} matches played`;
 
         loadingState.classList.add('hidden');
-        searchSection.classList.remove('hidden');
-        allFixturesBtn.classList.remove('hidden');
+        stickyControls.classList.remove('hidden');
         welcomeState.classList.remove('hidden');
 
         // Auto-load first saved favourite
@@ -947,8 +949,7 @@
         loadingState.classList.add('hidden');
         errorMsg.textContent = `⚠️ ${err.message}`;
         errorBanner.classList.remove('hidden');
-        searchSection.classList.remove('hidden');
-        allFixturesBtn.classList.remove('hidden');
+        stickyControls.classList.remove('hidden');
         welcomeState.classList.remove('hidden');
 
         // Fall back to cached matches if available
