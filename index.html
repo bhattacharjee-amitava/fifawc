@@ -18,6 +18,7 @@
     <div class="flex items-center gap-2">
       <span id="liveIndicator" class="hidden bg-red-600 text-white text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase animate-pulse">LIVE</span>
       <span class="bg-slate-700 text-amber-400 text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase">IST</span>
+      <button id="musicBtn" title="Play theme" class="text-slate-400 hover:text-amber-400 transition text-lg">&#127925;</button>
       <button id="refreshBtn" title="Refresh fixtures" class="text-slate-400 hover:text-amber-400 transition text-lg ml-1">&#128260;</button>
     </div>
   </header>
@@ -685,9 +686,115 @@
       document.body.style.overflow = '';
     }
 
+
+    // -- Generated royalty-free theme (Web Audio API) ----------------------
+    // A simple upbeat march in C major, loops forever. No external files.
+    let audioCtx     = null;
+    let musicOn      = false;
+    let musicTimer   = null;
+    let nextLoopAt   = 0;
+
+    // Melody: [frequency_Hz, duration_in_beats]
+    // C5 E5 G5 E5 | G5 A5 G5 - | E5 D5 E5 C5 | C5 - - -
+    const BPM    = 126;
+    const BEAT   = 60 / BPM;
+    const NOTES  = [
+      [523,1],[659,1],[784,1],[659,1],
+      [784,1],[880,1],[784,2],
+      [659,1],[587,1],[659,1],[523,1],
+      [523,4]
+    ];
+    const BASS = [
+      [262,2],[294,2],
+      [330,2],[294,2],
+      [262,2],[294,2],
+      [262,4]
+    ];
+
+    function getCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function tone(ctx, freq, t, beats, vol, type) {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = type || 'triangle';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(vol, t);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + beats * BEAT * 0.82);
+      osc.start(t); osc.stop(t + beats * BEAT);
+    }
+
+    function drum(ctx, t) {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.type = 'sine';
+      o.frequency.setValueAtTime(120, t);
+      o.frequency.exponentialRampToValueAtTime(28, t + 0.18);
+      g.gain.setValueAtTime(0.55, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+      o.start(t); o.stop(t + 0.2);
+    }
+
+    function scheduleLoop() {
+      if (!musicOn) return;
+      const ctx = getCtx();
+      let t = nextLoopAt;
+
+      // melody voice
+      NOTES.forEach(([f, b]) => { tone(ctx, f, t, b, 0.18, 'triangle'); t += b * BEAT; });
+      const loopLen = NOTES.reduce((s,[,b]) => s + b*BEAT, 0);
+
+      // bass voice (offset half a beat for feel)
+      let tb = nextLoopAt + BEAT * 0.5;
+      BASS.forEach(([f, b]) => { tone(ctx, f, tb, b, 0.10, 'sine'); tb += b * BEAT; });
+
+      // kick drum on every 2 beats
+      for (let i = 0; i < loopLen; i += BEAT * 2) {
+        drum(ctx, nextLoopAt + i);
+      }
+
+      nextLoopAt += loopLen;
+      const msLeft = (nextLoopAt - ctx.currentTime) * 1000 - 150;
+      musicTimer = setTimeout(scheduleLoop, Math.max(msLeft, 0));
+    }
+
+    function startMusic() {
+      const ctx = getCtx();
+      nextLoopAt = ctx.currentTime + 0.08;
+      scheduleLoop();
+    }
+
+    function stopMusic() {
+      clearTimeout(musicTimer);
+      musicTimer = null;
+    }
+
+    function toggleMusic() {
+      musicOn = !musicOn;
+      const btn = document.getElementById('musicBtn');
+      if (musicOn) {
+        startMusic();
+        btn.textContent = '&#128264;';
+        btn.title = 'Mute music';
+        btn.classList.add('text-amber-400');
+        btn.classList.remove('text-slate-400');
+      } else {
+        stopMusic();
+        btn.textContent = '&#127925;';
+        btn.title = 'Play theme';
+        btn.classList.remove('text-amber-400');
+        btn.classList.add('text-slate-400');
+      }
+    }
+
     // &#9472;&#9472; Entry point &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('allFixturesBtn').addEventListener('click', renderAllFixtures);
+      document.getElementById('musicBtn').addEventListener('click', toggleMusic);
 
 
       // Date filter
