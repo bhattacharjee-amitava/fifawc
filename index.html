@@ -45,6 +45,11 @@
       <div id="suggestionsBox" class="hidden absolute z-10 w-full bg-slate-800 border border-slate-600 rounded-xl mt-1 shadow-xl overflow-hidden"></div>
     </div>
 
+    <!-- All Fixtures Button -->
+    <button id="allFixturesBtn" class="hidden w-full bg-slate-800 border border-slate-600 hover:border-amber-500 text-slate-300 hover:text-amber-400 font-semibold py-3 rounded-xl text-sm transition flex items-center justify-center gap-2">
+      <span>📋</span> All 2026 Fixtures — Groups A to L
+    </button>
+
     <!-- Welcome State -->
     <div id="welcomeState" class="hidden text-center py-12 text-slate-500 space-y-4">
       <p class="text-5xl animate-bounce">⚽</p>
@@ -96,15 +101,28 @@
     // ── Historical data (not available via free API tier) ──────────────────────
     const HISTORICAL = {
       "brazil": [
-        {year:2022, host:"Qatar",       stage:"Quarter-Finals"},
-        {year:2018, host:"Russia",      stage:"Quarter-Finals"},
-        {year:2002, host:"Korea/Japan", stage:"Winner"},
-        {year:1998, host:"France",      stage:"Runner-up"},
-        {year:1994, host:"USA",         stage:"Winner"},
-        {year:1990, host:"Italy",       stage:"Semi-Finals"},
-        {year:1970, host:"Mexico",      stage:"Winner"},
-        {year:1962, host:"Chile",       stage:"Winner"},
-        {year:1958, host:"Sweden",      stage:"Winner"}
+        {year:2022, host:"Qatar",        stage:"Quarter-Finals"},
+        {year:2018, host:"Russia",       stage:"Quarter-Finals"},
+        {year:2014, host:"Brazil",       stage:"Fourth Place"},
+        {year:2010, host:"South Africa", stage:"Quarter-Finals"},
+        {year:2006, host:"Germany",      stage:"Quarter-Finals"},
+        {year:2002, host:"Korea/Japan",  stage:"Winner"},
+        {year:1998, host:"France",       stage:"Runner-up"},
+        {year:1994, host:"USA",          stage:"Winner"},
+        {year:1990, host:"Italy",        stage:"Round of 16"},
+        {year:1986, host:"Mexico",       stage:"Quarter-Finals"},
+        {year:1982, host:"Spain",        stage:"Group Stage"},
+        {year:1978, host:"Argentina",    stage:"Third Place"},
+        {year:1974, host:"West Germany", stage:"Fourth Place"},
+        {year:1970, host:"Mexico",       stage:"Winner"},
+        {year:1966, host:"England",      stage:"Group Stage"},
+        {year:1962, host:"Chile",        stage:"Winner"},
+        {year:1958, host:"Sweden",       stage:"Winner"},
+        {year:1954, host:"Switzerland",  stage:"Quarter-Finals"},
+        {year:1950, host:"Brazil",       stage:"Runner-up"},
+        {year:1938, host:"France",       stage:"Third Place"},
+        {year:1934, host:"Italy",        stage:"First Round"},
+        {year:1930, host:"Uruguay",      stage:"Semi-Finals"}
       ],
       "argentina": [
         {year:2022, host:"Qatar",       stage:"Winner"},
@@ -556,9 +574,10 @@
     };
 
     // ── State ──────────────────────────────────────────────────────────────────
-    let teamIndex    = {};
-    let currentKey   = '';
-    let demoMode     = false;
+    let teamIndex      = {};
+    let allMatchesList = [];
+    let currentKey     = '';
+    let demoMode       = false;
 
     // ── DOM refs ───────────────────────────────────────────────────────────────
     const $  = id => document.getElementById(id);
@@ -578,6 +597,7 @@
     const refreshBtn       = $('refreshBtn');
     const liveIndicator    = $('liveIndicator');
     const suggestionsBox   = $('suggestionsBox');
+    const allFixturesBtn   = $('allFixturesBtn');
 
     // ── Utilities ──────────────────────────────────────────────────────────────
     function safeJSON(key, fallback) {
@@ -744,9 +764,7 @@
           <p class="text-xl font-black text-white tracking-wide mt-0.5">${esc(opponent.name)}</p>
           ${scoreBlock}
           <p class="text-xs text-slate-400 mt-1 font-medium">${esc(istDate(match.utcDate))}</p>
-          <div class="mt-3 pt-2.5 border-t border-slate-700/60 flex items-center text-xs text-slate-400">
-            <span class="mr-2">📍</span>${esc(match.venue || 'Venue TBC')}
-          </div>
+          ${match.venue ? `<div class="mt-3 pt-2.5 border-t border-slate-700/60 flex items-center text-xs text-slate-400"><span class="mr-2">📍</span>${esc(match.venue)}</div>` : ''}
         </div>`;
     }
 
@@ -882,6 +900,7 @@
       });
       dataStatus.textContent = 'Demo mode — historical data only';
       searchSection.classList.remove('hidden');
+      allFixturesBtn.classList.remove('hidden');
       welcomeState.classList.remove('hidden');
       loadingState.classList.add('hidden');
     }
@@ -896,6 +915,7 @@
 
       try {
         const matches = await fetchMatches();
+        allMatchesList = matches;
         teamIndex = buildIndex(matches);
 
         const total    = matches.length;
@@ -910,6 +930,7 @@
 
         loadingState.classList.add('hidden');
         searchSection.classList.remove('hidden');
+        allFixturesBtn.classList.remove('hidden');
         welcomeState.classList.remove('hidden');
 
         // Auto-load first saved favourite
@@ -927,6 +948,7 @@
         errorMsg.textContent = `⚠️ ${err.message}`;
         errorBanner.classList.remove('hidden');
         searchSection.classList.remove('hidden');
+        allFixturesBtn.classList.remove('hidden');
         welcomeState.classList.remove('hidden');
 
         // Fall back to cached matches if available
@@ -940,8 +962,110 @@
       }
     }
 
+    // ── All Fixtures Modal ─────────────────────────────────────────────────────
+    function renderAllFixtures() {
+      const modal     = document.getElementById('allFixturesModal');
+      const container = document.getElementById('allFixturesContainer');
+
+      if (!allMatchesList.length) {
+        container.innerHTML = '<p class="text-slate-400 text-sm text-center py-8">No fixture data available yet.</p>';
+        modal.classList.remove('hidden');
+        return;
+      }
+
+      // Group matches by group label (e.g. "Group A")
+      const groups = {};
+      allMatchesList.forEach(m => {
+        const label = m.group || 'Knockout';
+        if (!groups[label]) groups[label] = [];
+        groups[label].push(m);
+      });
+
+      // Sort: Group A–L first, then knockout rounds
+      const groupOrder = key => {
+        const letter = key.match(/Group ([A-L])/i);
+        if (letter) return letter[1].charCodeAt(0);
+        // Knockout ordering
+        const ko = { 'Round of 32': 200, 'Round of 16': 201, 'Quarter-Finals': 202, 'Quarter-Final': 202,
+                     'Semi-Finals': 203, 'Semi-Final': 203, '3rd Place': 204, 'Final': 205 };
+        return ko[key] || 300;
+      };
+
+      const sortedKeys = Object.keys(groups).sort((a, b) => groupOrder(a) - groupOrder(b));
+
+      const html = sortedKeys.map(groupKey => {
+        const matches = groups[groupKey].sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate));
+        const rows = matches.map(m => {
+          const home = esc(m.homeTeam?.shortName || m.homeTeam?.name || 'TBD');
+          const away = esc(m.awayTeam?.shortName || m.awayTeam?.name || 'TBD');
+          const status = m.status;
+          let scoreOrTime;
+          if (status === 'FINISHED') {
+            const hg = m.score?.fullTime?.home ?? '?';
+            const ag = m.score?.fullTime?.away ?? '?';
+            scoreOrTime = `<span class="font-bold text-amber-400">${hg} – ${ag}</span>`;
+          } else if (status === 'IN_PLAY' || status === 'PAUSED') {
+            const hg = m.score?.fullTime?.home ?? m.score?.halfTime?.home ?? 0;
+            const ag = m.score?.fullTime?.away ?? m.score?.halfTime?.away ?? 0;
+            scoreOrTime = `<span class="font-bold text-red-400 animate-pulse">${hg} – ${ag} 🔴</span>`;
+          } else {
+            const ist = new Date(m.utcDate).toLocaleString('en-IN', {
+              timeZone: 'Asia/Kolkata', month: 'short', day: 'numeric',
+              hour: '2-digit', minute: '2-digit', hour12: true
+            });
+            scoreOrTime = `<span class="text-slate-400 text-xs">${ist} IST</span>`;
+          }
+          return `<div class="flex items-center justify-between py-1.5 border-b border-slate-700/50 last:border-0 text-sm">
+            <span class="w-2/5 text-right text-slate-200">${home}</span>
+            <span class="w-1/5 text-center">${scoreOrTime}</span>
+            <span class="w-2/5 text-left text-slate-200">${away}</span>
+          </div>`;
+        }).join('');
+
+        return `<div class="mb-5">
+          <h3 class="text-xs font-bold uppercase tracking-widest text-amber-400 mb-2 flex items-center gap-1.5">
+            <span>🏆</span>${esc(groupKey)}
+          </h3>
+          <div>${rows}</div>
+        </div>`;
+      }).join('');
+
+      container.innerHTML = html;
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeAllFixtures() {
+      document.getElementById('allFixturesModal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
     // ── Entry point ────────────────────────────────────────────────────────────
-    window.addEventListener('DOMContentLoaded', () => boot());
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('allFixturesBtn').addEventListener('click', renderAllFixtures);
+      document.getElementById('allFixturesClose').addEventListener('click', closeAllFixtures);
+      document.getElementById('allFixturesModal').addEventListener('click', e => {
+        if (e.target === e.currentTarget) closeAllFixtures();
+      });
+      boot();
+    });
   </script>
+
+  <!-- All Fixtures Modal -->
+  <div id="allFixturesModal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg max-h-[90vh] flex flex-col shadow-2xl">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700 sticky top-0 bg-slate-900 rounded-t-2xl sm:rounded-t-2xl z-10">
+        <div>
+          <h2 class="text-base font-extrabold text-amber-400 tracking-wide">📋 All 2026 Fixtures</h2>
+          <p class="text-xs text-slate-500">Groups A – L · Live scores in IST</p>
+        </div>
+        <button id="allFixturesClose" class="text-slate-400 hover:text-white transition text-xl leading-none px-2">✕</button>
+      </div>
+      <!-- Scrollable Body -->
+      <div id="allFixturesContainer" class="overflow-y-auto px-5 py-4 flex-1"></div>
+    </div>
+  </div>
+
 </body>
 </html>
