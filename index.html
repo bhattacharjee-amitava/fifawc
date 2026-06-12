@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -18,7 +18,7 @@
     <div class="flex items-center gap-2">
       <span id="liveIndicator" class="hidden bg-red-600 text-white text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase animate-pulse">LIVE</span>
       <span class="bg-slate-700 text-amber-400 text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase">IST</span>
-      <button id="refreshBtn" title="Refresh fixtures" class="text-slate-400 hover:text-amber-400 transition text-lg ml-1">🔄</button>
+      <button id="refreshBtn" title="Refresh fixtures" class="text-slate-400 hover:text-amber-400 transition text-lg ml-1">ðŸ”„</button>
     </div>
   </header>
 
@@ -27,14 +27,14 @@
 
     <!-- Loading State -->
     <div id="loadingState" class="hidden text-center py-12 space-y-3">
-      <p class="text-4xl animate-spin inline-block">⚽</p>
+      <p class="text-4xl animate-spin inline-block">âš½</p>
       <p class="text-sm text-slate-400">Fetching live fixtures...</p>
     </div>
 
     <!-- Error Banner -->
     <div id="errorBanner" class="hidden bg-red-900/40 border border-red-700 rounded-xl p-4 text-sm text-red-300 space-y-1">
       <p id="errorMsg"></p>
-      <p class="text-xs text-red-400">Showing cached data if available. Tap 🔄 to retry.</p>
+      <p class="text-xs text-red-400">Showing cached data if available. Tap ðŸ”„ to retry.</p>
     </div>
 
     <!-- Sticky Search + All Fixtures panel -->
@@ -43,19 +43,19 @@
       <div id="searchSection" class="relative">
         <input id="teamSearch" type="text" placeholder="Search any team (e.g., Brazil, England, USA)..."
                class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl p-4 pl-12 text-slate-200 focus:border-amber-500 focus:outline-none transition shadow-inner placeholder-slate-500">
-        <span class="absolute left-4 top-4 text-xl">🔍</span>
+        <span class="absolute left-4 top-4 text-xl">ðŸ”</span>
         <div id="suggestionsBox" class="hidden absolute z-10 w-full bg-slate-800 border border-slate-600 rounded-xl mt-1 shadow-xl overflow-hidden"></div>
       </div>
 
       <!-- All Fixtures Button -->
       <button id="allFixturesBtn" class="w-full bg-slate-800 border border-slate-600 hover:border-amber-500 text-slate-300 hover:text-amber-400 font-semibold py-3 rounded-xl text-sm transition flex items-center justify-center gap-2">
-        <span>📋</span> All 2026 Fixtures — Groups A to L
+        <span>ðŸ“‹</span> All 2026 Fixtures â€” Groups A to L
       </button>
     </div>
 
     <!-- Welcome State -->
     <div id="welcomeState" class="hidden text-center py-12 text-slate-500 space-y-4">
-      <p class="text-5xl animate-bounce">⚽</p>
+      <p class="text-5xl animate-bounce">âš½</p>
       <div class="space-y-1">
         <p class="text-sm font-semibold text-slate-400">Track 2026 Fixtures & Historical Milestones</p>
         <p class="text-xs text-slate-500">Type any participating country name to begin.</p>
@@ -70,13 +70,13 @@
           <h2 id="countryHeader" class="text-3xl font-extrabold text-white"></h2>
           <span id="teamGroup" class="text-xs text-slate-400 font-mono"></span>
         </div>
-        <span id="favoriteBtn" class="text-2xl cursor-pointer select-none hover:scale-110 transition duration-150">☆</span>
+        <span id="favoriteBtn" class="text-2xl cursor-pointer select-none hover:scale-110 transition duration-150">â˜†</span>
       </div>
 
       <!-- Fixtures Section -->
       <section class="space-y-3">
         <h3 class="text-xs font-bold uppercase tracking-widest text-amber-400 flex items-center">
-          <span class="mr-1.5">📅</span> 2026 Fixtures (IST)
+          <span class="mr-1.5">ðŸ“…</span> 2026 Fixtures (IST)
         </h3>
         <div id="scheduleContainer" class="space-y-3"></div>
       </section>
@@ -84,7 +84,7 @@
       <!-- Historical Section -->
       <section class="space-y-3">
         <h3 class="text-xs font-bold uppercase tracking-widest text-teal-400 flex items-center">
-          <span class="mr-1.5">🏆</span> Historical World Cup Legacy
+          <span class="mr-1.5">&#127942;</span> FIFA World Cup Titles
         </h3>
         <div id="historyContainer" class="bg-slate-800/50 rounded-xl p-4 border border-slate-700"></div>
       </section>
@@ -93,7 +93,7 @@
   </main>
 
   <script>
-    // ── Config ─────────────────────────────────────────────────────────────────
+    // â”€â”€ Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const API_BASE       = 'https://api.football-data.org/v4';
     const WC_CODE        = 'WC';
     const CACHE_MATCHES  = 'copakick_matches_v2';
@@ -101,414 +101,17 @@
     const CACHE_TTL      = 3 * 60 * 1000;   // 3 minutes
     const FAV_KEY        = 'wc_favorites_v2';
 
-    // ── Historical data (not available via free API tier) ──────────────────────
-    const HISTORICAL = {
-      "brazil": [
-        {year:2022, host:"Qatar",        stage:"Quarter-Finals"},
-        {year:2018, host:"Russia",       stage:"Quarter-Finals"},
-        {year:2014, host:"Brazil",       stage:"Fourth Place"},
-        {year:2010, host:"South Africa", stage:"Quarter-Finals"},
-        {year:2006, host:"Germany",      stage:"Quarter-Finals"},
-        {year:2002, host:"Korea/Japan",  stage:"Winner"},
-        {year:1998, host:"France",       stage:"Runner-up"},
-        {year:1994, host:"USA",          stage:"Winner"},
-        {year:1990, host:"Italy",        stage:"Round of 16"},
-        {year:1986, host:"Mexico",       stage:"Quarter-Finals"},
-        {year:1982, host:"Spain",        stage:"Group Stage"},
-        {year:1978, host:"Argentina",    stage:"Third Place"},
-        {year:1974, host:"West Germany", stage:"Fourth Place"},
-        {year:1970, host:"Mexico",       stage:"Winner"},
-        {year:1966, host:"England",      stage:"Group Stage"},
-        {year:1962, host:"Chile",        stage:"Winner"},
-        {year:1958, host:"Sweden",       stage:"Winner"},
-        {year:1954, host:"Switzerland",  stage:"Quarter-Finals"},
-        {year:1950, host:"Brazil",       stage:"Runner-up"},
-        {year:1938, host:"France",       stage:"Third Place"},
-        {year:1934, host:"Italy",        stage:"First Round"},
-        {year:1930, host:"Uruguay",      stage:"Semi-Finals"}
-      ],
-      "argentina": [
-        {year:2022, host:"Qatar",       stage:"Winner"},
-        {year:2018, host:"Russia",      stage:"Round of 16"},
-        {year:2014, host:"Brazil",      stage:"Runner-up"},
-        {year:2010, host:"South Africa",stage:"Quarter-Finals"},
-        {year:1990, host:"Italy",       stage:"Runner-up"},
-        {year:1986, host:"Mexico",      stage:"Winner"},
-        {year:1978, host:"Argentina",   stage:"Winner"}
-      ],
-      "france": [
-        {year:2022, host:"Qatar",       stage:"Runner-up"},
-        {year:2018, host:"Russia",      stage:"Winner"},
-        {year:2014, host:"Brazil",      stage:"Quarter-Finals"},
-        {year:2006, host:"Germany",     stage:"Runner-up"},
-        {year:1998, host:"France",      stage:"Winner"},
-        {year:1986, host:"Mexico",      stage:"Semi-Finals"}
-      ],
-      "germany": [
-        {year:2022, host:"Qatar",       stage:"Group Stage"},
-        {year:2018, host:"Russia",      stage:"Group Stage"},
-        {year:2014, host:"Brazil",      stage:"Winner"},
-        {year:2010, host:"South Africa",stage:"Semi-Finals"},
-        {year:2006, host:"Germany",     stage:"Semi-Finals"},
-        {year:2002, host:"Korea/Japan", stage:"Runner-up"},
-        {year:1990, host:"Italy",       stage:"Winner"},
-        {year:1986, host:"Mexico",      stage:"Runner-up"},
-        {year:1982, host:"Spain",       stage:"Runner-up"},
-        {year:1974, host:"West Germany",stage:"Winner"}
-      ],
-      "england": [
-        {year:2022, host:"Qatar",       stage:"Quarter-Finals"},
-        {year:2018, host:"Russia",      stage:"Semi-Finals"},
-        {year:2014, host:"Brazil",      stage:"Group Stage"},
-        {year:1990, host:"Italy",       stage:"Semi-Finals"},
-        {year:1966, host:"England",     stage:"Winner"}
-      ],
-      "spain": [
-        {year:2022, host:"Qatar",       stage:"Quarter-Finals"},
-        {year:2018, host:"Russia",      stage:"Round of 16"},
-        {year:2014, host:"Brazil",      stage:"Group Stage"},
-        {year:2010, host:"South Africa",stage:"Winner"},
-        {year:2006, host:"Germany",     stage:"Semi-Finals"},
-        {year:2002, host:"Korea/Japan", stage:"Quarter-Finals"},
-        {year:1950, host:"Brazil",      stage:"Runner-up"}
-      ],
-      "italy": [
-        {year:2014, host:"Brazil",      stage:"Group Stage"},
-        {year:2010, host:"South Africa",stage:"Round of 16"},
-        {year:2006, host:"Germany",     stage:"Winner"},
-        {year:2002, host:"Korea/Japan", stage:"Round of 16"},
-        {year:1994, host:"USA",         stage:"Runner-up"},
-        {year:1990, host:"Italy",       stage:"Semi-Finals"},
-        {year:1982, host:"Spain",       stage:"Winner"},
-        {year:1970, host:"Mexico",      stage:"Runner-up"},
-        {year:1938, host:"France",      stage:"Winner"},
-        {year:1934, host:"Italy",       stage:"Winner"}
-      ],
-      "netherlands": [
-        {year:2022, host:"Qatar",       stage:"Quarter-Finals"},
-        {year:2014, host:"Brazil",      stage:"Semi-Finals"},
-        {year:2010, host:"South Africa",stage:"Runner-up"},
-        {year:1998, host:"France",      stage:"Semi-Finals"},
-        {year:1978, host:"Argentina",   stage:"Runner-up"},
-        {year:1974, host:"West Germany",stage:"Runner-up"}
-      ],
-      "portugal": [
-        {year:2022, host:"Qatar",       stage:"Quarter-Finals"},
-        {year:2018, host:"Russia",      stage:"Round of 16"},
-        {year:2010, host:"South Africa",stage:"Semi-Finals"},
-        {year:2006, host:"Germany",     stage:"Semi-Finals"},
-        {year:1966, host:"England",     stage:"Semi-Finals"}
-      ],
-      "mexico": [
-        {year:2022, host:"Qatar",       stage:"Group Stage"},
-        {year:2018, host:"Russia",      stage:"Round of 16"},
-        {year:2014, host:"Brazil",      stage:"Round of 16"},
-        {year:2010, host:"South Africa",stage:"Round of 16"},
-        {year:2006, host:"Germany",     stage:"Round of 16"},
-        {year:2002, host:"Korea/Japan", stage:"Round of 16"},
-        {year:1986, host:"Mexico",      stage:"Quarter-Finals"},
-        {year:1970, host:"Mexico",      stage:"Quarter-Finals"}
-      ],
-      "uruguay": [
-        {year:2022, host:"Qatar",       stage:"Group Stage"},
-        {year:2018, host:"Russia",      stage:"Quarter-Finals"},
-        {year:2014, host:"Brazil",      stage:"Quarter-Finals"},
-        {year:2010, host:"South Africa",stage:"Semi-Finals"},
-        {year:1970, host:"Mexico",      stage:"Semi-Finals"},
-        {year:1954, host:"Switzerland", stage:"Semi-Finals"},
-        {year:1950, host:"Brazil",      stage:"Winner"},
-        {year:1930, host:"Uruguay",     stage:"Winner"}
-      ],
-      "united states": [
-        {year:2022, host:"Qatar",       stage:"Round of 16"},
-        {year:2014, host:"Brazil",      stage:"Round of 16"},
-        {year:2010, host:"South Africa",stage:"Round of 16"},
-        {year:2002, host:"Korea/Japan", stage:"Quarter-Finals"},
-        {year:1994, host:"USA",         stage:"Round of 16"},
-        {year:1930, host:"Uruguay",     stage:"Semi-Finals"}
-      ],
-      "canada": [],
-      "belgium": [
-        {year:2022, host:"Qatar",       stage:"Round of 16"},
-        {year:2018, host:"Russia",      stage:"Semi-Finals"},
-        {year:2014, host:"Brazil",      stage:"Round of 16"},
-        {year:1986, host:"Mexico",      stage:"Semi-Finals"}
-      ],
-      "japan": [
-        {year:2022, host:"Qatar",       stage:"Round of 16"},
-        {year:2018, host:"Russia",      stage:"Round of 16"},
-        {year:2010, host:"South Africa",stage:"Round of 16"},
-        {year:2002, host:"Korea/Japan", stage:"Quarter-Finals"}
-      ],
-      "south korea": [
-        {year:2022, host:"Qatar",       stage:"Round of 16"},
-        {year:2010, host:"South Africa",stage:"Round of 16"},
-        {year:2002, host:"Korea/Japan", stage:"Semi-Finals"}
-      ],
-      "croatia": [
-        {year:2022, host:"Qatar",       stage:"Semi-Finals"},
-        {year:2018, host:"Russia",      stage:"Runner-up"},
-        {year:1998, host:"France",      stage:"Semi-Finals"}
-      ],
-      "morocco": [
-        {year:2022, host:"Qatar",       stage:"Semi-Finals"}
-      ],
-      "senegal": [
-        {year:2022, host:"Qatar",        stage:"Round of 16"},
-        {year:2018, host:"Russia",       stage:"Group Stage"},
-        {year:2002, host:"Korea/Japan",  stage:"Semi-Finals"}
-      ],
-      // ── Additional Europe ─────────────────────────────────────────────────
-      "colombia": [
-        {year:2018, host:"Russia",       stage:"Round of 16"},
-        {year:2014, host:"Brazil",       stage:"Quarter-Finals"},
-        {year:1994, host:"USA",          stage:"Group Stage"},
-        {year:1990, host:"Italy",        stage:"Round of 16"},
-        {year:1962, host:"Chile",        stage:"Group Stage"}
-      ],
-      "ecuador": [
-        {year:2022, host:"Qatar",        stage:"Group Stage"},
-        {year:2014, host:"Brazil",       stage:"Group Stage"},
-        {year:2006, host:"Germany",      stage:"Round of 16"},
-        {year:2002, host:"Korea/Japan",  stage:"Group Stage"}
-      ],
-      "chile": [
-        {year:2014, host:"Brazil",       stage:"Round of 16"},
-        {year:2010, host:"South Africa", stage:"Round of 16"},
-        {year:1998, host:"France",       stage:"Round of 16"},
-        {year:1962, host:"Chile",        stage:"Third Place"}
-      ],
-      "paraguay": [
-        {year:2010, host:"South Africa", stage:"Quarter-Finals"},
-        {year:2006, host:"Germany",      stage:"Group Stage"},
-        {year:2002, host:"Korea/Japan",  stage:"Round of 16"},
-        {year:1998, host:"France",       stage:"Round of 16"}
-      ],
-      "peru": [
-        {year:2018, host:"Russia",       stage:"Group Stage"},
-        {year:1982, host:"Spain",        stage:"Group Stage"},
-        {year:1978, host:"Argentina",    stage:"Group Stage"},
-        {year:1970, host:"Mexico",       stage:"Quarter-Finals"}
-      ],
-      "venezuela": [],
-      "bolivia": [
-        {year:1994, host:"USA",          stage:"Group Stage"},
-        {year:1950, host:"Brazil",       stage:"Group Stage"},
-        {year:1930, host:"Uruguay",      stage:"Group Stage"}
-      ],
-      "switzerland": [
-        {year:2022, host:"Qatar",        stage:"Quarter-Finals"},
-        {year:2018, host:"Russia",       stage:"Round of 16"},
-        {year:2014, host:"Brazil",       stage:"Round of 16"},
-        {year:2010, host:"South Africa", stage:"Group Stage"},
-        {year:2006, host:"Germany",      stage:"Round of 16"},
-        {year:1954, host:"Switzerland",  stage:"Quarter-Finals"},
-        {year:1938, host:"France",       stage:"Quarter-Finals"},
-        {year:1934, host:"Italy",        stage:"Quarter-Finals"}
-      ],
-      "denmark": [
-        {year:2022, host:"Qatar",        stage:"Round of 16"},
-        {year:2018, host:"Russia",       stage:"Round of 16"},
-        {year:2002, host:"Korea/Japan",  stage:"Round of 16"},
-        {year:1998, host:"France",       stage:"Quarter-Finals"},
-        {year:1986, host:"Mexico",       stage:"Round of 16"}
-      ],
-      "austria": [
-        {year:1998, host:"France",       stage:"Group Stage"},
-        {year:1982, host:"Spain",        stage:"Group Stage"},
-        {year:1978, host:"Argentina",    stage:"Group Stage"},
-        {year:1954, host:"Switzerland",  stage:"Third Place"},
-        {year:1934, host:"Italy",        stage:"Fourth Place"}
-      ],
-      "poland": [
-        {year:2022, host:"Qatar",        stage:"Round of 16"},
-        {year:2018, host:"Russia",       stage:"Group Stage"},
-        {year:2006, host:"Germany",      stage:"Group Stage"},
-        {year:2002, host:"Korea/Japan",  stage:"Group Stage"},
-        {year:1986, host:"Mexico",       stage:"Round of 16"},
-        {year:1982, host:"Spain",        stage:"Third Place"},
-        {year:1978, host:"Argentina",    stage:"Group Stage"},
-        {year:1974, host:"West Germany", stage:"Third Place"}
-      ],
-      "serbia": [
-        {year:2022, host:"Qatar",        stage:"Group Stage"},
-        {year:2018, host:"Russia",       stage:"Group Stage"},
-        {year:2010, host:"South Africa", stage:"Group Stage"},
-        {year:1990, host:"Italy",        stage:"Quarter-Finals"},
-        {year:1962, host:"Chile",        stage:"Fourth Place"},
-        {year:1954, host:"Switzerland",  stage:"Quarter-Finals"},
-        {year:1930, host:"Uruguay",      stage:"Semi-Finals"}
-      ],
-      "scotland": [
-        {year:1998, host:"France",       stage:"Group Stage"},
-        {year:1990, host:"Italy",        stage:"Group Stage"},
-        {year:1986, host:"Mexico",       stage:"Group Stage"},
-        {year:1982, host:"Spain",        stage:"Group Stage"},
-        {year:1978, host:"Argentina",    stage:"Group Stage"},
-        {year:1974, host:"West Germany", stage:"Group Stage"}
-      ],
-      "turkey": [
-        {year:2002, host:"Korea/Japan",  stage:"Third Place"},
-        {year:1954, host:"Switzerland",  stage:"Group Stage"}
-      ],
-      "ukraine": [
-        {year:2006, host:"Germany",      stage:"Quarter-Finals"}
-      ],
-      "romania": [
-        {year:1998, host:"France",       stage:"Quarter-Finals"},
-        {year:1994, host:"USA",          stage:"Quarter-Finals"},
-        {year:1990, host:"Italy",        stage:"Round of 16"},
-        {year:1970, host:"Mexico",       stage:"Group Stage"},
-        {year:1934, host:"Italy",        stage:"Round of 16"},
-        {year:1930, host:"Uruguay",      stage:"Group Stage"}
-      ],
-      "hungary": [
-        {year:1986, host:"Mexico",       stage:"Group Stage"},
-        {year:1982, host:"Spain",        stage:"Group Stage"},
-        {year:1966, host:"England",      stage:"Quarter-Finals"},
-        {year:1962, host:"Chile",        stage:"Quarter-Finals"},
-        {year:1958, host:"Sweden",       stage:"Quarter-Finals"},
-        {year:1954, host:"Switzerland",  stage:"Runner-up"},
-        {year:1938, host:"France",       stage:"Runner-up"},
-        {year:1934, host:"Italy",        stage:"Quarter-Finals"}
-      ],
-      "czech republic": [
-        {year:2006, host:"Germany",      stage:"Group Stage"},
-        {year:1962, host:"Chile",        stage:"Runner-up"},
-        {year:1934, host:"Italy",        stage:"Runner-up"}
-      ],
-      "slovakia": [
-        {year:2010, host:"South Africa", stage:"Round of 16"}
-      ],
-      "slovenia": [
-        {year:2010, host:"South Africa", stage:"Group Stage"},
-        {year:2002, host:"Korea/Japan",  stage:"Group Stage"}
-      ],
-      "albania":  [],
-      "georgia":  [],
-      "greece": [
-        {year:2014, host:"Brazil",       stage:"Round of 16"},
-        {year:2010, host:"South Africa", stage:"Group Stage"},
-        {year:1994, host:"USA",          stage:"Group Stage"}
-      ],
-      // ── Additional CONCACAF ───────────────────────────────────────────────
-      "costa rica": [
-        {year:2022, host:"Qatar",        stage:"Group Stage"},
-        {year:2018, host:"Russia",       stage:"Group Stage"},
-        {year:2014, host:"Brazil",       stage:"Quarter-Finals"},
-        {year:2006, host:"Germany",      stage:"Group Stage"},
-        {year:2002, host:"Korea/Japan",  stage:"Group Stage"},
-        {year:1990, host:"Italy",        stage:"Round of 16"}
-      ],
-      "panama": [
-        {year:2018, host:"Russia",       stage:"Group Stage"}
-      ],
-      "honduras": [
-        {year:2014, host:"Brazil",       stage:"Group Stage"},
-        {year:2010, host:"South Africa", stage:"Group Stage"},
-        {year:1982, host:"Spain",        stage:"Group Stage"}
-      ],
-      "jamaica": [
-        {year:1998, host:"France",       stage:"Group Stage"}
-      ],
-      // ── Additional Africa ─────────────────────────────────────────────────
-      "nigeria": [
-        {year:2018, host:"Russia",       stage:"Group Stage"},
-        {year:2014, host:"Brazil",       stage:"Round of 16"},
-        {year:2010, host:"South Africa", stage:"Group Stage"},
-        {year:2002, host:"Korea/Japan",  stage:"Round of 16"},
-        {year:1998, host:"France",       stage:"Round of 16"},
-        {year:1994, host:"USA",          stage:"Round of 16"}
-      ],
-      "cameroon": [
-        {year:2022, host:"Qatar",        stage:"Group Stage"},
-        {year:2014, host:"Brazil",       stage:"Group Stage"},
-        {year:2010, host:"South Africa", stage:"Group Stage"},
-        {year:2002, host:"Korea/Japan",  stage:"Group Stage"},
-        {year:1998, host:"France",       stage:"Group Stage"},
-        {year:1994, host:"USA",          stage:"Group Stage"},
-        {year:1990, host:"Italy",        stage:"Quarter-Finals"},
-        {year:1982, host:"Spain",        stage:"Group Stage"}
-      ],
-      "ghana": [
-        {year:2022, host:"Qatar",        stage:"Group Stage"},
-        {year:2014, host:"Brazil",       stage:"Group Stage"},
-        {year:2010, host:"South Africa", stage:"Quarter-Finals"},
-        {year:2006, host:"Germany",      stage:"Round of 16"}
-      ],
-      "ivory coast": [
-        {year:2014, host:"Brazil",       stage:"Group Stage"},
-        {year:2010, host:"South Africa", stage:"Group Stage"},
-        {year:2006, host:"Germany",      stage:"Group Stage"}
-      ],
-      "egypt": [
-        {year:2018, host:"Russia",       stage:"Group Stage"},
-        {year:1990, host:"Italy",        stage:"Group Stage"},
-        {year:1934, host:"Italy",        stage:"Round of 16"}
-      ],
-      "algeria": [
-        {year:2014, host:"Brazil",       stage:"Round of 16"},
-        {year:2010, host:"South Africa", stage:"Group Stage"},
-        {year:1986, host:"Mexico",       stage:"Group Stage"},
-        {year:1982, host:"Spain",        stage:"Group Stage"}
-      ],
-      "tunisia": [
-        {year:2022, host:"Qatar",        stage:"Group Stage"},
-        {year:2018, host:"Russia",       stage:"Group Stage"},
-        {year:2006, host:"Germany",      stage:"Group Stage"},
-        {year:2002, host:"Korea/Japan",  stage:"Group Stage"},
-        {year:1998, host:"France",       stage:"Group Stage"},
-        {year:1978, host:"Argentina",    stage:"Group Stage"}
-      ],
-      "south africa": [
-        {year:2010, host:"South Africa", stage:"Group Stage"},
-        {year:2002, host:"Korea/Japan",  stage:"Round of 16"},
-        {year:1998, host:"France",       stage:"Group Stage"}
-      ],
-      "mali":    [],
-      "dr congo": [
-        {year:1974, host:"West Germany", stage:"Group Stage"}
-      ],
-      "congo dr": [
-        {year:1974, host:"West Germany", stage:"Group Stage"}
-      ],
-      // ── Additional Asia / Pacific ─────────────────────────────────────────
-      "iran": [
-        {year:2022, host:"Qatar",        stage:"Group Stage"},
-        {year:2018, host:"Russia",       stage:"Group Stage"},
-        {year:2014, host:"Brazil",       stage:"Group Stage"},
-        {year:2006, host:"Germany",      stage:"Group Stage"},
-        {year:1998, host:"France",       stage:"Group Stage"},
-        {year:1978, host:"Argentina",    stage:"Group Stage"}
-      ],
-      "saudi arabia": [
-        {year:2022, host:"Qatar",        stage:"Group Stage"},
-        {year:2018, host:"Russia",       stage:"Group Stage"},
-        {year:2006, host:"Germany",      stage:"Group Stage"},
-        {year:2002, host:"Korea/Japan",  stage:"Group Stage"},
-        {year:1998, host:"France",       stage:"Group Stage"},
-        {year:1994, host:"USA",          stage:"Round of 16"}
-      ],
-      "australia": [
-        {year:2022, host:"Qatar",        stage:"Round of 16"},
-        {year:2014, host:"Brazil",       stage:"Group Stage"},
-        {year:2010, host:"South Africa", stage:"Group Stage"},
-        {year:2006, host:"Germany",      stage:"Round of 16"}
-      ],
-      "qatar": [
-        {year:2022, host:"Qatar",        stage:"Group Stage"}
-      ],
-      "uzbekistan": [],
-      "jordan":    [],
-      "iraq": [
-        {year:1986, host:"Mexico",       stage:"Group Stage"}
-      ],
-      "indonesia": [],
-      // ── Oceania ───────────────────────────────────────────────────────────
-      "new zealand": [
-        {year:2010, host:"South Africa", stage:"Group Stage"},
-        {year:1982, host:"Spain",        stage:"Group Stage"}
-      ]
+    // â”€â”€ Historical data (not available via free API tier) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // World Cup title holders — the ONLY 8 nations ever to win the FIFA World Cup
+    const WC_WINNERS = {
+      "brazil":    { titles: 5, years: [1958, 1962, 1970, 1994, 2002] },
+      "germany":   { titles: 4, years: [1954, 1974, 1990, 2014] },
+      "italy":     { titles: 4, years: [1934, 1938, 1982, 2006] },
+      "argentina": { titles: 3, years: [1978, 1986, 2022] },
+      "france":    { titles: 2, years: [1998, 2018] },
+      "uruguay":   { titles: 2, years: [1930, 1950] },
+      "england":   { titles: 1, years: [1966] },
+      "spain":     { titles: 1, years: [2010] }
     };
 
     // Name aliases for search flexibility
@@ -525,7 +128,7 @@
       "ivory coast":             "ivory coast",
       "cote d'ivoire":           "ivory coast",
       "cote divoire":            "ivory coast",
-      "côte d'ivoire":           "ivory coast",
+      "cÃ´te d'ivoire":           "ivory coast",
       "dr congo":                "dr congo",
       "democratic republic of congo": "dr congo",
       "drc":                     "dr congo",
@@ -549,9 +152,9 @@
       // Native language names
       "deutschland":             "germany",
       "espana":                  "spain",
-      "españa":                  "spain",
+      "espaÃ±a":                  "spain",
       "brasil":                  "brazil",
-      "seleção":                 "brazil",
+      "seleÃ§Ã£o":                 "brazil",
       "selecao":                 "brazil",
       "les bleus":               "france",
       "la roja":                 "spain",
@@ -576,13 +179,13 @@
       "persia":                  "iran"
     };
 
-    // ── State ──────────────────────────────────────────────────────────────────
+    // â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     let teamIndex      = {};
     let allMatchesList = [];
     let currentKey     = '';
     let demoMode       = false;
 
-    // ── DOM refs ───────────────────────────────────────────────────────────────
+    // â”€â”€ DOM refs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const $  = id => document.getElementById(id);
     const teamSearch       = $('teamSearch');
     const welcomeState     = $('welcomeState');
@@ -603,7 +206,7 @@
     const suggestionsBox   = $('suggestionsBox');
     const allFixturesBtn   = $('allFixturesBtn');
 
-    // ── Utilities ──────────────────────────────────────────────────────────────
+    // â”€â”€ Utilities â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function safeJSON(key, fallback) {
       try { return JSON.parse(localStorage.getItem(key) ?? fallback); }
       catch { return JSON.parse(fallback); }
@@ -626,7 +229,7 @@
           timeZone: 'Asia/Kolkata',
           hour: '2-digit', minute: '2-digit', hour12: true
         }).toUpperCase() + ' IST';
-      } catch { return '—'; }
+      } catch { return 'â€”'; }
     }
 
     function istDate(utcStr) {
@@ -650,7 +253,7 @@
       return map[raw] || (raw ?? '').replace(/_/g, ' ');
     }
 
-    // ── API ────────────────────────────────────────────────────────────────────
+    // â”€â”€ API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     async function fetchMatches() {
       const ts = parseInt(localStorage.getItem(CACHE_TS) || '0');
       if (Date.now() - ts < CACHE_TTL) {
@@ -671,7 +274,7 @@
       return data.matches;
     }
 
-    // ── Build team index ───────────────────────────────────────────────────────
+    // â”€â”€ Build team index â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function buildIndex(matches) {
       const idx = {};
       matches.forEach(match => {
@@ -698,7 +301,7 @@
       return idx;
     }
 
-    // ── Search / lookup ────────────────────────────────────────────────────────
+    // â”€â”€ Search / lookup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function findTeam(query) {
       const q = query.trim().toLowerCase();
       if (!q) return null;
@@ -723,7 +326,7 @@
         .map(([k, v]) => ({ key: k, name: v.name, group: v.group }));
     }
 
-    // ── Render match card ──────────────────────────────────────────────────────
+    // â”€â”€ Render match card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function renderMatchCard(match, myName) {
       const isHome   = match.homeTeam.name === myName;
       const opponent = isHome ? match.awayTeam : match.homeTeam;
@@ -739,7 +342,7 @@
         const col  = myG > oppG ? 'text-green-400' : myG < oppG ? 'text-red-400' : 'text-slate-300';
         scoreBlock = `
           <div class="mt-2 flex items-baseline gap-2">
-            <span class="text-2xl font-black ${col}">${esc(myG)} – ${esc(oppG)}</span>
+            <span class="text-2xl font-black ${col}">${esc(myG)} â€“ ${esc(oppG)}</span>
             <span class="text-[10px] text-slate-500 font-mono">FT</span>
           </div>`;
         statusTag = `<span class="text-[9px] bg-slate-600 text-slate-300 px-2 py-0.5 rounded font-mono ml-1">FT</span>`;
@@ -749,7 +352,7 @@
         const oppG = isHome ? (sc.fullTime.away ?? 0) : (sc.fullTime.home ?? 0);
         scoreBlock = `
           <div class="mt-2 flex items-baseline gap-2">
-            <span class="text-2xl font-black text-amber-400">${esc(myG)} – ${esc(oppG)}</span>
+            <span class="text-2xl font-black text-amber-400">${esc(myG)} â€“ ${esc(oppG)}</span>
             <span class="text-[9px] bg-red-600 text-white px-2 py-0.5 rounded font-bold animate-pulse">LIVE</span>
           </div>`;
         statusTag = '';
@@ -762,44 +365,37 @@
       return `
         <div class="bg-slate-800 border border-slate-700 p-4 rounded-xl shadow-md relative overflow-hidden">
           <div class="absolute right-0 top-0 bg-slate-700 px-3 py-1 text-[9px] uppercase tracking-widest text-amber-400 font-mono font-bold rounded-bl-lg">
-            FIFA • ${esc(stageLabel(match.stage))}${statusTag}
+            FIFA â€¢ ${esc(stageLabel(match.stage))}${statusTag}
           </div>
           <p class="text-sm font-medium text-slate-400 mt-1">vs</p>
           <p class="text-xl font-black text-white tracking-wide mt-0.5">${esc(opponent.name)}</p>
           ${scoreBlock}
           <p class="text-xs text-slate-400 mt-1 font-medium">${esc(istDate(match.utcDate))}</p>
-          ${match.venue ? `<div class="mt-3 pt-2.5 border-t border-slate-700/60 flex items-center text-xs text-slate-400"><span class="mr-2">📍</span>${esc(match.venue)}</div>` : ''}
+          ${match.venue ? `<div class="mt-3 pt-2.5 border-t border-slate-700/60 flex items-center text-xs text-slate-400"><span class="mr-2">ðŸ“</span>${esc(match.venue)}</div>` : ''}
         </div>`;
     }
 
-    // ── Render history ─────────────────────────────────────────────────────────
+    // â”€â”€ Render history â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function renderHistory(key) {
-      const hist = HISTORICAL[key.toLowerCase()];
-      if (!hist || hist.length === 0) {
+      const w = WC_WINNERS[key.toLowerCase()];
+      if (!w) {
         historyContainer.innerHTML =
-          `<p class="text-sm text-slate-500 italic py-2">No notable World Cup finishes on record.</p>`;
+          `<p class="text-sm text-slate-500 italic py-2">No FIFA World Cup title.</p>`;
         return;
       }
-      historyContainer.innerHTML = hist.map((h, i, arr) => {
-        let badge = 'bg-slate-700 text-slate-300';
-        if (h.stage === 'Winner')       badge = 'bg-amber-500 text-slate-950 font-bold';
-        if (h.stage === 'Runner-up')    badge = 'bg-slate-300 text-slate-900 font-bold';
-        if (h.stage === 'Semi-Finals')  badge = 'bg-teal-800 text-teal-200';
-        if (h.stage === 'Quarter-Finals') badge = 'bg-slate-600 text-slate-200';
-        const divider = i < arr.length - 1
-          ? 'border-b border-slate-700/40 pb-3 mb-3' : '';
-        return `
-          <div class="flex items-center justify-between ${divider}">
-            <div>
-              <span class="text-lg font-black text-white">${esc(h.year)}</span>
-              <span class="text-[11px] text-slate-400 block font-medium">Host: ${esc(h.host)}</span>
-            </div>
-            <span class="text-xs px-2.5 py-1 rounded-md tracking-wide uppercase ${badge}">${esc(h.stage)}</span>
-          </div>`;
-      }).join('');
+      const trophy  = w.titles === 1 ? '🏆' : '🏆'.repeat(Math.min(w.titles, 5));
+      const label   = w.titles === 1 ? '1 title' : `${w.titles} titles`;
+      historyContainer.innerHTML = `
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">${trophy}</span>
+          <div>
+            <p class="text-xl font-black text-amber-400">${esc(label)}</p>
+            <p class="text-sm text-slate-300">${w.years.join(' · ')}</p>
+          </div>
+        </div>`;
     }
 
-    // ── Show team results ──────────────────────────────────────────────────────
+    // â”€â”€ Show team results â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function showTeam(key, team) {
       currentKey = key;
       welcomeState.classList.add('hidden');
@@ -823,10 +419,10 @@
       renderHistory(key);
     }
 
-    // ── Favourites ─────────────────────────────────────────────────────────────
+    // â”€â”€ Favourites â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function updateFavStar() {
       const favs = safeJSON(FAV_KEY, '[]');
-      favoriteBtn.textContent = favs.includes(currentKey) ? '⭐' : '☆';
+      favoriteBtn.textContent = favs.includes(currentKey) ? 'â­' : 'â˜†';
     }
 
     favoriteBtn.addEventListener('click', () => {
@@ -839,7 +435,7 @@
       updateFavStar();
     });
 
-    // ── Search input ───────────────────────────────────────────────────────────
+    // â”€â”€ Search input â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     teamSearch.addEventListener('input', e => {
       const val = e.target.value;
       const result = findTeam(val);
@@ -885,16 +481,16 @@
       if (!searchSection.contains(e.target)) suggestionsBox.classList.add('hidden');
     });
 
-    // ── Refresh button ─────────────────────────────────────────────────────────
+    // â”€â”€ Refresh button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     refreshBtn.addEventListener('click', () => {
       try { localStorage.removeItem(CACHE_TS); } catch {}
       boot();
     });
 
-    // ── Demo mode (historical data only, no live fixtures) ─────────────────────
+    // â”€â”€ Demo mode (historical data only, no live fixtures) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function loadDemoMode() {
       demoMode = true;
-      Object.keys(HISTORICAL).forEach(k => {
+      Object.keys(WC_WINNERS).forEach(k => {
         teamIndex[k] = {
           name:    k.split(' ').map(w => w[0].toUpperCase() + w.slice(1)).join(' '),
           tla:     k.slice(0, 3).toUpperCase(),
@@ -902,13 +498,13 @@
           group:   ''
         };
       });
-      dataStatus.textContent = 'Demo mode — historical data only';
+      dataStatus.textContent = 'Demo mode â€” historical data only';
       stickyControls.classList.remove('hidden');
       welcomeState.classList.remove('hidden');
       loadingState.classList.add('hidden');
     }
 
-    // ── Boot sequence ──────────────────────────────────────────────────────────
+    // â”€â”€ Boot sequence â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     async function boot() {
       loadingState.classList.remove('hidden');
       stickyControls.classList.add('hidden');
@@ -928,7 +524,7 @@
         ).length;
 
         dataStatus.textContent = live > 0
-          ? `${live} match${live > 1 ? 'es' : ''} LIVE now — ${finished}/${total} played`
+          ? `${live} match${live > 1 ? 'es' : ''} LIVE now â€” ${finished}/${total} played`
           : `${finished} / ${total} matches played`;
 
         loadingState.classList.add('hidden');
@@ -947,7 +543,7 @@
 
       } catch (err) {
         loadingState.classList.add('hidden');
-        errorMsg.textContent = `⚠️ ${err.message}`;
+        errorMsg.textContent = `âš ï¸ ${err.message}`;
         errorBanner.classList.remove('hidden');
         stickyControls.classList.remove('hidden');
         welcomeState.classList.remove('hidden');
@@ -963,7 +559,7 @@
       }
     }
 
-    // ── All Fixtures Modal ─────────────────────────────────────────────────────
+    // â”€â”€ All Fixtures Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function renderAllFixtures() {
       const modal     = document.getElementById('allFixturesModal');
       const container = document.getElementById('allFixturesContainer');
@@ -982,7 +578,7 @@
         groups[label].push(m);
       });
 
-      // Sort: Group A–L first, then knockout rounds
+      // Sort: Group Aâ€“L first, then knockout rounds
       const groupOrder = key => {
         const letter = key.match(/Group ([A-L])/i);
         if (letter) return letter[1].charCodeAt(0);
@@ -1004,11 +600,11 @@
           if (status === 'FINISHED') {
             const hg = m.score?.fullTime?.home ?? '?';
             const ag = m.score?.fullTime?.away ?? '?';
-            scoreOrTime = `<span class="font-bold text-amber-400">${hg} – ${ag}</span>`;
+            scoreOrTime = `<span class="font-bold text-amber-400">${hg} â€“ ${ag}</span>`;
           } else if (status === 'IN_PLAY' || status === 'PAUSED') {
             const hg = m.score?.fullTime?.home ?? m.score?.halfTime?.home ?? 0;
             const ag = m.score?.fullTime?.away ?? m.score?.halfTime?.away ?? 0;
-            scoreOrTime = `<span class="font-bold text-red-400 animate-pulse">${hg} – ${ag} 🔴</span>`;
+            scoreOrTime = `<span class="font-bold text-red-400 animate-pulse">${hg} â€“ ${ag} ðŸ”´</span>`;
           } else {
             const ist = new Date(m.utcDate).toLocaleString('en-IN', {
               timeZone: 'Asia/Kolkata', month: 'short', day: 'numeric',
@@ -1025,7 +621,7 @@
 
         return `<div class="mb-5">
           <h3 class="text-xs font-bold uppercase tracking-widest text-amber-400 mb-2 flex items-center gap-1.5">
-            <span>🏆</span>${esc(groupKey)}
+            <span>ðŸ†</span>${esc(groupKey)}
           </h3>
           <div>${rows}</div>
         </div>`;
@@ -1041,7 +637,7 @@
       document.body.style.overflow = '';
     }
 
-    // ── Entry point ────────────────────────────────────────────────────────────
+    // â”€â”€ Entry point â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('allFixturesBtn').addEventListener('click', renderAllFixtures);
       document.getElementById('allFixturesClose').addEventListener('click', closeAllFixtures);
@@ -1058,10 +654,10 @@
       <!-- Modal Header -->
       <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700 sticky top-0 bg-slate-900 rounded-t-2xl sm:rounded-t-2xl z-10">
         <div>
-          <h2 class="text-base font-extrabold text-amber-400 tracking-wide">📋 All 2026 Fixtures</h2>
-          <p class="text-xs text-slate-500">Groups A – L · Live scores in IST</p>
+          <h2 class="text-base font-extrabold text-amber-400 tracking-wide">ðŸ“‹ All 2026 Fixtures</h2>
+          <p class="text-xs text-slate-500">Groups A â€“ L Â· Live scores in IST</p>
         </div>
-        <button id="allFixturesClose" class="text-slate-400 hover:text-white transition text-xl leading-none px-2">✕</button>
+        <button id="allFixturesClose" class="text-slate-400 hover:text-white transition text-xl leading-none px-2">âœ•</button>
       </div>
       <!-- Scrollable Body -->
       <div id="allFixturesContainer" class="overflow-y-auto px-5 py-4 flex-1"></div>
