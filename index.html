@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+&#65279;<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -18,7 +18,7 @@
     <div class="flex items-center gap-2">
       <span id="liveIndicator" class="hidden bg-red-600 text-white text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase animate-pulse">LIVE</span>
       <span class="bg-slate-700 text-amber-400 text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase">IST</span>
-      <button id="refreshBtn" title="Refresh fixtures" class="text-slate-400 hover:text-amber-400 transition text-lg ml-1">ðŸ”„</button>
+      <button id="refreshBtn" title="Refresh fixtures" class="text-slate-400 hover:text-amber-400 transition text-lg ml-1">&#128260;</button>
     </div>
   </header>
 
@@ -27,14 +27,14 @@
 
     <!-- Loading State -->
     <div id="loadingState" class="hidden text-center py-12 space-y-3">
-      <p class="text-4xl animate-spin inline-block">âš½</p>
+      <p class="text-4xl animate-spin inline-block">&#9917;</p>
       <p class="text-sm text-slate-400">Fetching live fixtures...</p>
     </div>
 
     <!-- Error Banner -->
     <div id="errorBanner" class="hidden bg-red-900/40 border border-red-700 rounded-xl p-4 text-sm text-red-300 space-y-1">
       <p id="errorMsg"></p>
-      <p class="text-xs text-red-400">Showing cached data if available. Tap ðŸ”„ to retry.</p>
+      <p class="text-xs text-red-400">Showing cached data if available. Tap &#128260; to retry.</p>
     </div>
 
     <!-- Sticky Search + All Fixtures panel -->
@@ -43,19 +43,19 @@
       <div id="searchSection" class="relative">
         <input id="teamSearch" type="text" placeholder="Search any team (e.g., Brazil, England, USA)..."
                class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl p-4 pl-12 text-slate-200 focus:border-amber-500 focus:outline-none transition shadow-inner placeholder-slate-500">
-        <span class="absolute left-4 top-4 text-xl">ðŸ”</span>
+        <span class="absolute left-4 top-4 text-xl">&#65533;&#141;</span>
         <div id="suggestionsBox" class="hidden absolute z-10 w-full bg-slate-800 border border-slate-600 rounded-xl mt-1 shadow-xl overflow-hidden"></div>
       </div>
 
       <!-- All Fixtures Button -->
       <button id="allFixturesBtn" class="w-full bg-slate-800 border border-slate-600 hover:border-amber-500 text-slate-300 hover:text-amber-400 font-semibold py-3 rounded-xl text-sm transition flex items-center justify-center gap-2">
-        <span>ðŸ“‹</span> All 2026 Fixtures â€” Groups A to L
+        <span>&#128203;</span> All 2026 Fixtures &#8212; Groups A to L
       </button>
     </div>
 
     <!-- Welcome State -->
     <div id="welcomeState" class="hidden text-center py-12 text-slate-500 space-y-4">
-      <p class="text-5xl animate-bounce">âš½</p>
+      <p class="text-5xl animate-bounce">&#9917;</p>
       <div class="space-y-1">
         <p class="text-sm font-semibold text-slate-400">Track 2026 Fixtures & Historical Milestones</p>
         <p class="text-xs text-slate-500">Type any participating country name to begin.</p>
@@ -70,13 +70,13 @@
           <h2 id="countryHeader" class="text-3xl font-extrabold text-white"></h2>
           <span id="teamGroup" class="text-xs text-slate-400 font-mono"></span>
         </div>
-        <span id="favoriteBtn" class="text-2xl cursor-pointer select-none hover:scale-110 transition duration-150">â˜†</span>
+        <span id="favoriteBtn" class="text-2xl cursor-pointer select-none hover:scale-110 transition duration-150">&#9734;</span>
       </div>
 
       <!-- Fixtures Section -->
       <section class="space-y-3">
         <h3 class="text-xs font-bold uppercase tracking-widest text-amber-400 flex items-center">
-          <span class="mr-1.5">ðŸ“…</span> 2026 Fixtures (IST)
+          <span class="mr-1.5">&#128197;</span> 2026 Fixtures (IST)
         </h3>
         <div id="scheduleContainer" class="space-y-3"></div>
       </section>
@@ -93,7 +93,7 @@
   </main>
 
   <script>
-    // â”€â”€ Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // &#9472;&#9472; Config &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
     const API_BASE       = 'https://api.football-data.org/v4';
     const WC_CODE        = 'WC';
     const CACHE_MATCHES  = 'copakick_matches_v2';
@@ -101,8 +101,8 @@
     const CACHE_TTL      = 3 * 60 * 1000;   // 3 minutes
     const FAV_KEY        = 'wc_favorites_v2';
 
-    // â”€â”€ Historical data (not available via free API tier) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    // World Cup title holders — the ONLY 8 nations ever to win the FIFA World Cup
+    // &#9472;&#9472; Historical data (not available via free API tier) &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+    // World Cup title holders &#65533; the ONLY 8 nations ever to win the FIFA World Cup
     const WC_WINNERS = {
       "brazil":    { titles: 5, years: [1958, 1962, 1970, 1994, 2002] },
       "germany":   { titles: 4, years: [1954, 1974, 1990, 2014] },
@@ -128,7 +128,7 @@
       "ivory coast":             "ivory coast",
       "cote d'ivoire":           "ivory coast",
       "cote divoire":            "ivory coast",
-      "cÃ´te d'ivoire":           "ivory coast",
+      "c&#244;te d'ivoire":           "ivory coast",
       "dr congo":                "dr congo",
       "democratic republic of congo": "dr congo",
       "drc":                     "dr congo",
@@ -152,9 +152,9 @@
       // Native language names
       "deutschland":             "germany",
       "espana":                  "spain",
-      "espaÃ±a":                  "spain",
+      "espa&#241;a":                  "spain",
       "brasil":                  "brazil",
-      "seleÃ§Ã£o":                 "brazil",
+      "sele&#231;&#227;o":                 "brazil",
       "selecao":                 "brazil",
       "les bleus":               "france",
       "la roja":                 "spain",
@@ -179,13 +179,13 @@
       "persia":                  "iran"
     };
 
-    // â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // &#9472;&#9472; State &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
     let teamIndex      = {};
     let allMatchesList = [];
     let currentKey     = '';
     let demoMode       = false;
 
-    // â”€â”€ DOM refs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // &#9472;&#9472; DOM refs &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
     const $  = id => document.getElementById(id);
     const teamSearch       = $('teamSearch');
     const welcomeState     = $('welcomeState');
@@ -206,7 +206,7 @@
     const suggestionsBox   = $('suggestionsBox');
     const allFixturesBtn   = $('allFixturesBtn');
 
-    // â”€â”€ Utilities â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // &#9472;&#9472; Utilities &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
     function safeJSON(key, fallback) {
       try { return JSON.parse(localStorage.getItem(key) ?? fallback); }
       catch { return JSON.parse(fallback); }
@@ -229,7 +229,7 @@
           timeZone: 'Asia/Kolkata',
           hour: '2-digit', minute: '2-digit', hour12: true
         }).toUpperCase() + ' IST';
-      } catch { return 'â€”'; }
+      } catch { return '&#8212;'; }
     }
 
     function istDate(utcStr) {
@@ -253,7 +253,7 @@
       return map[raw] || (raw ?? '').replace(/_/g, ' ');
     }
 
-    // â”€â”€ API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // &#9472;&#9472; API &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
     async function fetchMatches() {
       const ts = parseInt(localStorage.getItem(CACHE_TS) || '0');
       if (Date.now() - ts < CACHE_TTL) {
@@ -274,7 +274,7 @@
       return data.matches;
     }
 
-    // â”€â”€ Build team index â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // &#9472;&#9472; Build team index &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
     function buildIndex(matches) {
       const idx = {};
       matches.forEach(match => {
@@ -301,7 +301,7 @@
       return idx;
     }
 
-    // â”€â”€ Search / lookup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // &#9472;&#9472; Search / lookup &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
     function findTeam(query) {
       const q = query.trim().toLowerCase();
       if (!q) return null;
@@ -326,7 +326,7 @@
         .map(([k, v]) => ({ key: k, name: v.name, group: v.group }));
     }
 
-    // â”€â”€ Render match card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // &#9472;&#9472; Render match card &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
     function renderMatchCard(match, myName) {
       const isHome   = match.homeTeam.name === myName;
       const opponent = isHome ? match.awayTeam : match.homeTeam;
@@ -342,7 +342,7 @@
         const col  = myG > oppG ? 'text-green-400' : myG < oppG ? 'text-red-400' : 'text-slate-300';
         scoreBlock = `
           <div class="mt-2 flex items-baseline gap-2">
-            <span class="text-2xl font-black ${col}">${esc(myG)} â€“ ${esc(oppG)}</span>
+            <span class="text-2xl font-black ${col}">${esc(myG)} &#8211; ${esc(oppG)}</span>
             <span class="text-[10px] text-slate-500 font-mono">FT</span>
           </div>`;
         statusTag = `<span class="text-[9px] bg-slate-600 text-slate-300 px-2 py-0.5 rounded font-mono ml-1">FT</span>`;
@@ -352,7 +352,7 @@
         const oppG = isHome ? (sc.fullTime.away ?? 0) : (sc.fullTime.home ?? 0);
         scoreBlock = `
           <div class="mt-2 flex items-baseline gap-2">
-            <span class="text-2xl font-black text-amber-400">${esc(myG)} â€“ ${esc(oppG)}</span>
+            <span class="text-2xl font-black text-amber-400">${esc(myG)} &#8211; ${esc(oppG)}</span>
             <span class="text-[9px] bg-red-600 text-white px-2 py-0.5 rounded font-bold animate-pulse">LIVE</span>
           </div>`;
         statusTag = '';
@@ -365,17 +365,17 @@
       return `
         <div class="bg-slate-800 border border-slate-700 p-4 rounded-xl shadow-md relative overflow-hidden">
           <div class="absolute right-0 top-0 bg-slate-700 px-3 py-1 text-[9px] uppercase tracking-widest text-amber-400 font-mono font-bold rounded-bl-lg">
-            FIFA â€¢ ${esc(stageLabel(match.stage))}${statusTag}
+            FIFA &#8226; ${esc(stageLabel(match.stage))}${statusTag}
           </div>
           <p class="text-sm font-medium text-slate-400 mt-1">vs</p>
           <p class="text-xl font-black text-white tracking-wide mt-0.5">${esc(opponent.name)}</p>
           ${scoreBlock}
           <p class="text-xs text-slate-400 mt-1 font-medium">${esc(istDate(match.utcDate))}</p>
-          ${match.venue ? `<div class="mt-3 pt-2.5 border-t border-slate-700/60 flex items-center text-xs text-slate-400"><span class="mr-2">ðŸ“</span>${esc(match.venue)}</div>` : ''}
+          ${match.venue ? `<div class="mt-3 pt-2.5 border-t border-slate-700/60 flex items-center text-xs text-slate-400"><span class="mr-2">&#65533;&#141;</span>${esc(match.venue)}</div>` : ''}
         </div>`;
     }
 
-    // â”€â”€ Render history â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // &#9472;&#9472; Render history &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
     function renderHistory(key) {
       const w = WC_WINNERS[key.toLowerCase()];
       if (!w) {
@@ -383,19 +383,19 @@
           `<p class="text-sm text-slate-500 italic py-2">No FIFA World Cup title.</p>`;
         return;
       }
-      const trophy  = w.titles === 1 ? '🏆' : '🏆'.repeat(Math.min(w.titles, 5));
+      const trophy  = w.titles === 1 ? '&#127942;' : '&#127942;'.repeat(Math.min(w.titles, 5));
       const label   = w.titles === 1 ? '1 title' : `${w.titles} titles`;
       historyContainer.innerHTML = `
         <div class="flex items-center gap-3">
           <span class="text-3xl">${trophy}</span>
           <div>
             <p class="text-xl font-black text-amber-400">${esc(label)}</p>
-            <p class="text-sm text-slate-300">${w.years.join(' · ')}</p>
+            <p class="text-sm text-slate-300">${w.years.join(' &#65533; ')}</p>
           </div>
         </div>`;
     }
 
-    // â”€â”€ Show team results â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // &#9472;&#9472; Show team results &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
     function showTeam(key, team) {
       currentKey = key;
       welcomeState.classList.add('hidden');
@@ -419,10 +419,10 @@
       renderHistory(key);
     }
 
-    // â”€â”€ Favourites â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // &#9472;&#9472; Favourites &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
     function updateFavStar() {
       const favs = safeJSON(FAV_KEY, '[]');
-      favoriteBtn.textContent = favs.includes(currentKey) ? 'â­' : 'â˜†';
+      favoriteBtn.textContent = favs.includes(currentKey) ? '&#65533;&#144;' : '&#9734;';
     }
 
     favoriteBtn.addEventListener('click', () => {
@@ -435,7 +435,7 @@
       updateFavStar();
     });
 
-    // â”€â”€ Search input â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // &#9472;&#9472; Search input &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
     teamSearch.addEventListener('input', e => {
       const val = e.target.value;
       const result = findTeam(val);
@@ -481,13 +481,13 @@
       if (!searchSection.contains(e.target)) suggestionsBox.classList.add('hidden');
     });
 
-    // â”€â”€ Refresh button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // &#9472;&#9472; Refresh button &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
     refreshBtn.addEventListener('click', () => {
       try { localStorage.removeItem(CACHE_TS); } catch {}
       boot();
     });
 
-    // â”€â”€ Demo mode (historical data only, no live fixtures) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // &#9472;&#9472; Demo mode (historical data only, no live fixtures) &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
     function loadDemoMode() {
       demoMode = true;
       Object.keys(WC_WINNERS).forEach(k => {
@@ -498,13 +498,13 @@
           group:   ''
         };
       });
-      dataStatus.textContent = 'Demo mode â€” historical data only';
+      dataStatus.textContent = 'Demo mode &#8212; historical data only';
       stickyControls.classList.remove('hidden');
       welcomeState.classList.remove('hidden');
       loadingState.classList.add('hidden');
     }
 
-    // â”€â”€ Boot sequence â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // &#9472;&#9472; Boot sequence &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
     async function boot() {
       loadingState.classList.remove('hidden');
       stickyControls.classList.add('hidden');
@@ -524,7 +524,7 @@
         ).length;
 
         dataStatus.textContent = live > 0
-          ? `${live} match${live > 1 ? 'es' : ''} LIVE now â€” ${finished}/${total} played`
+          ? `${live} match${live > 1 ? 'es' : ''} LIVE now &#8212; ${finished}/${total} played`
           : `${finished} / ${total} matches played`;
 
         loadingState.classList.add('hidden');
@@ -543,7 +543,7 @@
 
       } catch (err) {
         loadingState.classList.add('hidden');
-        errorMsg.textContent = `âš ï¸ ${err.message}`;
+        errorMsg.textContent = `&#9888;&#65533;&#143; ${err.message}`;
         errorBanner.classList.remove('hidden');
         stickyControls.classList.remove('hidden');
         welcomeState.classList.remove('hidden');
@@ -559,7 +559,7 @@
       }
     }
 
-    // â”€â”€ All Fixtures Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // &#9472;&#9472; All Fixtures Modal &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
     function renderAllFixtures() {
       const modal     = document.getElementById('allFixturesModal');
       const container = document.getElementById('allFixturesContainer');
@@ -578,7 +578,7 @@
         groups[label].push(m);
       });
 
-      // Sort: Group Aâ€“L first, then knockout rounds
+      // Sort: Group A&#8211;L first, then knockout rounds
       const groupOrder = key => {
         const letter = key.match(/Group ([A-L])/i);
         if (letter) return letter[1].charCodeAt(0);
@@ -600,11 +600,11 @@
           if (status === 'FINISHED') {
             const hg = m.score?.fullTime?.home ?? '?';
             const ag = m.score?.fullTime?.away ?? '?';
-            scoreOrTime = `<span class="font-bold text-amber-400">${hg} â€“ ${ag}</span>`;
+            scoreOrTime = `<span class="font-bold text-amber-400">${hg} &#8211; ${ag}</span>`;
           } else if (status === 'IN_PLAY' || status === 'PAUSED') {
             const hg = m.score?.fullTime?.home ?? m.score?.halfTime?.home ?? 0;
             const ag = m.score?.fullTime?.away ?? m.score?.halfTime?.away ?? 0;
-            scoreOrTime = `<span class="font-bold text-red-400 animate-pulse">${hg} â€“ ${ag} ðŸ”´</span>`;
+            scoreOrTime = `<span class="font-bold text-red-400 animate-pulse">${hg} &#8211; ${ag} &#128308;</span>`;
           } else {
             const ist = new Date(m.utcDate).toLocaleString('en-IN', {
               timeZone: 'Asia/Kolkata', month: 'short', day: 'numeric',
@@ -621,7 +621,7 @@
 
         return `<div class="mb-5">
           <h3 class="text-xs font-bold uppercase tracking-widest text-amber-400 mb-2 flex items-center gap-1.5">
-            <span>ðŸ†</span>${esc(groupKey)}
+            <span>&#65533;&#143;&#65533;</span>${esc(groupKey)}
           </h3>
           <div>${rows}</div>
         </div>`;
@@ -637,7 +637,7 @@
       document.body.style.overflow = '';
     }
 
-    // â”€â”€ Entry point â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // &#9472;&#9472; Entry point &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('allFixturesBtn').addEventListener('click', renderAllFixtures);
       document.getElementById('allFixturesClose').addEventListener('click', closeAllFixtures);
@@ -654,10 +654,10 @@
       <!-- Modal Header -->
       <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700 sticky top-0 bg-slate-900 rounded-t-2xl sm:rounded-t-2xl z-10">
         <div>
-          <h2 class="text-base font-extrabold text-amber-400 tracking-wide">ðŸ“‹ All 2026 Fixtures</h2>
-          <p class="text-xs text-slate-500">Groups A â€“ L Â· Live scores in IST</p>
+          <h2 class="text-base font-extrabold text-amber-400 tracking-wide">&#128203; All 2026 Fixtures</h2>
+          <p class="text-xs text-slate-500">Groups A &#8211; L &#183; Live scores in IST</p>
         </div>
-        <button id="allFixturesClose" class="text-slate-400 hover:text-white transition text-xl leading-none px-2">âœ•</button>
+        <button id="allFixturesClose" class="text-slate-400 hover:text-white transition text-xl leading-none px-2">&#10005;</button>
       </div>
       <!-- Scrollable Body -->
       <div id="allFixturesContainer" class="overflow-y-auto px-5 py-4 flex-1"></div>
