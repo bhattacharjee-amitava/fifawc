@@ -266,6 +266,8 @@
     document.addEventListener('DOMContentLoaded', () => {
       const el = document.getElementById('tzLabel');
       if (el) el.textContent = localTZS;
+      const el2 = document.getElementById('tzLabelDate');
+      if (el2) el2.textContent = localTZS;
     });
 
     function istTime(utcStr) {
@@ -913,7 +915,7 @@
       <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700 sticky top-0 bg-slate-900 rounded-t-2xl z-10">
         <div>
           <h2 id="dateModalTitle" class="text-base font-extrabold text-amber-400 tracking-wide"></h2>
-          <p class="text-xs text-slate-500">Kick-off times in IST</p>
+          <p class="text-xs text-slate-500">Kick-off times in <span id="tzLabelDate"></span></p>
         </div>
         <button id="dateModalClose" class="text-slate-400 hover:text-white transition text-xl leading-none px-2">&#10005;</button>
       </div>
