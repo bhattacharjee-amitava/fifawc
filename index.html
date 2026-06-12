@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CopaKick: World Cup Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkNvcGFLaWNrIDIwMjYgSHViIiwKICAic2hvcnRfbmFtZSI6ICJDb3BhS2ljayIsCiAgInN0YXJ0X3VybCI6ICIuL2NvcGFraWNrLmh0bWwiLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwZjE3MmEiLAogICJ0aGVtZV9jb2xvciI6ICIjZjU5ZTA4Igp9">
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen pb-10">
+
+  <!-- Sticky Header -->
+  <header class="bg-slate-800 p-4 sticky top-0 shadow-xl border-b border-slate-700 z-50 flex justify-between items-center">
+    <div>
+      <h1 class="text-xl font-black text-amber-500 tracking-wider">COPAKICK 2026</h1>
+      <p id="dataStatus" class="text-xs text-slate-400">Initialising...</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <span id="liveIndicator" class="hidden bg-red-600 text-white text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase animate-pulse">LIVE</span>
+      <span class="bg-slate-700 text-amber-400 text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase">IST</span>
+      <button id="settingsBtn" title="API Settings" class="text-slate-400 hover:text-amber-400 transition text-lg ml-1">⚙️</button>
+    </div>
+  </header>
+
+  <!-- API Key Modal -->
+  <div id="apiKeyModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center hidden">
+    <div class="bg-slate-800 rounded-2xl p-6 mx-4 max-w-sm w-full border border-slate-600 shadow-2xl">
+      <h2 class="text-lg font-bold text-amber-400 mb-1">Connect to Live Data</h2>
+      <p class="text-xs text-slate-400 mb-1">Enter your free API key from <span class="text-amber-400 font-semibold">football-data.org</span> to fetch live 2026 World Cup fixtures and scores.</p>
+      <p class="text-xs text-slate-500 mb-4">Registration is free — no credit card required.</p>
+      <input id="apiKeyInput" type="text" placeholder="Paste your API key here..."
+             class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3 text-sm text-slate-200 focus:border-amber-500 focus:outline-none mb-3 placeholder-slate-600">
+      <p id="apiKeyError" class="text-xs text-red-400 mb-2 hidden"></p>
+      <div class="flex gap-2">
+        <button id="saveApiKey" class="flex-1 bg-amber-500 text-slate-950 font-bold py-2.5 rounded-xl text-sm hover:bg-amber-400 transition">Save & Load</button>
+        <button id="skipApiKey" class="flex-1 bg-slate-700 text-slate-300 font-bold py-2.5 rounded-xl text-sm hover:bg-slate-600 transition">Demo Mode</button>
+      </div>
+      <p class="text-[10px] text-slate-500 mt-3 text-center">Key is stored only in your browser's localStorage.</p>
+    </div>
+  </div>
+
+  <main class="p-4 max-w-md mx-auto space-y-5">
+
+    <!-- Loading State -->
+    <div id="loadingState" class="hidden text-center py-12 space-y-3">
+      <p class="text-4xl animate-spin inline-block">⚽</p>
+      <p class="text-sm text-slate-400">Fetching live fixtures...</p>
+    </div>
+
+    <!-- Error Banner -->
+    <div id="errorBanner" class="hidden bg-red-900/40 border border-red-700 rounded-xl p-4 text-sm text-red-300 space-y-1">
+      <p id="errorMsg"></p>
+      <p class="text-xs text-red-400">Showing cached data if available. Tap ⚙️ to update your API key.</p>
+    </div>
+
+    <!-- Search Bar -->
+    <div id="searchSection" class="relative hidden">
+      <input id="teamSearch" type="text" placeholder="Search any team (e.g., Brazil, England, USA)..."
+             class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl p-4 pl-12 text-slate-200 focus:border-amber-500 focus:outline-none transition shadow-inner placeholder-slate-500">
+      <span class="absolute left-4 top-4 text-xl">🔍</span>
+      <div id="suggestionsBox" class="hidden absolute z-10 w-full bg-slate-800 border border-slate-600 rounded-xl mt-1 shadow-xl overflow-hidden"></div>
+    </div>
+
+    <!-- Welcome State -->
+    <div id="welcomeState" class="hidden text-center py-12 text-slate-500 space-y-4">
+      <p class="text-5xl animate-bounce">⚽</p>
+      <div class="space-y-1">
+        <p class="text-sm font-semibold text-slate-400">Track 2026 Fixtures & Historical Milestones</p>
+        <p class="text-xs text-slate-500">Type any participating country name to begin.</p>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div id="resultsWrapper" class="space-y-6 hidden">
+
+      <div class="flex items-end justify-between border-b-2 border-amber-500 pb-2">
+        <div>
+          <h2 id="countryHeader" class="text-3xl font-extrabold text-white"></h2>
+          <span id="teamGroup" class="text-xs text-slate-400 font-mono"></span>
+        </div>
+        <span id="favoriteBtn" class="text-2xl cursor-pointer select-none hover:scale-110 transition duration-150">☆</span>
+      </div>
+
+      <!-- Fixtures Section -->
+      <section class="space-y-3">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-amber-400 flex items-center">
+          <span class="mr-1.5">📅</span> 2026 Fixtures (IST)
+        </h3>
+        <div id="scheduleContainer" class="space-y-3"></div>
+      </section>
+
+      <!-- Historical Section -->
+      <section class="space-y-3">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-teal-400 flex items-center">
+          <span class="mr-1.5">🏆</span> Historical World Cup Legacy
+        </h3>
+        <div id="historyContainer" class="bg-slate-800/50 rounded-xl p-4 border border-slate-700"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    // ── Config ─────────────────────────────────────────────────────────────────
+    const API_BASE       = 'https://api.football-data.org/v4';
+    const WC_CODE        = 'WC';
+    const CACHE_MATCHES  = 'copakick_matches_v2';
+    const CACHE_TS       = 'copakick_ts_v2';
+    const CACHE_TTL      = 3 * 60 * 1000;   // 3 minutes
+    const FAV_KEY        = 'wc_favorites_v2';
+    const API_KEY_STORE  = 'copakick_apikey';
+
+    // ── Historical data (not available via free API tier) ──────────────────────
+    const HISTORICAL = {
+      "brazil": [
+        {year:2022, host:"Qatar",       stage:"Quarter-Finals"},
+        {year:2018, host:"Russia",      stage:"Quarter-Finals"},
+        {year:2002, host:"Korea/Japan", stage:"Winner"},
+        {year:1998, host:"France",      stage:"Runner-up"},
+        {year:1994, host:"USA",         stage:"Winner"},
+        {year:1990, host:"Italy",       stage:"Semi-Finals"},
+        {year:1970, host:"Mexico",      stage:"Winner"},
+        {year:1962, host:"Chile",       stage:"Winner"},
+        {year:1958, host:"Sweden",      stage:"Winner"}
+      ],
+      "argentina": [
+        {year:2022, host:"Qatar",       stage:"Winner"},
+        {year:2018, host:"Russia",      stage:"Round of 16"},
+        {year:2014, host:"Brazil",      stage:"Runner-up"},
+        {year:2010, host:"South Africa",stage:"Quarter-Finals"},
+        {year:1990, host:"Italy",       stage:"Runner-up"},
+        {year:1986, host:"Mexico",      stage:"Winner"},
+        {year:1978, host:"Argentina",   stage:"Winner"}
+      ],
+      "france": [
+        {year:2022, host:"Qatar",       stage:"Runner-up"},
+        {year:2018, host:"Russia",      stage:"Winner"},
+        {year:2014, host:"Brazil",      stage:"Quarter-Finals"},
+        {year:2006, host:"Germany",     stage:"Runner-up"},
+        {year:1998, host:"France",      stage:"Winner"},
+        {year:1986, host:"Mexico",      stage:"Semi-Finals"}
+      ],
+      "germany": [
+        {year:2022, host:"Qatar",       stage:"Group Stage"},
+        {year:2018, host:"Russia",      stage:"Group Stage"},
+        {year:2014, host:"Brazil",      stage:"Winner"},
+        {year:2010, host:"South Africa",stage:"Semi-Finals"},
+        {year:2006, host:"Germany",     stage:"Semi-Finals"},
+        {year:2002, host:"Korea/Japan", stage:"Runner-up"},
+        {year:1990, host:"Italy",       stage:"Winner"},
+        {year:1986, host:"Mexico",      stage:"Runner-up"},
+        {year:1982, host:"Spain",       stage:"Runner-up"},
+        {year:1974, host:"West Germany",stage:"Winner"}
+      ],
+      "england": [
+        {year:2022, host:"Qatar",       stage:"Quarter-Finals"},
+        {year:2018, host:"Russia",      stage:"Semi-Finals"},
+        {year:2014, host:"Brazil",      stage:"Group Stage"},
+        {year:1990, host:"Italy",       stage:"Semi-Finals"},
+        {year:1966, host:"England",     stage:"Winner"}
+      ],
+      "spain": [
+        {year:2022, host:"Qatar",       stage:"Quarter-Finals"},
+        {year:2018, host:"Russia",      stage:"Round of 16"},
+        {year:2014, host:"Brazil",      stage:"Group Stage"},
+        {year:2010, host:"South Africa",stage:"Winner"},
+        {year:2006, host:"Germany",     stage:"Semi-Finals"},
+        {year:2002, host:"Korea/Japan", stage:"Quarter-Finals"},
+        {year:1950, host:"Brazil",      stage:"Runner-up"}
+      ],
+      "italy": [
+        {year:2014, host:"Brazil",      stage:"Group Stage"},
+        {year:2010, host:"South Africa",stage:"Round of 16"},
+        {year:2006, host:"Germany",     stage:"Winner"},
+        {year:2002, host:"Korea/Japan", stage:"Round of 16"},
+        {year:1994, host:"USA",         stage:"Runner-up"},
+        {year:1990, host:"Italy",       stage:"Semi-Finals"},
+        {year:1982, host:"Spain",       stage:"Winner"},
+        {year:1970, host:"Mexico",      stage:"Runner-up"},
+        {year:1938, host:"France",      stage:"Winner"},
+        {year:1934, host:"Italy",       stage:"Winner"}
+      ],
+      "netherlands": [
+        {year:2022, host:"Qatar",       stage:"Quarter-Finals"},
+        {year:2014, host:"Brazil",      stage:"Semi-Finals"},
+        {year:2010, host:"South Africa",stage:"Runner-up"},
+        {year:1998, host:"France",      stage:"Semi-Finals"},
+        {year:1978, host:"Argentina",   stage:"Runner-up"},
+        {year:1974, host:"West Germany",stage:"Runner-up"}
+      ],
+      "portugal": [
+        {year:2022, host:"Qatar",       stage:"Quarter-Finals"},
+        {year:2018, host:"Russia",      stage:"Round of 16"},
+        {year:2010, host:"South Africa",stage:"Semi-Finals"},
+        {year:2006, host:"Germany",     stage:"Semi-Finals"},
+        {year:1966, host:"England",     stage:"Semi-Finals"}
+      ],
+      "mexico": [
+        {year:2022, host:"Qatar",       stage:"Group Stage"},
+        {year:2018, host:"Russia",      stage:"Round of 16"},
+        {year:2014, host:"Brazil",      stage:"Round of 16"},
+        {year:2010, host:"South Africa",stage:"Round of 16"},
+        {year:2006, host:"Germany",     stage:"Round of 16"},
+        {year:2002, host:"Korea/Japan", stage:"Round of 16"},
+        {year:1986, host:"Mexico",      stage:"Quarter-Finals"},
+        {year:1970, host:"Mexico",      stage:"Quarter-Finals"}
+      ],
+      "uruguay": [
+        {year:2022, host:"Qatar",       stage:"Group Stage"},
+        {year:2018, host:"Russia",      stage:"Quarter-Finals"},
+        {year:2014, host:"Brazil",      stage:"Quarter-Finals"},
+        {year:2010, host:"South Africa",stage:"Semi-Finals"},
+        {year:1970, host:"Mexico",      stage:"Semi-Finals"},
+        {year:1954, host:"Switzerland", stage:"Semi-Finals"},
+        {year:1950, host:"Brazil",      stage:"Winner"},
+        {year:1930, host:"Uruguay",     stage:"Winner"}
+      ],
+      "united states": [
+        {year:2022, host:"Qatar",       stage:"Round of 16"},
+        {year:2014, host:"Brazil",      stage:"Round of 16"},
+        {year:2010, host:"South Africa",stage:"Round of 16"},
+        {year:2002, host:"Korea/Japan", stage:"Quarter-Finals"},
+        {year:1994, host:"USA",         stage:"Round of 16"},
+        {year:1930, host:"Uruguay",     stage:"Semi-Finals"}
+      ],
+      "canada": [],
+      "belgium": [
+        {year:2022, host:"Qatar",       stage:"Round of 16"},
+        {year:2018, host:"Russia",      stage:"Semi-Finals"},
+        {year:2014, host:"Brazil",      stage:"Round of 16"},
+        {year:1986, host:"Mexico",      stage:"Semi-Finals"}
+      ],
+      "japan": [
+        {year:2022, host:"Qatar",       stage:"Round of 16"},
+        {year:2018, host:"Russia",      stage:"Round of 16"},
+        {year:2010, host:"South Africa",stage:"Round of 16"},
+        {year:2002, host:"Korea/Japan", stage:"Quarter-Finals"}
+      ],
+      "south korea": [
+        {year:2022, host:"Qatar",       stage:"Round of 16"},
+        {year:2010, host:"South Africa",stage:"Round of 16"},
+        {year:2002, host:"Korea/Japan", stage:"Semi-Finals"}
+      ],
+      "croatia": [
+        {year:2022, host:"Qatar",       stage:"Semi-Finals"},
+        {year:2018, host:"Russia",      stage:"Runner-up"},
+        {year:1998, host:"France",      stage:"Semi-Finals"}
+      ],
+      "morocco": [
+        {year:2022, host:"Qatar",       stage:"Semi-Finals"}
+      ],
+      "senegal": [
+        {year:2022, host:"Qatar",        stage:"Round of 16"},
+        {year:2018, host:"Russia",       stage:"Group Stage"},
+        {year:2002, host:"Korea/Japan",  stage:"Semi-Finals"}
+      ],
+      // ── Additional Europe ─────────────────────────────────────────────────
+      "colombia": [
+        {year:2018, host:"Russia",       stage:"Round of 16"},
+        {year:2014, host:"Brazil",       stage:"Quarter-Finals"},
+        {year:1994, host:"USA",          stage:"Group Stage"},
+        {year:1990, host:"Italy",        stage:"Round of 16"},
+        {year:1962, host:"Chile",        stage:"Group Stage"}
+      ],
+      "ecuador": [
+        {year:2022, host:"Qatar",        stage:"Group Stage"},
+        {year:2014, host:"Brazil",       stage:"Group Stage"},
+        {year:2006, host:"Germany",      stage:"Round of 16"},
+        {year:2002, host:"Korea/Japan",  stage:"Group Stage"}
+      ],
+      "chile": [
+        {year:2014, host:"Brazil",       stage:"Round of 16"},
+        {year:2010, host:"South Africa", stage:"Round of 16"},
+        {year:1998, host:"France",       stage:"Round of 16"},
+        {year:1962, host:"Chile",        stage:"Third Place"}
+      ],
+      "paraguay": [
+        {year:2010, host:"South Africa", stage:"Quarter-Finals"},
+        {year:2006, host:"Germany",      stage:"Group Stage"},
+        {year:2002, host:"Korea/Japan",  stage:"Round of 16"},
+        {year:1998, host:"France",       stage:"Round of 16"}
+      ],
+      "peru": [
+        {year:2018, host:"Russia",       stage:"Group Stage"},
+        {year:1982, host:"Spain",        stage:"Group Stage"},
+        {year:1978, host:"Argentina",    stage:"Group Stage"},
+        {year:1970, host:"Mexico",       stage:"Quarter-Finals"}
+      ],
+      "venezuela": [],
+      "bolivia": [
+        {year:1994, host:"USA",          stage:"Group Stage"},
+        {year:1950, host:"Brazil",       stage:"Group Stage"},
+        {year:1930, host:"Uruguay",      stage:"Group Stage"}
+      ],
+      "switzerland": [
+        {year:2022, host:"Qatar",        stage:"Quarter-Finals"},
+        {year:2018, host:"Russia",       stage:"Round of 16"},
+        {year:2014, host:"Brazil",       stage:"Round of 16"},
+        {year:2010, host:"South Africa", stage:"Group Stage"},
+        {year:2006, host:"Germany",      stage:"Round of 16"},
+        {year:1954, host:"Switzerland",  stage:"Quarter-Finals"},
+        {year:1938, host:"France",       stage:"Quarter-Finals"},
+        {year:1934, host:"Italy",        stage:"Quarter-Finals"}
+      ],
+      "denmark": [
+        {year:2022, host:"Qatar",        stage:"Round of 16"},
+        {year:2018, host:"Russia",       stage:"Round of 16"},
+        {year:2002, host:"Korea/Japan",  stage:"Round of 16"},
+        {year:1998, host:"France",       stage:"Quarter-Finals"},
+        {year:1986, host:"Mexico",       stage:"Round of 16"}
+      ],
+      "austria": [
+        {year:1998, host:"France",       stage:"Group Stage"},
+        {year:1982, host:"Spain",        stage:"Group Stage"},
+        {year:1978, host:"Argentina",    stage:"Group Stage"},
+        {year:1954, host:"Switzerland",  stage:"Third Place"},
+        {year:1934, host:"Italy",        stage:"Fourth Place"}
+      ],
+      "poland": [
+        {year:2022, host:"Qatar",        stage:"Round of 16"},
+        {year:2018, host:"Russia",       stage:"Group Stage"},
+        {year:2006, host:"Germany",      stage:"Group Stage"},
+        {year:2002, host:"Korea/Japan",  stage:"Group Stage"},
+        {year:1986, host:"Mexico",       stage:"Round of 16"},
+        {year:1982, host:"Spain",        stage:"Third Place"},
+        {year:1978, host:"Argentina",    stage:"Group Stage"},
+        {year:1974, host:"West Germany", stage:"Third Place"}
+      ],
+      "serbia": [
+        {year:2022, host:"Qatar",        stage:"Group Stage"},
+        {year:2018, host:"Russia",       stage:"Group Stage"},
+        {year:2010, host:"South Africa", stage:"Group Stage"},
+        {year:1990, host:"Italy",        stage:"Quarter-Finals"},
+        {year:1962, host:"Chile",        stage:"Fourth Place"},
+        {year:1954, host:"Switzerland",  stage:"Quarter-Finals"},
+        {year:1930, host:"Uruguay",      stage:"Semi-Finals"}
+      ],
+      "scotland": [
+        {year:1998, host:"France",       stage:"Group Stage"},
+        {year:1990, host:"Italy",        stage:"Group Stage"},
+        {year:1986, host:"Mexico",       stage:"Group Stage"},
+        {year:1982, host:"Spain",        stage:"Group Stage"},
+        {year:1978, host:"Argentina",    stage:"Group Stage"},
+        {year:1974, host:"West Germany", stage:"Group Stage"}
+      ],
+      "turkey": [
+        {year:2002, host:"Korea/Japan",  stage:"Third Place"},
+        {year:1954, host:"Switzerland",  stage:"Group Stage"}
+      ],
+      "ukraine": [
+        {year:2006, host:"Germany",      stage:"Quarter-Finals"}
+      ],
+      "romania": [
+        {year:1998, host:"France",       stage:"Quarter-Finals"},
+        {year:1994, host:"USA",          stage:"Quarter-Finals"},
+        {year:1990, host:"Italy",        stage:"Round of 16"},
+        {year:1970, host:"Mexico",       stage:"Group Stage"},
+        {year:1934, host:"Italy",        stage:"Round of 16"},
+        {year:1930, host:"Uruguay",      stage:"Group Stage"}
+      ],
+      "hungary": [
+        {year:1986, host:"Mexico",       stage:"Group Stage"},
+        {year:1982, host:"Spain",        stage:"Group Stage"},
+        {year:1966, host:"England",      stage:"Quarter-Finals"},
+        {year:1962, host:"Chile",        stage:"Quarter-Finals"},
+        {year:1958, host:"Sweden",       stage:"Quarter-Finals"},
+        {year:1954, host:"Switzerland",  stage:"Runner-up"},
+        {year:1938, host:"France",       stage:"Runner-up"},
+        {year:1934, host:"Italy",        stage:"Quarter-Finals"}
+      ],
+      "czech republic": [
+        {year:2006, host:"Germany",      stage:"Group Stage"},
+        {year:1962, host:"Chile",        stage:"Runner-up"},
+        {year:1934, host:"Italy",        stage:"Runner-up"}
+      ],
+      "slovakia": [
+        {year:2010, host:"South Africa", stage:"Round of 16"}
+      ],
+      "slovenia": [
+        {year:2010, host:"South Africa", stage:"Group Stage"},
+        {year:2002, host:"Korea/Japan",  stage:"Group Stage"}
+      ],
+      "albania":  [],
+      "georgia":  [],
+      "greece": [
+        {year:2014, host:"Brazil",       stage:"Round of 16"},
+        {year:2010, host:"South Africa", stage:"Group Stage"},
+        {year:1994, host:"USA",          stage:"Group Stage"}
+      ],
+      // ── Additional CONCACAF ───────────────────────────────────────────────
+      "costa rica": [
+        {year:2022, host:"Qatar",        stage:"Group Stage"},
+        {year:2018, host:"Russia",       stage:"Group Stage"},
+        {year:2014, host:"Brazil",       stage:"Quarter-Finals"},
+        {year:2006, host:"Germany",      stage:"Group Stage"},
+        {year:2002, host:"Korea/Japan",  stage:"Group Stage"},
+        {year:1990, host:"Italy",        stage:"Round of 16"}
+      ],
+      "panama": [
+        {year:2018, host:"Russia",       stage:"Group Stage"}
+      ],
+      "honduras": [
+        {year:2014, host:"Brazil",       stage:"Group Stage"},
+        {year:2010, host:"South Africa", stage:"Group Stage"},
+        {year:1982, host:"Spain",        stage:"Group Stage"}
+      ],
+      "jamaica": [
+        {year:1998, host:"France",       stage:"Group Stage"}
+      ],
+      // ── Additional Africa ─────────────────────────────────────────────────
+      "nigeria": [
+        {year:2018, host:"Russia",       stage:"Group Stage"},
+        {year:2014, host:"Brazil",       stage:"Round of 16"},
+        {year:2010, host:"South Africa", stage:"Group Stage"},
+        {year:2002, host:"Korea/Japan",  stage:"Round of 16"},
+        {year:1998, host:"France",       stage:"Round of 16"},
+        {year:1994, host:"USA",          stage:"Round of 16"}
+      ],
+      "cameroon": [
+        {year:2022, host:"Qatar",        stage:"Group Stage"},
+        {year:2014, host:"Brazil",       stage:"Group Stage"},
+        {year:2010, host:"South Africa", stage:"Group Stage"},
+        {year:2002, host:"Korea/Japan",  stage:"Group Stage"},
+        {year:1998, host:"France",       stage:"Group Stage"},
+        {year:1994, host:"USA",          stage:"Group Stage"},
+        {year:1990, host:"Italy",        stage:"Quarter-Finals"},
+        {year:1982, host:"Spain",        stage:"Group Stage"}
+      ],
+      "ghana": [
+        {year:2022, host:"Qatar",        stage:"Group Stage"},
+        {year:2014, host:"Brazil",       stage:"Group Stage"},
+        {year:2010, host:"South Africa", stage:"Quarter-Finals"},
+        {year:2006, host:"Germany",      stage:"Round of 16"}
+      ],
+      "ivory coast": [
+        {year:2014, host:"Brazil",       stage:"Group Stage"},
+        {year:2010, host:"South Africa", stage:"Group Stage"},
+        {year:2006, host:"Germany",      stage:"Group Stage"}
+      ],
+      "egypt": [
+        {year:2018, host:"Russia",       stage:"Group Stage"},
+        {year:1990, host:"Italy",        stage:"Group Stage"},
+        {year:1934, host:"Italy",        stage:"Round of 16"}
+      ],
+      "algeria": [
+        {year:2014, host:"Brazil",       stage:"Round of 16"},
+        {year:2010, host:"South Africa", stage:"Group Stage"},
+        {year:1986, host:"Mexico",       stage:"Group Stage"},
+        {year:1982, host:"Spain",        stage:"Group Stage"}
+      ],
+      "tunisia": [
+        {year:2022, host:"Qatar",        stage:"Group Stage"},
+        {year:2018, host:"Russia",       stage:"Group Stage"},
+        {year:2006, host:"Germany",      stage:"Group Stage"},
+        {year:2002, host:"Korea/Japan",  stage:"Group Stage"},
+        {year:1998, host:"France",       stage:"Group Stage"},
+        {year:1978, host:"Argentina",    stage:"Group Stage"}
+      ],
+      "south africa": [
+        {year:2010, host:"South Africa", stage:"Group Stage"},
+        {year:2002, host:"Korea/Japan",  stage:"Round of 16"},
+        {year:1998, host:"France",       stage:"Group Stage"}
+      ],
+      "mali":    [],
+      "dr congo": [
+        {year:1974, host:"West Germany", stage:"Group Stage"}
+      ],
+      "congo dr": [
+        {year:1974, host:"West Germany", stage:"Group Stage"}
+      ],
+      // ── Additional Asia / Pacific ─────────────────────────────────────────
+      "iran": [
+        {year:2022, host:"Qatar",        stage:"Group Stage"},
+        {year:2018, host:"Russia",       stage:"Group Stage"},
+        {year:2014, host:"Brazil",       stage:"Group Stage"},
+        {year:2006, host:"Germany",      stage:"Group Stage"},
+        {year:1998, host:"France",       stage:"Group Stage"},
+        {year:1978, host:"Argentina",    stage:"Group Stage"}
+      ],
+      "saudi arabia": [
+        {year:2022, host:"Qatar",        stage:"Group Stage"},
+        {year:2018, host:"Russia",       stage:"Group Stage"},
+        {year:2006, host:"Germany",      stage:"Group Stage"},
+        {year:2002, host:"Korea/Japan",  stage:"Group Stage"},
+        {year:1998, host:"France",       stage:"Group Stage"},
+        {year:1994, host:"USA",          stage:"Round of 16"}
+      ],
+      "australia": [
+        {year:2022, host:"Qatar",        stage:"Round of 16"},
+        {year:2014, host:"Brazil",       stage:"Group Stage"},
+        {year:2010, host:"South Africa", stage:"Group Stage"},
+        {year:2006, host:"Germany",      stage:"Round of 16"}
+      ],
+      "qatar": [
+        {year:2022, host:"Qatar",        stage:"Group Stage"}
+      ],
+      "uzbekistan": [],
+      "jordan":    [],
+      "iraq": [
+        {year:1986, host:"Mexico",       stage:"Group Stage"}
+      ],
+      "indonesia": [],
+      // ── Oceania ───────────────────────────────────────────────────────────
+      "new zealand": [
+        {year:2010, host:"South Africa", stage:"Group Stage"},
+        {year:1982, host:"Spain",        stage:"Group Stage"}
+      ]
+    };
+
+    // Name aliases for search flexibility
+    const ALIASES = {
+      // English alternates
+      "usa":                     "united states",
+      "us":                      "united states",
+      "america":                 "united states",
+      "united states of america":"united states",
+      "uk":                      "england",
+      "holland":                 "netherlands",
+      "dutch":                   "netherlands",
+      "the netherlands":         "netherlands",
+      "ivory coast":             "ivory coast",
+      "cote d'ivoire":           "ivory coast",
+      "cote divoire":            "ivory coast",
+      "côte d'ivoire":           "ivory coast",
+      "dr congo":                "dr congo",
+      "democratic republic of congo": "dr congo",
+      "drc":                     "dr congo",
+      "zaire":                   "dr congo",
+      "south korea":             "south korea",
+      "korea":                   "south korea",
+      "republic of korea":       "south korea",
+      "new zealand":             "new zealand",
+      "nz":                      "new zealand",
+      "all whites":              "new zealand",
+      "saudi":                   "saudi arabia",
+      "ksa":                     "saudi arabia",
+      "czech":                   "czech republic",
+      "czechia":                 "czech republic",
+      "slovakia":                "slovakia",
+      "slovak republic":         "slovakia",
+      "costa rica":              "costa rica",
+      "south africa":            "south africa",
+      "rsa":                     "south africa",
+      "bafana bafana":           "south africa",
+      // Native language names
+      "deutschland":             "germany",
+      "espana":                  "spain",
+      "españa":                  "spain",
+      "brasil":                  "brazil",
+      "seleção":                 "brazil",
+      "selecao":                 "brazil",
+      "les bleus":               "france",
+      "la roja":                 "spain",
+      "albiceleste":             "argentina",
+      "oranje":                  "netherlands",
+      "azzurri":                 "italy",
+      "three lions":             "england",
+      "mannschaft":              "germany",
+      "die mannschaft":          "germany",
+      "super eagles":            "nigeria",
+      "black stars":             "ghana",
+      "lions of atlas":          "morocco",
+      "teranga lions":           "senegal",
+      "indomitable lions":       "cameroon",
+      "elephants":               "ivory coast",
+      "red devils":              "belgium",
+      "samurai blue":            "japan",
+      "taegeuk warriors":        "south korea",
+      "socceroos":               "australia",
+      "all blacks":              "new zealand",
+      "iran":                    "iran",
+      "persia":                  "iran"
+    };
+
+    // ── State ──────────────────────────────────────────────────────────────────
+    let teamIndex    = {};
+    let currentKey   = '';
+    let demoMode     = false;
+
+    // ── DOM refs ───────────────────────────────────────────────────────────────
+    const $  = id => document.getElementById(id);
+    const teamSearch       = $('teamSearch');
+    const welcomeState     = $('welcomeState');
+    const resultsWrapper   = $('resultsWrapper');
+    const countryHeader    = $('countryHeader');
+    const teamGroup        = $('teamGroup');
+    const scheduleContainer= $('scheduleContainer');
+    const historyContainer = $('historyContainer');
+    const favoriteBtn      = $('favoriteBtn');
+    const loadingState     = $('loadingState');
+    const errorBanner      = $('errorBanner');
+    const errorMsg         = $('errorMsg');
+    const searchSection    = $('searchSection');
+    const apiKeyModal      = $('apiKeyModal');
+    const apiKeyInput      = $('apiKeyInput');
+    const apiKeyError      = $('apiKeyError');
+    const dataStatus       = $('dataStatus');
+    const settingsBtn      = $('settingsBtn');
+    const liveIndicator    = $('liveIndicator');
+    const suggestionsBox   = $('suggestionsBox');
+
+    // ── Utilities ──────────────────────────────────────────────────────────────
+    function safeJSON(key, fallback) {
+      try { return JSON.parse(localStorage.getItem(key) ?? fallback); }
+      catch { return JSON.parse(fallback); }
+    }
+
+    function safeSave(key, value) {
+      try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+    }
+
+    // Escape user-facing strings inserted into innerHTML to prevent XSS
+    function esc(val) {
+      const d = document.createElement('div');
+      d.textContent = String(val ?? '');
+      return d.innerHTML;
+    }
+
+    function istTime(utcStr) {
+      try {
+        return new Date(utcStr).toLocaleString('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          hour: '2-digit', minute: '2-digit', hour12: true
+        }).toUpperCase() + ' IST';
+      } catch { return '—'; }
+    }
+
+    function istDate(utcStr) {
+      try {
+        return new Date(utcStr).toLocaleString('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          day: 'numeric', month: 'long', year: 'numeric'
+        });
+      } catch { return utcStr; }
+    }
+
+    function stageLabel(raw) {
+      const map = {
+        GROUP_STAGE:    'Group Stage',
+        ROUND_OF_16:    'Round of 16',
+        QUARTER_FINALS: 'Quarter-Finals',
+        SEMI_FINALS:    'Semi-Finals',
+        THIRD_PLACE:    'Third Place',
+        FINAL:          'Final'
+      };
+      return map[raw] || (raw ?? '').replace(/_/g, ' ');
+    }
+
+    // ── API ────────────────────────────────────────────────────────────────────
+    async function fetchMatches(apiKey) {
+      const ts = parseInt(localStorage.getItem(CACHE_TS) || '0');
+      if (Date.now() - ts < CACHE_TTL) {
+        const cached = safeJSON(CACHE_MATCHES, 'null');
+        if (cached) return cached;
+      }
+
+      const res = await fetch(`${API_BASE}/competitions/${WC_CODE}/matches`, {
+        headers: { 'X-Auth-Token': apiKey }
+      });
+
+      if (!res.ok) {
+        const msgs = {
+          401: 'Invalid API key — please check and re-enter it.',
+          403: 'This API key does not have access to the World Cup competition.',
+          429: 'Rate limit hit (10 req/min). Please wait a moment then refresh.'
+        };
+        throw new Error(msgs[res.status] || `API error ${res.status}`);
+      }
+
+      const data = await res.json();
+      safeSave(CACHE_MATCHES, data.matches);
+      try { localStorage.setItem(CACHE_TS, Date.now()); } catch {}
+      return data.matches;
+    }
+
+    // ── Build team index ───────────────────────────────────────────────────────
+    function buildIndex(matches) {
+      const idx = {};
+      matches.forEach(match => {
+        [
+          { side: match.homeTeam, isHome: true },
+          { side: match.awayTeam, isHome: false }
+        ].forEach(({ side }) => {
+          if (!side?.name) return;
+          const key = side.name.toLowerCase();
+          if (!idx[key]) {
+            idx[key] = {
+              name:    side.name,
+              tla:     side.tla || '',
+              matches: [],
+              group:   ''
+            };
+          }
+          idx[key].matches.push(match);
+          if (match.group) {
+            idx[key].group = match.group.replace('GROUP_', 'Group ');
+          }
+        });
+      });
+      return idx;
+    }
+
+    // ── Search / lookup ────────────────────────────────────────────────────────
+    function findTeam(query) {
+      const q = query.trim().toLowerCase();
+      if (!q) return null;
+      const resolved = ALIASES[q] || q;
+      if (teamIndex[resolved]) return { key: resolved, team: teamIndex[resolved] };
+      // Partial prefix match
+      const keys = Object.keys(teamIndex);
+      const hit = keys.find(k => k.startsWith(resolved) || resolved.startsWith(k));
+      if (hit) return { key: hit, team: teamIndex[hit] };
+      // Substring fallback
+      const sub = keys.find(k => k.includes(resolved));
+      if (sub) return { key: sub, team: teamIndex[sub] };
+      return null;
+    }
+
+    function getSuggestions(query) {
+      const q = (ALIASES[query.toLowerCase().trim()] || query.toLowerCase().trim());
+      if (q.length < 2) return [];
+      return Object.entries(teamIndex)
+        .filter(([k]) => k.includes(q) || q.includes(k))
+        .slice(0, 5)
+        .map(([k, v]) => ({ key: k, name: v.name, group: v.group }));
+    }
+
+    // ── Render match card ──────────────────────────────────────────────────────
+    function renderMatchCard(match, myName) {
+      const isHome   = match.homeTeam.name === myName;
+      const opponent = isHome ? match.awayTeam : match.homeTeam;
+      const status   = match.status;
+      const sc       = match.score;
+
+      let scoreBlock = '';
+      let statusTag  = '';
+
+      if (status === 'FINISHED') {
+        const myG  = isHome ? sc.fullTime.home : sc.fullTime.away;
+        const oppG = isHome ? sc.fullTime.away : sc.fullTime.home;
+        const col  = myG > oppG ? 'text-green-400' : myG < oppG ? 'text-red-400' : 'text-slate-300';
+        scoreBlock = `
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-2xl font-black ${col}">${esc(myG)} – ${esc(oppG)}</span>
+            <span class="text-[10px] text-slate-500 font-mono">FT</span>
+          </div>`;
+        statusTag = `<span class="text-[9px] bg-slate-600 text-slate-300 px-2 py-0.5 rounded font-mono ml-1">FT</span>`;
+
+      } else if (status === 'IN_PLAY' || status === 'PAUSED') {
+        const myG  = isHome ? (sc.fullTime.home ?? 0) : (sc.fullTime.away ?? 0);
+        const oppG = isHome ? (sc.fullTime.away ?? 0) : (sc.fullTime.home ?? 0);
+        scoreBlock = `
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-2xl font-black text-amber-400">${esc(myG)} – ${esc(oppG)}</span>
+            <span class="text-[9px] bg-red-600 text-white px-2 py-0.5 rounded font-bold animate-pulse">LIVE</span>
+          </div>`;
+        statusTag = '';
+
+      } else {
+        scoreBlock = `<p class="text-2xl font-black text-amber-500 mt-2">${esc(istTime(match.utcDate))}</p>`;
+        statusTag  = '';
+      }
+
+      return `
+        <div class="bg-slate-800 border border-slate-700 p-4 rounded-xl shadow-md relative overflow-hidden">
+          <div class="absolute right-0 top-0 bg-slate-700 px-3 py-1 text-[9px] uppercase tracking-widest text-amber-400 font-mono font-bold rounded-bl-lg">
+            FIFA • ${esc(stageLabel(match.stage))}${statusTag}
+          </div>
+          <p class="text-sm font-medium text-slate-400 mt-1">vs</p>
+          <p class="text-xl font-black text-white tracking-wide mt-0.5">${esc(opponent.name)}</p>
+          ${scoreBlock}
+          <p class="text-xs text-slate-400 mt-1 font-medium">${esc(istDate(match.utcDate))}</p>
+          <div class="mt-3 pt-2.5 border-t border-slate-700/60 flex items-center text-xs text-slate-400">
+            <span class="mr-2">📍</span>${esc(match.venue || 'Venue TBC')}
+          </div>
+        </div>`;
+    }
+
+    // ── Render history ─────────────────────────────────────────────────────────
+    function renderHistory(key) {
+      const hist = HISTORICAL[key.toLowerCase()];
+      if (!hist || hist.length === 0) {
+        historyContainer.innerHTML =
+          `<p class="text-sm text-slate-500 italic py-2">No notable World Cup finishes on record.</p>`;
+        return;
+      }
+      historyContainer.innerHTML = hist.map((h, i, arr) => {
+        let badge = 'bg-slate-700 text-slate-300';
+        if (h.stage === 'Winner')       badge = 'bg-amber-500 text-slate-950 font-bold';
+        if (h.stage === 'Runner-up')    badge = 'bg-slate-300 text-slate-900 font-bold';
+        if (h.stage === 'Semi-Finals')  badge = 'bg-teal-800 text-teal-200';
+        if (h.stage === 'Quarter-Finals') badge = 'bg-slate-600 text-slate-200';
+        const divider = i < arr.length - 1
+          ? 'border-b border-slate-700/40 pb-3 mb-3' : '';
+        return `
+          <div class="flex items-center justify-between ${divider}">
+            <div>
+              <span class="text-lg font-black text-white">${esc(h.year)}</span>
+              <span class="text-[11px] text-slate-400 block font-medium">Host: ${esc(h.host)}</span>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded-md tracking-wide uppercase ${badge}">${esc(h.stage)}</span>
+          </div>`;
+      }).join('');
+    }
+
+    // ── Show team results ──────────────────────────────────────────────────────
+    function showTeam(key, team) {
+      currentKey = key;
+      welcomeState.classList.add('hidden');
+      resultsWrapper.classList.remove('hidden');
+      countryHeader.textContent = team.name;
+      teamGroup.textContent = team.group ? `(${team.group})` : '';
+      updateFavStar();
+
+      const hasLive = team.matches.some(
+        m => m.status === 'IN_PLAY' || m.status === 'PAUSED'
+      );
+      liveIndicator.classList.toggle('hidden', !hasLive);
+
+      scheduleContainer.innerHTML = team.matches.length
+        ? team.matches
+            .sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate))
+            .map(m => renderMatchCard(m, team.name))
+            .join('')
+        : `<p class="text-sm text-slate-500 italic">No fixtures found for this team.</p>`;
+
+      renderHistory(key);
+    }
+
+    // ── Favourites ─────────────────────────────────────────────────────────────
+    function updateFavStar() {
+      const favs = safeJSON(FAV_KEY, '[]');
+      favoriteBtn.textContent = favs.includes(currentKey) ? '⭐' : '☆';
+    }
+
+    favoriteBtn.addEventListener('click', () => {
+      if (!currentKey) return;
+      let favs = safeJSON(FAV_KEY, '[]');
+      favs = favs.includes(currentKey)
+        ? favs.filter(f => f !== currentKey)
+        : [...favs, currentKey];
+      safeSave(FAV_KEY, favs);
+      updateFavStar();
+    });
+
+    // ── Search input ───────────────────────────────────────────────────────────
+    teamSearch.addEventListener('input', e => {
+      const val = e.target.value;
+      const result = findTeam(val);
+
+      if (result) {
+        suggestionsBox.classList.add('hidden');
+        showTeam(result.key, result.team);
+      } else {
+        welcomeState.classList.remove('hidden');
+        resultsWrapper.classList.add('hidden');
+        liveIndicator.classList.add('hidden');
+        currentKey = '';
+
+        // Show suggestions for partial input
+        const sugs = getSuggestions(val);
+        if (sugs.length && val.trim().length > 1) {
+          suggestionsBox.innerHTML = sugs.map(s =>
+            `<button class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-700 transition flex justify-between items-center"
+                     data-key="${esc(s.key)}">
+               <span>${esc(s.name)}</span>
+               <span class="text-xs text-slate-500">${esc(s.group)}</span>
+             </button>`
+          ).join('');
+          suggestionsBox.classList.remove('hidden');
+        } else {
+          suggestionsBox.classList.add('hidden');
+        }
+      }
+    });
+
+    suggestionsBox.addEventListener('click', e => {
+      const btn = e.target.closest('button[data-key]');
+      if (!btn) return;
+      const key = btn.dataset.key;
+      const team = teamIndex[key];
+      if (!team) return;
+      teamSearch.value = team.name;
+      suggestionsBox.classList.add('hidden');
+      showTeam(key, team);
+    });
+
+    document.addEventListener('click', e => {
+      if (!searchSection.contains(e.target)) suggestionsBox.classList.add('hidden');
+    });
+
+    // ── Settings / API key modal ───────────────────────────────────────────────
+    settingsBtn.addEventListener('click', () => {
+      apiKeyInput.value = localStorage.getItem(API_KEY_STORE) || '';
+      apiKeyError.classList.add('hidden');
+      apiKeyModal.classList.remove('hidden');
+    });
+
+    document.getElementById('saveApiKey').addEventListener('click', async () => {
+      const key = apiKeyInput.value.trim();
+      if (!key) {
+        apiKeyError.textContent = 'Please enter an API key.';
+        apiKeyError.classList.remove('hidden');
+        return;
+      }
+      try { localStorage.setItem(API_KEY_STORE, key); } catch {}
+      apiKeyModal.classList.add('hidden');
+      await boot(key);
+    });
+
+    document.getElementById('skipApiKey').addEventListener('click', () => {
+      apiKeyModal.classList.add('hidden');
+      loadDemoMode();
+    });
+
+    // ── Demo mode (historical data only, no live fixtures) ─────────────────────
+    function loadDemoMode() {
+      demoMode = true;
+      Object.keys(HISTORICAL).forEach(k => {
+        teamIndex[k] = {
+          name:    k.split(' ').map(w => w[0].toUpperCase() + w.slice(1)).join(' '),
+          tla:     k.slice(0, 3).toUpperCase(),
+          matches: [],
+          group:   ''
+        };
+      });
+      dataStatus.textContent = 'Demo mode — historical data only';
+      searchSection.classList.remove('hidden');
+      welcomeState.classList.remove('hidden');
+      loadingState.classList.add('hidden');
+    }
+
+    // ── Boot sequence ──────────────────────────────────────────────────────────
+    async function boot(apiKey) {
+      loadingState.classList.remove('hidden');
+      searchSection.classList.add('hidden');
+      welcomeState.classList.add('hidden');
+      resultsWrapper.classList.add('hidden');
+      errorBanner.classList.add('hidden');
+
+      try {
+        const matches = await fetchMatches(apiKey);
+        teamIndex = buildIndex(matches);
+
+        const total    = matches.length;
+        const finished = matches.filter(m => m.status === 'FINISHED').length;
+        const live     = matches.filter(
+          m => m.status === 'IN_PLAY' || m.status === 'PAUSED'
+        ).length;
+
+        dataStatus.textContent = live > 0
+          ? `${live} match${live > 1 ? 'es' : ''} LIVE now — ${finished}/${total} played`
+          : `${finished} / ${total} matches played`;
+
+        loadingState.classList.add('hidden');
+        searchSection.classList.remove('hidden');
+        welcomeState.classList.remove('hidden');
+
+        // Auto-load first saved favourite
+        const favs = safeJSON(FAV_KEY, '[]');
+        if (favs.length > 0) {
+          const hit = findTeam(favs[0]);
+          if (hit) {
+            teamSearch.value = hit.team.name;
+            showTeam(hit.key, hit.team);
+          }
+        }
+
+      } catch (err) {
+        loadingState.classList.add('hidden');
+        errorMsg.textContent = `⚠️ ${err.message}`;
+        errorBanner.classList.remove('hidden');
+        searchSection.classList.remove('hidden');
+        welcomeState.classList.remove('hidden');
+
+        // Fall back to cached matches if available
+        const cached = safeJSON(CACHE_MATCHES, 'null');
+        if (cached) {
+          teamIndex = buildIndex(cached);
+          dataStatus.textContent = 'Showing cached data';
+        } else {
+          loadDemoMode();
+        }
+      }
+    }
+
+    // ── Entry point ────────────────────────────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', () => {
+      const stored = localStorage.getItem(API_KEY_STORE);
+      if (stored) {
+        boot(stored);
+      } else {
+        apiKeyModal.classList.remove('hidden');
+        loadingState.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>
