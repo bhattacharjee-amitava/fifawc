@@ -680,6 +680,52 @@
     }
 
 
+    function showDateFixtures(dateISO) {
+      const modal     = document.getElementById('dateModal');
+      const container = document.getElementById('dateContainer');
+      const titleEl   = document.getElementById('dateModalTitle');
+      const label = new Date(dateISO + 'T12:00:00').toLocaleDateString('en-IN',
+        { day: 'numeric', month: 'long', year: 'numeric' });
+      titleEl.textContent = label;
+      const matches = allMatchesList.filter(mx => {
+        const ist = new Date(mx.utcDate).toLocaleDateString('en-CA',
+          { timeZone: 'Asia/Kolkata' });
+        return ist === dateISO;
+      }).sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate));
+      if (!matches.length) {
+        container.innerHTML = '<p class="text-slate-400 text-sm text-center py-8">No matches on this date.</p>';
+      } else {
+        container.innerHTML = matches.map(mx => {
+          const home   = esc(mx.homeTeam?.shortName || mx.homeTeam?.name || 'TBD');
+          const away   = esc(mx.awayTeam?.shortName || mx.awayTeam?.name || 'TBD');
+          const status = mx.status;
+          let mid;
+          if (status === 'FINISHED') {
+            const hg = mx.score?.fullTime?.home ?? '?';
+            const ag = mx.score?.fullTime?.away ?? '?';
+            mid = `<span class="font-bold text-amber-400 text-lg">${hg}&ndash;${ag}</span>`;
+          } else if (status === 'IN_PLAY' || status === 'PAUSED') {
+            const hg = mx.score?.fullTime?.home ?? 0;
+            const ag = mx.score?.fullTime?.away ?? 0;
+            mid = `<span class="font-bold text-red-400 animate-pulse text-lg">${hg}&ndash;${ag} &#128308;</span>`;
+          } else {
+            const ist = new Date(mx.utcDate).toLocaleString('en-IN',
+              { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase();
+            mid = `<span class="text-amber-300 text-sm font-semibold">${ist} IST</span>`;
+          }
+          const grp = mx.group
+            ? `<div class="text-[10px] text-slate-500 mt-0.5">${esc(mx.group.replace('GROUP_','Group '))}</div>` : '';
+          return `<div class="flex items-center justify-between py-3 border-b border-slate-700/50 last:border-0">
+            <span class="w-[42%] text-right text-slate-200 text-sm font-semibold leading-tight">${home}</span>
+            <div class="w-[16%] text-center">${mid}${grp}</div>
+            <span class="w-[42%] text-left text-slate-200 text-sm font-semibold leading-tight">${away}</span>
+          </div>`;
+        }).join('');
+      }
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
     function closeDateModal() {
       document.getElementById('dateModal').classList.add('hidden');
       document.body.style.overflow = '';
