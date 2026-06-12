@@ -18,26 +18,10 @@
     <div class="flex items-center gap-2">
       <span id="liveIndicator" class="hidden bg-red-600 text-white text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase animate-pulse">LIVE</span>
       <span class="bg-slate-700 text-amber-400 text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase">IST</span>
-      <button id="settingsBtn" title="API Settings" class="text-slate-400 hover:text-amber-400 transition text-lg ml-1">⚙️</button>
+      <button id="refreshBtn" title="Refresh fixtures" class="text-slate-400 hover:text-amber-400 transition text-lg ml-1">🔄</button>
     </div>
   </header>
 
-  <!-- API Key Modal -->
-  <div id="apiKeyModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center hidden">
-    <div class="bg-slate-800 rounded-2xl p-6 mx-4 max-w-sm w-full border border-slate-600 shadow-2xl">
-      <h2 class="text-lg font-bold text-amber-400 mb-1">Connect to Live Data</h2>
-      <p class="text-xs text-slate-400 mb-1">Enter your free API key from <span class="text-amber-400 font-semibold">football-data.org</span> to fetch live 2026 World Cup fixtures and scores.</p>
-      <p class="text-xs text-slate-500 mb-4">Registration is free — no credit card required.</p>
-      <input id="apiKeyInput" type="text" placeholder="Paste your API key here..."
-             class="w-full bg-slate-900 border border-slate-600 rounded-xl p-3 text-sm text-slate-200 focus:border-amber-500 focus:outline-none mb-3 placeholder-slate-600">
-      <p id="apiKeyError" class="text-xs text-red-400 mb-2 hidden"></p>
-      <div class="flex gap-2">
-        <button id="saveApiKey" class="flex-1 bg-amber-500 text-slate-950 font-bold py-2.5 rounded-xl text-sm hover:bg-amber-400 transition">Save & Load</button>
-        <button id="skipApiKey" class="flex-1 bg-slate-700 text-slate-300 font-bold py-2.5 rounded-xl text-sm hover:bg-slate-600 transition">Demo Mode</button>
-      </div>
-      <p class="text-[10px] text-slate-500 mt-3 text-center">Key is stored only in your browser's localStorage.</p>
-    </div>
-  </div>
 
   <main class="p-4 max-w-md mx-auto space-y-5">
 
@@ -50,7 +34,7 @@
     <!-- Error Banner -->
     <div id="errorBanner" class="hidden bg-red-900/40 border border-red-700 rounded-xl p-4 text-sm text-red-300 space-y-1">
       <p id="errorMsg"></p>
-      <p class="text-xs text-red-400">Showing cached data if available. Tap ⚙️ to update your API key.</p>
+      <p class="text-xs text-red-400">Showing cached data if available. Tap 🔄 to retry.</p>
     </div>
 
     <!-- Search Bar -->
@@ -108,7 +92,6 @@
     const CACHE_TS       = 'copakick_ts_v2';
     const CACHE_TTL      = 3 * 60 * 1000;   // 3 minutes
     const FAV_KEY        = 'wc_favorites_v2';
-    const API_KEY_STORE  = 'copakick_apikey';
 
     // ── Historical data (not available via free API tier) ──────────────────────
     const HISTORICAL = {
@@ -591,11 +574,8 @@
     const errorBanner      = $('errorBanner');
     const errorMsg         = $('errorMsg');
     const searchSection    = $('searchSection');
-    const apiKeyModal      = $('apiKeyModal');
-    const apiKeyInput      = $('apiKeyInput');
-    const apiKeyError      = $('apiKeyError');
     const dataStatus       = $('dataStatus');
-    const settingsBtn      = $('settingsBtn');
+    const refreshBtn       = $('refreshBtn');
     const liveIndicator    = $('liveIndicator');
     const suggestionsBox   = $('suggestionsBox');
 
@@ -647,24 +627,18 @@
     }
 
     // ── API ────────────────────────────────────────────────────────────────────
-    async function fetchMatches(apiKey) {
+    async function fetchMatches() {
       const ts = parseInt(localStorage.getItem(CACHE_TS) || '0');
       if (Date.now() - ts < CACHE_TTL) {
         const cached = safeJSON(CACHE_MATCHES, 'null');
         if (cached) return cached;
       }
 
-      const res = await fetch(`${API_BASE}/competitions/${WC_CODE}/matches`, {
-        headers: { 'X-Auth-Token': apiKey }
-      });
+      const res = await fetch('/api/matches');
 
       if (!res.ok) {
-        const msgs = {
-          401: 'Invalid API key — please check and re-enter it.',
-          403: 'This API key does not have access to the World Cup competition.',
-          429: 'Rate limit hit (10 req/min). Please wait a moment then refresh.'
-        };
-        throw new Error(msgs[res.status] || `API error ${res.status}`);
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || `Server error ${res.status}`);
       }
 
       const data = await res.json();
@@ -889,28 +863,10 @@
       if (!searchSection.contains(e.target)) suggestionsBox.classList.add('hidden');
     });
 
-    // ── Settings / API key modal ───────────────────────────────────────────────
-    settingsBtn.addEventListener('click', () => {
-      apiKeyInput.value = localStorage.getItem(API_KEY_STORE) || '';
-      apiKeyError.classList.add('hidden');
-      apiKeyModal.classList.remove('hidden');
-    });
-
-    document.getElementById('saveApiKey').addEventListener('click', async () => {
-      const key = apiKeyInput.value.trim();
-      if (!key) {
-        apiKeyError.textContent = 'Please enter an API key.';
-        apiKeyError.classList.remove('hidden');
-        return;
-      }
-      try { localStorage.setItem(API_KEY_STORE, key); } catch {}
-      apiKeyModal.classList.add('hidden');
-      await boot(key);
-    });
-
-    document.getElementById('skipApiKey').addEventListener('click', () => {
-      apiKeyModal.classList.add('hidden');
-      loadDemoMode();
+    // ── Refresh button ─────────────────────────────────────────────────────────
+    refreshBtn.addEventListener('click', () => {
+      try { localStorage.removeItem(CACHE_TS); } catch {}
+      boot();
     });
 
     // ── Demo mode (historical data only, no live fixtures) ─────────────────────
@@ -931,7 +887,7 @@
     }
 
     // ── Boot sequence ──────────────────────────────────────────────────────────
-    async function boot(apiKey) {
+    async function boot() {
       loadingState.classList.remove('hidden');
       searchSection.classList.add('hidden');
       welcomeState.classList.add('hidden');
@@ -939,7 +895,7 @@
       errorBanner.classList.add('hidden');
 
       try {
-        const matches = await fetchMatches(apiKey);
+        const matches = await fetchMatches();
         teamIndex = buildIndex(matches);
 
         const total    = matches.length;
@@ -985,15 +941,7 @@
     }
 
     // ── Entry point ────────────────────────────────────────────────────────────
-    window.addEventListener('DOMContentLoaded', () => {
-      const stored = localStorage.getItem(API_KEY_STORE);
-      if (stored) {
-        boot(stored);
-      } else {
-        apiKeyModal.classList.remove('hidden');
-        loadingState.classList.add('hidden');
-      }
-    });
+    window.addEventListener('DOMContentLoaded', () => boot());
   </script>
 </body>
 </html>
