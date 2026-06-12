@@ -18,7 +18,6 @@
     <div class="flex items-center gap-2">
       <span id="liveIndicator" class="hidden bg-red-600 text-white text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase animate-pulse">LIVE</span>
       <span class="bg-slate-700 text-amber-400 text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase">IST</span>
-      <button id="musicBtn" title="Toggle theme music" class="text-slate-400 hover:text-amber-400 transition text-lg">&#127925;</button>
       <button id="refreshBtn" title="Refresh fixtures" class="text-slate-400 hover:text-amber-400 transition text-lg ml-1">&#128260;</button>
     </div>
   </header>
@@ -192,6 +191,8 @@
       "albiceleste":             "argentina",
       "oranje":                  "netherlands",
       "azzurri":                 "italy",
+      "gli azzurri":             "italy",
+      "squadra azzurra":         "italy",
       "three lions":             "england",
       "mannschaft":              "germany",
       "die mannschaft":          "germany",
@@ -207,7 +208,9 @@
       "socceroos":               "australia",
       "all blacks":              "new zealand",
       "iran":                    "iran",
-      "persia":                  "iran"
+      "persia":                  "iran",
+      "celeste":                 "uruguay",
+      "la celeste":              "uruguay"
     };
 
     // &#9472;&#9472; State &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
@@ -475,12 +478,19 @@
         suggestionsBox.classList.add('hidden');
         showTeam(result.key, result.team);
       } else {
-        welcomeState.classList.remove('hidden');
-        resultsWrapper.classList.add('hidden');
-        liveIndicator.classList.add('hidden');
-        currentKey = '';
+        // Check if query matches a past WC champion not in 2026
+        const q2 = ALIASES[val.trim().toLowerCase()] || val.trim().toLowerCase();
+        const w2 = WC_WINNERS[q2];
+        if (w2 && !teamIndex[q2]) {
+          suggestionsBox.classList.add('hidden');
+          showNonQualifiedChampion(q2, w2);
+        } else {
+          welcomeState.classList.remove('hidden');
+          resultsWrapper.classList.add('hidden');
+          liveIndicator.classList.add('hidden');
+          currentKey = '';
 
-        // Show suggestions for partial input
+          // Show suggestions for partial input
         const sugs = getSuggestions(val);
         if (sugs.length && val.trim().length > 1) {
           suggestionsBox.innerHTML = sugs.map(s =>
@@ -494,6 +504,7 @@
         } else {
           suggestionsBox.classList.add('hidden');
         }
+        } // end non-champion else
       }
     });
 
@@ -669,76 +680,6 @@
     }
 
 
-    // -- Background music --------------------------------------------------
-    let musicEnabled = false;
-    let musicStarted  = false;
-
-    function tryStartMusic() {
-      const audio = document.getElementById('bgMusic');
-      if (!audio || !audio.src || audio.src === window.location.href) return;
-      audio.play().then(() => { musicStarted = true; updateMusicBtn(); }).catch(() => {});
-    }
-
-    function updateMusicBtn() {
-      const btn   = document.getElementById('musicBtn');
-      const audio = document.getElementById('bgMusic');
-      if (!audio || !audio.src || audio.src === window.location.href) {
-        btn.style.opacity = '0.35';
-        btn.title = 'No audio configured';
-        return;
-      }
-      btn.style.opacity = '1';
-      btn.textContent   = musicEnabled ? '&#128264;' : '&#127925;';
-      btn.title         = musicEnabled ? 'Mute music' : 'Play FIFA theme';
-    }
-
-    // -- Date-filter fixtures ----------------------------------------------
-    function showDateFixtures(dateISO) {
-      const modal     = document.getElementById('dateModal');
-      const container = document.getElementById('dateContainer');
-      const titleEl   = document.getElementById('dateModalTitle');
-      const label = new Date(dateISO + 'T12:00:00').toLocaleDateString('en-IN',
-        { day: 'numeric', month: 'long', year: 'numeric' });
-      titleEl.textContent = label;
-      const matches = allMatchesList.filter(mx => {
-        const ist = new Date(mx.utcDate).toLocaleDateString('en-CA',
-          { timeZone: 'Asia/Kolkata' });
-        return ist === dateISO;
-      }).sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate));
-      if (!matches.length) {
-        container.innerHTML = '<p class="text-slate-400 text-sm text-center py-8">No matches on this date.</p>';
-      } else {
-        container.innerHTML = matches.map(mx => {
-          const home   = esc(mx.homeTeam?.shortName || mx.homeTeam?.name || 'TBD');
-          const away   = esc(mx.awayTeam?.shortName || mx.awayTeam?.name || 'TBD');
-          const status = mx.status;
-          let mid;
-          if (status === 'FINISHED') {
-            const hg = mx.score?.fullTime?.home ?? '?';
-            const ag = mx.score?.fullTime?.away ?? '?';
-            mid = `<span class="font-bold text-amber-400 text-lg">${hg}&ndash;${ag}</span>`;
-          } else if (status === 'IN_PLAY' || status === 'PAUSED') {
-            const hg = mx.score?.fullTime?.home ?? 0;
-            const ag = mx.score?.fullTime?.away ?? 0;
-            mid = `<span class="font-bold text-red-400 animate-pulse text-lg">${hg}&ndash;${ag} &#128308;</span>`;
-          } else {
-            const ist = new Date(mx.utcDate).toLocaleString('en-IN',
-              { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase();
-            mid = `<span class="text-amber-300 text-sm font-semibold">${ist} IST</span>`;
-          }
-          const grp = mx.group
-            ? `<div class="text-[10px] text-slate-500 mt-0.5">${esc(mx.group.replace('GROUP_','Group '))}</div>` : '';
-          return `<div class="flex items-center justify-between py-3 border-b border-slate-700/50 last:border-0">
-            <span class="w-[42%] text-right text-slate-200 text-sm font-semibold leading-tight">${home}</span>
-            <div class="w-[16%] text-center">${mid}${grp}</div>
-            <span class="w-[42%] text-left text-slate-200 text-sm font-semibold leading-tight">${away}</span>
-          </div>`;
-        }).join('');
-      }
-      modal.classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-    }
-
     function closeDateModal() {
       document.getElementById('dateModal').classList.add('hidden');
       document.body.style.overflow = '';
@@ -748,18 +689,6 @@
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('allFixturesBtn').addEventListener('click', renderAllFixtures);
 
-      // Music toggle
-      updateMusicBtn();
-      document.getElementById('musicBtn').addEventListener('click', () => {
-        const audio = document.getElementById('bgMusic');
-        if (!audio.src || audio.src === window.location.href) return;
-        musicEnabled = !musicEnabled;
-        if (musicEnabled) { tryStartMusic(); } else { audio.pause(); musicStarted = false; }
-        updateMusicBtn();
-      });
-      document.addEventListener('touchstart', () => {
-        if (musicEnabled && !musicStarted) tryStartMusic();
-      }, { once: true });
 
       // Date filter
       document.getElementById('dateFilterBtn').addEventListener('click', () => {
@@ -808,11 +737,6 @@
     </div>
   </div>
 
-  <!-- Background Music (to enable: uncomment src and set to your hosted MP3 URL) -->
-  <!-- Example: copy the FIFA 2026 theme MP3 to the fifawc folder and use src="/theme.mp3" -->
-  <audio id="bgMusic" loop preload="none">
-    <!-- <source src="/theme.mp3" type="audio/mpeg"> -->
-  </audio>
 
   <!-- Date Picker Overlay -->
   <div id="datePickerWrap" class="hidden fixed inset-0 z-50 bg-black/70 items-center justify-center p-6">
