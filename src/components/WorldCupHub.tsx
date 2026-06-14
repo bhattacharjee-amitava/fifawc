@@ -625,10 +625,10 @@ export default function WorldCupHub() {
 
           <div className="flex items-center gap-2 sm:gap-3">
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={() => setQuizOpen(true)}
-              className="h-8 gap-1.5 px-2 text-muted-foreground hover:text-primary"
+              className="h-8 gap-1.5 border-primary/40 px-2.5 text-primary hover:border-primary/60 hover:bg-primary/10 hover:text-primary"
             >
               <Brain className="size-4" /> Quiz
             </Button>
@@ -805,6 +805,15 @@ export default function WorldCupHub() {
           )}
         </section>
       </main>
+
+      <footer className="mx-auto max-w-5xl px-4 pb-8 pt-4 text-right sm:px-6">
+        <p className="font-mono text-[11px] text-muted-foreground">
+          Made by{" "}
+          <span className="text-primary">
+            (a<sup>b</sup>)<sup>2</sup>
+          </span>
+        </p>
+      </footer>
 
       {/* Modals */}
       <AllFixturesDialog
