@@ -1016,13 +1016,15 @@ function TeamPanel({
       {/* Team hero */}
       <div className="rounded-2xl border border-border bg-card/60 p-6 backdrop-blur-sm">
         <div className="flex items-start justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <Crest url={team.crest} alt={team.name} size={56} />
-            <div>
+          <div>
+            <div className="flex items-center gap-4">
+              <Crest url={team.crest} alt={team.name} size={56} />
               <h1 className="font-display text-3xl font-extrabold leading-none tracking-tight sm:text-4xl">
                 {team.name}
               </h1>
-              <div className="mt-2 flex flex-wrap items-center gap-2">
+            </div>
+            {(team.group || winner) && (
+              <div className="mt-2 flex flex-wrap items-center gap-2 pl-[72px]">
                 {team.group && (
                   <Badge variant="secondary" className="font-mono text-[11px]">
                     {team.group}
@@ -1034,7 +1036,7 @@ function TeamPanel({
                   </Badge>
                 )}
               </div>
-            </div>
+            )}
           </div>
           <Button
             variant={isFollowing ? "secondary" : "outline"}
