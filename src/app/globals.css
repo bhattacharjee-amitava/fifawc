@@ -1,0 +1,148 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ── Floodlit Pitch theme ──────────────────────────────────────────────────
+   Dark by default. Warm near-black canvas, electric lime accent, red reserved
+   strictly for LIVE. Numeric data lives in mono for broadcast precision. */
+:root {
+  --radius: 2px;
+
+  --background: #0a0b09;
+  --foreground: #f2f3ec;
+
+  --card: #131512;
+  --card-foreground: #f2f3ec;
+
+  --popover: #14160f;
+  --popover-foreground: #f2f3ec;
+
+  /* electric lime — the signature */
+  --primary: #c8f250;
+  --primary-foreground: #0a0b09;
+
+  --secondary: #1c1f16;
+  --secondary-foreground: #f2f3ec;
+
+  --muted: #16190f;
+  --muted-foreground: #969b8c;
+
+  --accent: #1f2318;
+  --accent-foreground: #eaf6c0;
+
+  --destructive: #ff4438;
+  --destructive-foreground: #ffffff;
+
+  --border: #23271e;
+  --input: #23271e;
+  --ring: #c8f250;
+
+  /* app-semantic */
+  --live: #ff4438;
+  --win: #8be05a;
+  --loss: #c97a72;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-live: var(--live);
+  --color-win: var(--win);
+  --color-loss: var(--loss);
+
+  --radius-lg: var(--radius);
+  --radius-md: var(--radius);
+  --radius-sm: 1px;
+  --radius-xl: 3px;
+
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/40;
+  }
+
+  html {
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    /* Floodlight: a soft cool-white glow blooming from top-center, plus a faint
+       lime wash at the base — the stadium under lights. */
+    background-image:
+      radial-gradient(120% 80% at 50% -10%, rgba(200, 242, 80, 0.08) 0%, transparent 55%),
+      radial-gradient(90% 60% at 50% -5%, rgba(255, 255, 255, 0.05) 0%, transparent 45%),
+      radial-gradient(140% 120% at 50% 120%, rgba(200, 242, 80, 0.04) 0%, transparent 60%);
+    background-attachment: fixed;
+  }
+
+  /* Fine grain overlay for texture (very low opacity). */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+@layer utilities {
+  /* Staggered entrance for fixture grids. */
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-rise {
+    animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Soft pulsing dot for LIVE. */
+  @keyframes livepulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(255, 68, 56, 0.55);
+    }
+    50% {
+      box-shadow: 0 0 0 6px rgba(255, 68, 56, 0);
+    }
+  }
+  .live-dot {
+    animation: livepulse 1.6s ease-out infinite;
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+  }
+}

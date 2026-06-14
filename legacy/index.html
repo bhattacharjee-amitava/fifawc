@@ -1,0 +1,1400 @@
+&#65279;<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CopaKick: World Cup Hub</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            rel="manifest"
+            href="data:application/json;base64,ewogICJuYW1lIjogIkNvcGFLaWNrIDIwMjYgSHViIiwKICAic2hvcnRfbmFtZSI6ICJDb3BhS2ljayIsCiAgInN0YXJ0X3VybCI6ICIuL2NvcGFraWNrLmh0bWwiLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwZjE3MmEiLAogICJ0aGVtZV9jb2xvciI6ICIjZjU5ZTA4Igp9"
+        />
+    </head>
+    <body class="bg-slate-900 text-slate-100 font-sans min-h-screen pb-10">
+        <!-- Sticky Header -->
+        <header
+            class="bg-slate-800 p-4 sticky top-0 shadow-xl border-b border-slate-700 z-50 flex justify-between items-center"
+        >
+            <div>
+                <h1 class="text-xl font-black text-amber-500 tracking-wider">
+                    COPAKICK 2026
+                    <span
+                        class="font-light text-amber-400/80 text-xs tracking-wide align-middle"
+                        >~ know the schedule</span
+                    >
+                </h1>
+                <p id="dataStatus" class="text-xs text-slate-400">
+                    Initialising...
+                </p>
+            </div>
+            <div class="flex items-center gap-2">
+                <span
+                    id="liveIndicator"
+                    class="hidden bg-red-600 text-white text-[10px] px-2.5 py-1 rounded-full font-bold tracking-widest uppercase animate-pulse"
+                    >LIVE</span
+                >
+                <button
+                    id="refreshBtn"
+                    title="Refresh fixtures"
+                    class="text-slate-400 hover:text-amber-400 transition text-lg ml-1"
+                >
+                    &#128260;
+                </button>
+            </div>
+        </header>
+
+        <main class="p-4 max-w-md mx-auto space-y-5">
+            <!-- Loading State -->
+            <div id="loadingState" class="hidden text-center py-12 space-y-3">
+                <p class="text-4xl animate-spin inline-block">&#9917;</p>
+                <p class="text-sm text-slate-400">Fetching live fixtures...</p>
+            </div>
+
+            <!-- Error Banner -->
+            <div
+                id="errorBanner"
+                class="hidden bg-red-900/40 border border-red-700 rounded-xl p-4 text-sm text-red-300 space-y-1"
+            >
+                <p id="errorMsg"></p>
+                <p class="text-xs text-red-400">
+                    Showing cached data if available. Tap &#128260; to retry.
+                </p>
+            </div>
+
+            <!-- Subtitle strip — always visible between header and controls -->
+            <div
+                id="subtitleStrip"
+                class="hidden sticky top-[73px] z-41 bg-slate-900 py-2 -mx-4 px-4 text-center border-b border-slate-800/50"
+            >
+                <p class="text-xs text-slate-500 tracking-widest">
+                    a<sup>b</sup>
+                </p>
+                <p class="text-sm font-semibold text-slate-300">
+                    FIFA World Cup 2026
+                </p>
+                <p class="text-xs text-slate-500 mt-0.5">
+                    Search a country &bull; Browse fixtures &bull; Filter by
+                    date
+                </p>
+            </div>
+
+            <!-- Sticky Search + All Fixtures panel -->
+            <div
+                id="stickyControls"
+                class="hidden sticky top-[113px] z-40 bg-slate-900 pt-1 pb-2 -mx-4 px-4 space-y-2 border-b border-slate-800 shadow-lg"
+            >
+                <!-- Search Bar -->
+                <div id="searchSection" class="relative">
+                    <input
+                        id="teamSearch"
+                        type="text"
+                        placeholder="Search any team (e.g., Brazil, England, USA)..."
+                        class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl p-4 pl-12 text-slate-200 focus:border-amber-500 focus:outline-none transition shadow-inner placeholder-slate-500"
+                    />
+                    <span class="absolute left-4 top-4 text-xl">&#9917;</span>
+                    <div
+                        id="suggestionsBox"
+                        class="hidden absolute z-10 w-full bg-slate-800 border border-slate-600 rounded-xl mt-1 shadow-xl overflow-hidden"
+                    ></div>
+                </div>
+
+                <!-- Date Filter Button -->
+                <button
+                    id="dateFilterBtn"
+                    class="w-full bg-slate-800 border border-slate-600 hover:border-amber-500 text-slate-300 hover:text-amber-400 font-semibold py-3 rounded-xl text-sm transition flex items-center justify-center gap-2"
+                >
+                    <span>&#128197;</span> Fixtures by Date
+                </button>
+
+                <!-- All Fixtures Button -->
+                <button
+                    id="allFixturesBtn"
+                    class="w-full bg-slate-800 border border-slate-600 hover:border-amber-500 text-slate-300 hover:text-amber-400 font-semibold py-3 rounded-xl text-sm transition flex items-center justify-center gap-2"
+                >
+                    <span>&#9917;</span> All 2026 Fixtures &#8212; Groups A to L
+                </button>
+            </div>
+
+            <!-- Welcome State -->
+            <!-- Welcome State -->
+            <div
+                id="welcomeState"
+                class="hidden text-center text-slate-500 pt-6 pb-0 relative"
+            >
+                <p class="text-5xl animate-bounce">&#9917;</p>
+                <p class="mt-3 text-base italic text-slate-400">
+                    Let's play football ...
+                </p>
+                <!-- Trophy watermark -->
+                <div
+                    class="mt-4 flex justify-center opacity-[0.55] pointer-events-none select-none"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 200 300"
+                        width="240"
+                        height="320"
+                        aria-hidden="true"
+                    >
+                        <defs>
+                            <linearGradient
+                                id="tg1"
+                                x1="0%"
+                                y1="0%"
+                                x2="60%"
+                                y2="100%"
+                            >
+                                <stop offset="0%" style="stop-color: #fcd34d" />
+                                <stop
+                                    offset="100%"
+                                    style="stop-color: #b45309"
+                                />
+                            </linearGradient>
+                            <linearGradient
+                                id="tg2"
+                                x1="0%"
+                                y1="0%"
+                                x2="100%"
+                                y2="0%"
+                            >
+                                <stop offset="0%" style="stop-color: #fbbf24" />
+                                <stop
+                                    offset="100%"
+                                    style="stop-color: #92400e"
+                                />
+                            </linearGradient>
+                        </defs>
+                        <path
+                            d="M54,58 Q22,56 18,88 Q14,118 52,122"
+                            fill="none"
+                            stroke="url(#tg1)"
+                            stroke-width="13"
+                            stroke-linecap="round"
+                        />
+                        <path
+                            d="M146,58 Q178,56 182,88 Q186,118 148,122"
+                            fill="none"
+                            stroke="url(#tg1)"
+                            stroke-width="13"
+                            stroke-linecap="round"
+                        />
+                        <path
+                            d="M52,22 L148,22 Q165,22 168,52 L160,114 Q153,134 100,138 Q47,134 40,114 L32,52 Q35,22 52,22 Z"
+                            fill="url(#tg1)"
+                        />
+                        <circle
+                            cx="100"
+                            cy="20"
+                            r="24"
+                            fill="url(#tg1)"
+                            stroke="#fcd34d"
+                            stroke-width="2.5"
+                        />
+                        <ellipse
+                            cx="100"
+                            cy="20"
+                            rx="24"
+                            ry="11"
+                            fill="none"
+                            stroke="#92400e"
+                            stroke-width="1.5"
+                            opacity="0.5"
+                        />
+                        <line
+                            x1="100"
+                            y1="-4"
+                            x2="100"
+                            y2="44"
+                            stroke="#92400e"
+                            stroke-width="1.5"
+                            opacity="0.5"
+                        />
+                        <circle cx="87" cy="11" r="4.5" fill="#92400e" />
+                        <path
+                            d="M87,15.5 L84,24"
+                            stroke="#92400e"
+                            stroke-width="3"
+                            stroke-linecap="round"
+                        />
+                        <circle cx="113" cy="11" r="4.5" fill="#92400e" />
+                        <path
+                            d="M113,15.5 L116,24"
+                            stroke="#92400e"
+                            stroke-width="3"
+                            stroke-linecap="round"
+                        />
+                        <path
+                            d="M66,44 Q82,34 97,38"
+                            fill="none"
+                            stroke="white"
+                            stroke-width="5"
+                            stroke-linecap="round"
+                            opacity="0.3"
+                        />
+                        <rect
+                            x="84"
+                            y="138"
+                            width="32"
+                            height="52"
+                            rx="5"
+                            fill="url(#tg2)"
+                        />
+                        <path
+                            d="M58,190 Q72,186 84,190 L116,190 Q128,186 142,190 L158,216 L42,216 Z"
+                            fill="url(#tg1)"
+                        />
+                        <rect
+                            x="28"
+                            y="216"
+                            width="144"
+                            height="40"
+                            rx="7"
+                            fill="url(#tg2)"
+                        />
+                        <rect
+                            x="40"
+                            y="225"
+                            width="120"
+                            height="7"
+                            rx="3"
+                            fill="#fcd34d"
+                            opacity="0.2"
+                        />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div id="resultsWrapper" class="space-y-6 hidden">
+                <div
+                    class="flex items-end justify-between border-b-2 border-amber-500 pb-2"
+                >
+                    <div>
+                        <h2
+                            id="countryHeader"
+                            class="text-3xl font-extrabold text-white"
+                        ></h2>
+                        <span
+                            id="teamGroup"
+                            class="text-xs text-slate-400 font-mono"
+                        ></span>
+                    </div>
+                    <span
+                        id="favoriteBtn"
+                        class="text-2xl cursor-pointer select-none hover:scale-110 transition duration-150"
+                        >&#9734;</span
+                    >
+                </div>
+
+                <!-- Fixtures Section -->
+                <section class="space-y-3">
+                    <h3
+                        class="text-xs font-bold uppercase tracking-widest text-amber-400 flex items-center"
+                    >
+                        <span class="mr-1.5">&#128197;</span> 2026 Fixtures
+                        (<span id="tzLabel"></span>)
+                    </h3>
+                    <div id="scheduleContainer" class="space-y-3"></div>
+                </section>
+
+                <!-- Historical Section -->
+                <section class="space-y-3">
+                    <h3
+                        class="text-xs font-bold uppercase tracking-widest text-teal-400 flex items-center"
+                    >
+                        <span class="mr-1.5">&#127942;</span> FIFA World Cup
+                        Titles
+                    </h3>
+                    <div
+                        id="historyContainer"
+                        class="bg-slate-800/50 rounded-xl p-4 border border-slate-700"
+                    ></div>
+                </section>
+            </div>
+        </main>
+
+        <script>
+            // &#9472;&#9472; Config &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+            const API_BASE = "https://api.football-data.org/v4";
+            const WC_CODE = "WC";
+            const CACHE_MATCHES = "copakick_matches_v2";
+            const CACHE_TS = "copakick_ts_v2";
+            const CACHE_TTL = 3 * 60 * 1000; // 3 minutes
+            const FAV_KEY = "wc_favorites_v2";
+
+            // &#9472;&#9472; Historical data (not available via free API tier) &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+            // World Cup title holders &#65533; the ONLY 8 nations ever to win the FIFA World Cup
+            const WC_WINNERS = {
+                brazil: { titles: 5, years: [1958, 1962, 1970, 1994, 2002] },
+                germany: { titles: 4, years: [1954, 1974, 1990, 2014] },
+                italy: { titles: 4, years: [1934, 1938, 1982, 2006] },
+                argentina: { titles: 3, years: [1978, 1986, 2022] },
+                france: { titles: 2, years: [1998, 2018] },
+                uruguay: { titles: 2, years: [1930, 1950] },
+                england: { titles: 1, years: [1966] },
+                spain: { titles: 1, years: [2010] },
+            };
+
+            // Name aliases for search flexibility
+            const ALIASES = {
+                // English alternates
+                usa: "united states",
+                us: "united states",
+                america: "united states",
+                "united states of america": "united states",
+                uk: "england",
+                holland: "netherlands",
+                dutch: "netherlands",
+                "the netherlands": "netherlands",
+                "ivory coast": "ivory coast",
+                "cote d'ivoire": "ivory coast",
+                "cote divoire": "ivory coast",
+                "c&#244;te d'ivoire": "ivory coast",
+                "dr congo": "dr congo",
+                "democratic republic of congo": "dr congo",
+                drc: "dr congo",
+                zaire: "dr congo",
+                "south korea": "south korea",
+                korea: "south korea",
+                "republic of korea": "south korea",
+                "new zealand": "new zealand",
+                nz: "new zealand",
+                "all whites": "new zealand",
+                saudi: "saudi arabia",
+                ksa: "saudi arabia",
+                czech: "czech republic",
+                czechia: "czech republic",
+                slovakia: "slovakia",
+                "slovak republic": "slovakia",
+                "costa rica": "costa rica",
+                "south africa": "south africa",
+                rsa: "south africa",
+                "bafana bafana": "south africa",
+                // Native language names
+                deutschland: "germany",
+                espana: "spain",
+                "espa&#241;a": "spain",
+                brasil: "brazil",
+                "sele&#231;&#227;o": "brazil",
+                selecao: "brazil",
+                "les bleus": "france",
+                "la roja": "spain",
+                albiceleste: "argentina",
+                oranje: "netherlands",
+                azzurri: "italy",
+                "gli azzurri": "italy",
+                "squadra azzurra": "italy",
+                "three lions": "england",
+                mannschaft: "germany",
+                "die mannschaft": "germany",
+                "super eagles": "nigeria",
+                "black stars": "ghana",
+                "lions of atlas": "morocco",
+                "teranga lions": "senegal",
+                "indomitable lions": "cameroon",
+                elephants: "ivory coast",
+                "red devils": "belgium",
+                "samurai blue": "japan",
+                "taegeuk warriors": "south korea",
+                socceroos: "australia",
+                "all blacks": "new zealand",
+                iran: "iran",
+                persia: "iran",
+                celeste: "uruguay",
+                "la celeste": "uruguay",
+            };
+
+            // &#9472;&#9472; State &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+            let teamIndex = {};
+            let allMatchesList = [];
+            let currentKey = "";
+            let demoMode = false;
+
+            // &#9472;&#9472; DOM refs &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+            const $ = (id) => document.getElementById(id);
+            const teamSearch = $("teamSearch");
+            const welcomeState = $("welcomeState");
+            const resultsWrapper = $("resultsWrapper");
+            const countryHeader = $("countryHeader");
+            const teamGroup = $("teamGroup");
+            const scheduleContainer = $("scheduleContainer");
+            const historyContainer = $("historyContainer");
+            const favoriteBtn = $("favoriteBtn");
+            const loadingState = $("loadingState");
+            const errorBanner = $("errorBanner");
+            const errorMsg = $("errorMsg");
+            const searchSection = $("searchSection");
+            const stickyControls = $("stickyControls");
+            const dataStatus = $("dataStatus");
+            const refreshBtn = $("refreshBtn");
+            const liveIndicator = $("liveIndicator");
+            const suggestionsBox = $("suggestionsBox");
+            const allFixturesBtn = $("allFixturesBtn");
+            const subtitleStrip = $("subtitleStrip");
+
+            // &#9472;&#9472; Utilities &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+            function safeJSON(key, fallback) {
+                try {
+                    return JSON.parse(localStorage.getItem(key) ?? fallback);
+                } catch {
+                    return JSON.parse(fallback);
+                }
+            }
+
+            function safeSave(key, value) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(value));
+                } catch {}
+            }
+
+            // Escape user-facing strings inserted into innerHTML to prevent XSS
+            function esc(val) {
+                const d = document.createElement("div");
+                d.textContent = String(val ?? "");
+                return d.innerHTML;
+            }
+
+            const localTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const localTZS = new Date()
+                .toLocaleTimeString("default", { timeZoneName: "short" })
+                .split(" ")
+                .pop();
+            document.addEventListener("DOMContentLoaded", () => {
+                const el = document.getElementById("tzLabel");
+                if (el) el.textContent = localTZS;
+                const el2 = document.getElementById("tzLabelDate");
+                if (el2) el2.textContent = localTZS;
+                const el3 = document.getElementById("tzLabelAll");
+                if (el3) el3.textContent = localTZS;
+            });
+
+            function istTime(utcStr) {
+                try {
+                    return (
+                        new Date(utcStr)
+                            .toLocaleString(navigator.language, {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                            })
+                            .toUpperCase() +
+                        " " +
+                        localTZS
+                    );
+                } catch {
+                    return "&#8212;";
+                }
+            }
+
+            function istDate(utcStr) {
+                try {
+                    return new Date(utcStr).toLocaleString(navigator.language, {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                    });
+                } catch {
+                    return utcStr;
+                }
+            }
+
+            function stageLabel(raw) {
+                const map = {
+                    GROUP_STAGE: "Group Stage",
+                    ROUND_OF_16: "Round of 16",
+                    QUARTER_FINALS: "Quarter-Finals",
+                    SEMI_FINALS: "Semi-Finals",
+                    THIRD_PLACE: "Third Place",
+                    FINAL: "Final",
+                };
+                return map[raw] || (raw ?? "").replace(/_/g, " ");
+            }
+
+            // &#9472;&#9472; API &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+            async function fetchMatches() {
+                const ts = parseInt(localStorage.getItem(CACHE_TS) || "0");
+                if (Date.now() - ts < CACHE_TTL) {
+                    const cached = safeJSON(CACHE_MATCHES, "null");
+                    if (cached) return cached;
+                }
+
+                const res = await fetch("/api/matches");
+
+                if (!res.ok) {
+                    const body = await res.json().catch(() => ({}));
+                    throw new Error(body.error || `Server error ${res.status}`);
+                }
+
+                const data = await res.json();
+                safeSave(CACHE_MATCHES, data.matches);
+                try {
+                    localStorage.setItem(CACHE_TS, Date.now());
+                } catch {}
+                return data.matches;
+            }
+
+            // &#9472;&#9472; Build team index &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+            function buildIndex(matches) {
+                const idx = {};
+                matches.forEach((match) => {
+                    [
+                        { side: match.homeTeam, isHome: true },
+                        { side: match.awayTeam, isHome: false },
+                    ].forEach(({ side }) => {
+                        if (!side?.name) return;
+                        const key = side.name.toLowerCase();
+                        if (!idx[key]) {
+                            idx[key] = {
+                                name: side.name,
+                                tla: side.tla || "",
+                                matches: [],
+                                group: "",
+                            };
+                        }
+                        idx[key].matches.push(match);
+                        if (match.group) {
+                            idx[key].group = match.group.replace(
+                                "GROUP_",
+                                "Group ",
+                            );
+                        }
+                    });
+                });
+                return idx;
+            }
+
+            // &#9472;&#9472; Search / lookup &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+            function findTeam(query) {
+                const q = query.trim().toLowerCase();
+                if (!q) return null;
+                const resolved = ALIASES[q] || q;
+                if (teamIndex[resolved])
+                    return { key: resolved, team: teamIndex[resolved] };
+                // Partial prefix match
+                const keys = Object.keys(teamIndex);
+                const hit = keys.find(
+                    (k) => k.startsWith(resolved) || resolved.startsWith(k),
+                );
+                if (hit) return { key: hit, team: teamIndex[hit] };
+                // Substring fallback
+                const sub = keys.find((k) => k.includes(resolved));
+                if (sub) return { key: sub, team: teamIndex[sub] };
+                return null;
+            }
+
+            function getSuggestions(query) {
+                const q =
+                    ALIASES[query.toLowerCase().trim()] ||
+                    query.toLowerCase().trim();
+                if (q.length < 2) return [];
+                return Object.entries(teamIndex)
+                    .filter(([k]) => k.includes(q) || q.includes(k))
+                    .slice(0, 5)
+                    .map(([k, v]) => ({
+                        key: k,
+                        name: v.name,
+                        group: v.group,
+                    }));
+            }
+
+            // &#9472;&#9472; Render match card &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+            function renderMatchCard(match, myName) {
+                const isHome = match.homeTeam.name === myName;
+                const opponent = isHome ? match.awayTeam : match.homeTeam;
+                const status = match.status;
+                const sc = match.score;
+
+                let scoreBlock = "";
+                let statusTag = "";
+
+                if (status === "FINISHED") {
+                    const myG = isHome ? sc.fullTime.home : sc.fullTime.away;
+                    const oppG = isHome ? sc.fullTime.away : sc.fullTime.home;
+                    const col =
+                        myG > oppG
+                            ? "text-green-400"
+                            : myG < oppG
+                              ? "text-red-400"
+                              : "text-slate-300";
+                    scoreBlock = `
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-2xl font-black ${col}">${esc(myG)} &#8211; ${esc(oppG)}</span>
+            <span class="text-[10px] text-slate-500 font-mono">FT</span>
+          </div>`;
+                    statusTag = `<span class="text-[9px] bg-slate-600 text-slate-300 px-2 py-0.5 rounded font-mono ml-1">FT</span>`;
+                } else if (status === "IN_PLAY" || status === "PAUSED") {
+                    const myG = isHome
+                        ? (sc.fullTime.home ?? 0)
+                        : (sc.fullTime.away ?? 0);
+                    const oppG = isHome
+                        ? (sc.fullTime.away ?? 0)
+                        : (sc.fullTime.home ?? 0);
+                    scoreBlock = `
+          <div class="mt-2 flex items-baseline gap-2">
+            <span class="text-2xl font-black text-amber-400">${esc(myG)} &#8211; ${esc(oppG)}</span>
+            <span class="text-[9px] bg-red-600 text-white px-2 py-0.5 rounded font-bold animate-pulse">LIVE</span>
+          </div>`;
+                    statusTag = "";
+                } else {
+                    scoreBlock = `<p class="text-2xl font-black text-amber-500 mt-2">${esc(istTime(match.utcDate))}</p>`;
+                    statusTag = "";
+                }
+
+                return `
+        <div class="bg-slate-800 border border-slate-700 p-4 rounded-xl shadow-md relative overflow-hidden">
+          <div class="absolute right-0 top-0 bg-slate-700 px-3 py-1 text-[9px] uppercase tracking-widest text-amber-400 font-mono font-bold rounded-bl-lg">
+            FIFA &#8226; ${esc(stageLabel(match.stage))}${statusTag}
+          </div>
+          <p class="text-sm font-medium text-slate-400 mt-1">vs</p>
+          <p class="text-xl font-black text-white tracking-wide mt-0.5">${esc(opponent.name)}</p>
+          ${scoreBlock}
+          <p class="text-xs text-slate-400 mt-1 font-medium">${esc(istDate(match.utcDate))}</p>
+          ${match.venue ? `<div class="mt-3 pt-2.5 border-t border-slate-700/60 flex items-center text-xs text-slate-400"><span class="mr-2">&#65533;&#141;</span>${esc(match.venue)}</div>` : ""}
+        </div>`;
+            }
+
+            // &#9472;&#9472; Render history &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+            function renderHistory(key) {
+                const w = WC_WINNERS[key.toLowerCase()];
+                if (!w) {
+                    historyContainer.innerHTML = `<p class="text-sm text-slate-500 italic py-2">No FIFA World Cup title.</p>`;
+                    return;
+                }
+                const trophy =
+                    w.titles === 1
+                        ? "&#127942;"
+                        : "&#127942;".repeat(Math.min(w.titles, 5));
+                const label = w.titles === 1 ? "1 title" : `${w.titles} titles`;
+                historyContainer.innerHTML = `
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">${trophy}</span>
+          <div>
+            <p class="text-xl font-black text-amber-400">${esc(label)}</p>
+            <p class="text-sm text-slate-300">${w.years.join(" &#65533; ")}</p>
+          </div>
+        </div>`;
+            }
+
+            // &#9472;&#9472; Show team results &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+            function showTeam(key, team) {
+                currentKey = key;
+                welcomeState.classList.add("hidden");
+                resultsWrapper.classList.remove("hidden");
+                countryHeader.textContent = team.name;
+                teamGroup.textContent = team.group ? `(${team.group})` : "";
+                updateFavStar();
+
+                const hasLive = team.matches.some(
+                    (m) => m.status === "IN_PLAY" || m.status === "PAUSED",
+                );
+                liveIndicator.classList.toggle("hidden", !hasLive);
+
+                scheduleContainer.innerHTML = team.matches.length
+                    ? team.matches
+                          .sort(
+                              (a, b) =>
+                                  new Date(a.utcDate) - new Date(b.utcDate),
+                          )
+                          .map((m) => renderMatchCard(m, team.name))
+                          .join("")
+                    : `<p class="text-sm text-slate-500 italic">No fixtures found for this team.</p>`;
+
+                renderHistory(key);
+            }
+
+            // &#9472;&#9472; Favourites &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+            function updateFavStar() {
+                const favs = safeJSON(FAV_KEY, "[]");
+                favoriteBtn.innerHTML = favs.includes(currentKey)
+                    ? "&#11088;"
+                    : "&#9734;";
+            }
+
+            favoriteBtn.addEventListener("click", () => {
+                if (!currentKey) return;
+                let favs = safeJSON(FAV_KEY, "[]");
+                favs = favs.includes(currentKey)
+                    ? favs.filter((f) => f !== currentKey)
+                    : [...favs, currentKey];
+                safeSave(FAV_KEY, favs);
+                updateFavStar();
+            });
+
+            // &#9472;&#9472; Search input &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+            teamSearch.addEventListener("input", (e) => {
+                const val = e.target.value;
+                const result = findTeam(val);
+
+                if (result) {
+                    suggestionsBox.classList.add("hidden");
+                    showTeam(result.key, result.team);
+                } else {
+                    // Check if query matches a past WC champion not in 2026
+                    const q2 =
+                        ALIASES[val.trim().toLowerCase()] ||
+                        val.trim().toLowerCase();
+                    const w2 = WC_WINNERS[q2];
+                    if (w2 && !teamIndex[q2]) {
+                        suggestionsBox.classList.add("hidden");
+                        showNonQualifiedChampion(q2, w2);
+                    } else {
+                        welcomeState.classList.remove("hidden");
+                        resultsWrapper.classList.add("hidden");
+                        liveIndicator.classList.add("hidden");
+                        currentKey = "";
+
+                        // Show suggestions for partial input
+                        const sugs = getSuggestions(val);
+                        if (sugs.length && val.trim().length > 1) {
+                            suggestionsBox.innerHTML = sugs
+                                .map(
+                                    (s) =>
+                                        `<button class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-700 transition flex justify-between items-center"
+                     data-key="${esc(s.key)}">
+               <span>${esc(s.name)}</span>
+               <span class="text-xs text-slate-500">${esc(s.group)}</span>
+             </button>`,
+                                )
+                                .join("");
+                            suggestionsBox.classList.remove("hidden");
+                        } else {
+                            suggestionsBox.classList.add("hidden");
+                        }
+                    } // end non-champion else
+                }
+            });
+
+            suggestionsBox.addEventListener("click", (e) => {
+                const btn = e.target.closest("button[data-key]");
+                if (!btn) return;
+                const key = btn.dataset.key;
+                const team = teamIndex[key];
+                if (!team) return;
+                teamSearch.value = team.name;
+                suggestionsBox.classList.add("hidden");
+                showTeam(key, team);
+            });
+
+            document.addEventListener("click", (e) => {
+                if (!searchSection.contains(e.target))
+                    suggestionsBox.classList.add("hidden");
+            });
+
+            // &#9472;&#9472; Refresh button &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+            refreshBtn.addEventListener("click", () => {
+                try {
+                    localStorage.removeItem(CACHE_TS);
+                } catch {}
+                boot();
+            });
+
+            // &#9472;&#9472; Demo mode (historical data only, no live fixtures) &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+            function loadDemoMode() {
+                demoMode = true;
+                Object.keys(WC_WINNERS).forEach((k) => {
+                    teamIndex[k] = {
+                        name: k
+                            .split(" ")
+                            .map((w) => w[0].toUpperCase() + w.slice(1))
+                            .join(" "),
+                        tla: k.slice(0, 3).toUpperCase(),
+                        matches: [],
+                        group: "",
+                    };
+                });
+                dataStatus.textContent =
+                    "Demo mode &#8212; historical data only";
+                stickyControls.classList.remove("hidden");
+                subtitleStrip.classList.remove("hidden");
+                welcomeState.classList.remove("hidden");
+                loadingState.classList.add("hidden");
+            }
+
+            // &#9472;&#9472; Boot sequence &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+            async function boot() {
+                loadingState.classList.remove("hidden");
+                stickyControls.classList.add("hidden");
+                subtitleStrip.classList.add("hidden");
+                welcomeState.classList.add("hidden");
+                resultsWrapper.classList.add("hidden");
+                errorBanner.classList.add("hidden");
+
+                try {
+                    const matches = await fetchMatches();
+                    allMatchesList = matches;
+                    teamIndex = buildIndex(matches);
+
+                    const total = matches.length;
+                    const finished = matches.filter(
+                        (m) => m.status === "FINISHED",
+                    ).length;
+                    const live = matches.filter(
+                        (m) => m.status === "IN_PLAY" || m.status === "PAUSED",
+                    ).length;
+
+                    dataStatus.textContent =
+                        live > 0
+                            ? `${live} match${live > 1 ? "es" : ""} LIVE now &#8212; ${finished}/${total} played`
+                            : `${finished} / ${total} matches played`;
+
+                    loadingState.classList.add("hidden");
+                    stickyControls.classList.remove("hidden");
+                    subtitleStrip.classList.remove("hidden");
+                    welcomeState.classList.remove("hidden");
+
+                    // Auto-load first saved favourite
+                    const favs = safeJSON(FAV_KEY, "[]");
+                    if (favs.length > 0) {
+                        const hit = findTeam(favs[0]);
+                        if (hit) {
+                            teamSearch.value = hit.team.name;
+                            showTeam(hit.key, hit.team);
+                        }
+                    }
+                } catch (err) {
+                    loadingState.classList.add("hidden");
+                    errorMsg.textContent = `&#9888;&#65533;&#143; ${err.message}`;
+                    errorBanner.classList.remove("hidden");
+                    stickyControls.classList.remove("hidden");
+                    subtitleStrip.classList.remove("hidden");
+                    welcomeState.classList.remove("hidden");
+
+                    // Fall back to cached matches if available
+                    const cached = safeJSON(CACHE_MATCHES, "null");
+                    if (cached) {
+                        teamIndex = buildIndex(cached);
+                        dataStatus.textContent = "Showing cached data";
+                    } else {
+                        loadDemoMode();
+                    }
+                }
+            }
+
+            // &#9472;&#9472; All Fixtures Modal &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+            function renderAllFixtures() {
+                const modal = document.getElementById("allFixturesModal");
+                const container = document.getElementById(
+                    "allFixturesContainer",
+                );
+
+                if (!allMatchesList.length) {
+                    container.innerHTML =
+                        '<p class="text-slate-400 text-sm text-center py-8">No fixture data available yet.</p>';
+                    modal.classList.remove("hidden");
+                    return;
+                }
+
+                // Group matches by group label (e.g. "Group A")
+                const groups = {};
+                allMatchesList.forEach((m) => {
+                    const label = m.group
+                        ? m.group.replace("GROUP_", "Group ")
+                        : "Knockout";
+                    if (!groups[label]) groups[label] = [];
+                    groups[label].push(m);
+                });
+
+                // Sort: Group A&#8211;L first, then knockout rounds
+                const groupOrder = (key) => {
+                    const letter = key.match(/Group ([A-L])/i);
+                    if (letter) return letter[1].charCodeAt(0);
+                    // Knockout ordering
+                    const ko = {
+                        "Round of 32": 200,
+                        "Round of 16": 201,
+                        "Quarter-Finals": 202,
+                        "Quarter-Final": 202,
+                        "Semi-Finals": 203,
+                        "Semi-Final": 203,
+                        "3rd Place": 204,
+                        Final: 205,
+                    };
+                    return ko[key] || 300;
+                };
+
+                const sortedKeys = Object.keys(groups).sort(
+                    (a, b) => groupOrder(a) - groupOrder(b),
+                );
+
+                const html = sortedKeys
+                    .map((groupKey) => {
+                        const matches = groups[groupKey].sort(
+                            (a, b) => new Date(a.utcDate) - new Date(b.utcDate),
+                        );
+                        const rows = matches
+                            .map((m) => {
+                                const home = esc(
+                                    m.homeTeam?.shortName ||
+                                        m.homeTeam?.name ||
+                                        "TBD",
+                                );
+                                const away = esc(
+                                    m.awayTeam?.shortName ||
+                                        m.awayTeam?.name ||
+                                        "TBD",
+                                );
+                                const status = m.status;
+                                let scoreOrTime;
+                                if (status === "FINISHED") {
+                                    const hg = m.score?.fullTime?.home ?? "?";
+                                    const ag = m.score?.fullTime?.away ?? "?";
+                                    scoreOrTime = `<span class="font-bold text-amber-400">${hg} &#8211; ${ag}</span>`;
+                                } else if (
+                                    status === "IN_PLAY" ||
+                                    status === "PAUSED"
+                                ) {
+                                    const hg =
+                                        m.score?.fullTime?.home ??
+                                        m.score?.halfTime?.home ??
+                                        0;
+                                    const ag =
+                                        m.score?.fullTime?.away ??
+                                        m.score?.halfTime?.away ??
+                                        0;
+                                    scoreOrTime = `<span class="font-bold text-red-400 animate-pulse">${hg} &#8211; ${ag} &#128308;</span>`;
+                                } else {
+                                    const ist = new Date(
+                                        m.utcDate,
+                                    ).toLocaleString(navigator.language, {
+                                        month: "short",
+                                        day: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        hour12: true,
+                                    });
+                                    scoreOrTime = `<span class="text-slate-400 text-xs">${ist} ${localTZS}</span>`;
+                                }
+                                return `<div class="flex items-center justify-between py-1.5 border-b border-slate-700/50 last:border-0 text-sm">
+            <span class="w-2/5 text-right text-slate-200">${home}</span>
+            <span class="w-1/5 text-center">${scoreOrTime}</span>
+            <span class="w-2/5 text-left text-slate-200">${away}</span>
+          </div>`;
+                            })
+                            .join("");
+
+                        return `<div class="mb-5">
+          <h3 class="text-xs font-bold uppercase tracking-widest text-amber-400 mb-2 flex items-center gap-1.5">
+            <span>&#127942;</span>${esc(groupKey)}
+          </h3>
+          <div>${rows}</div>
+        </div>`;
+                    })
+                    .join("");
+
+                container.innerHTML = html;
+                modal.classList.remove("hidden");
+                document.body.style.overflow = "hidden";
+            }
+
+            function closeAllFixtures() {
+                document
+                    .getElementById("allFixturesModal")
+                    .classList.add("hidden");
+                document.body.style.overflow = "";
+            }
+
+            function showDateFixtures(dateISO) {
+                const modal = document.getElementById("dateModal");
+                const container = document.getElementById("dateContainer");
+                const titleEl = document.getElementById("dateModalTitle");
+                const label = new Date(
+                    dateISO + "T12:00:00",
+                ).toLocaleDateString(navigator.language, {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                });
+                titleEl.textContent = label;
+                const matches = allMatchesList
+                    .filter((mx) => {
+                        const ist = new Date(mx.utcDate).toLocaleDateString(
+                            "en-CA",
+                            { timeZone: localTZ },
+                        );
+                        return ist === dateISO;
+                    })
+                    .sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate));
+                if (!matches.length) {
+                    container.innerHTML =
+                        '<p class="text-slate-400 text-sm text-center py-8">No matches on this date.</p>';
+                } else {
+                    container.innerHTML = matches
+                        .map((mx) => {
+                            const home = esc(
+                                mx.homeTeam?.shortName ||
+                                    mx.homeTeam?.name ||
+                                    "TBD",
+                            );
+                            const away = esc(
+                                mx.awayTeam?.shortName ||
+                                    mx.awayTeam?.name ||
+                                    "TBD",
+                            );
+                            const status = mx.status;
+                            let mid;
+                            if (status === "FINISHED") {
+                                const hg = mx.score?.fullTime?.home ?? "?";
+                                const ag = mx.score?.fullTime?.away ?? "?";
+                                mid = `<span class="font-bold text-amber-400 text-lg">${hg}&ndash;${ag}</span>`;
+                            } else if (
+                                status === "IN_PLAY" ||
+                                status === "PAUSED"
+                            ) {
+                                const hg = mx.score?.fullTime?.home ?? 0;
+                                const ag = mx.score?.fullTime?.away ?? 0;
+                                mid = `<span class="font-bold text-red-400 animate-pulse text-lg">${hg}&ndash;${ag} &#128308;</span>`;
+                            } else {
+                                const ist = new Date(mx.utcDate)
+                                    .toLocaleString(navigator.language, {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        hour12: true,
+                                    })
+                                    .toUpperCase();
+                                mid = `<span class="text-amber-300 text-sm font-semibold">${ist} ${localTZS}</span>`;
+                            }
+                            const grp = mx.group
+                                ? `<div class="text-[10px] text-slate-500 mt-0.5">${esc(mx.group.replace("GROUP_", "Group "))}</div>`
+                                : "";
+                            return `<div class="flex items-center justify-between py-3 border-b border-slate-700/50 last:border-0">
+            <span class="w-[42%] text-right text-slate-200 text-sm font-semibold leading-tight">${home}</span>
+            <div class="w-[16%] text-center">${mid}${grp}</div>
+            <span class="w-[42%] text-left text-slate-200 text-sm font-semibold leading-tight">${away}</span>
+          </div>`;
+                        })
+                        .join("");
+                }
+                modal.classList.remove("hidden");
+                document.body.style.overflow = "hidden";
+            }
+
+            function closeDateModal() {
+                document.getElementById("dateModal").classList.add("hidden");
+                document.body.style.overflow = "";
+            }
+
+            // -- Royalty-free melodious tune (Web Audio API, auto-plays on first touch) --
+            // Original composition in C major, 92 BPM, sine-wave voices with ADSR
+            (function () {
+                var ctx = null,
+                    timer = null,
+                    nextAt = 0;
+                var BPM = 92,
+                    Q = 60 / 92;
+
+                // Frequencies
+                var C3 = 130.81,
+                    F3 = 174.61,
+                    G3 = 196.0,
+                    A3 = 220.0,
+                    B3 = 246.94,
+                    C4 = 261.63,
+                    D4 = 293.66,
+                    E4 = 329.63,
+                    F4 = 349.23,
+                    G4 = 392.0,
+                    A4 = 440.0,
+                    B4 = 493.88,
+                    C5 = 523.25,
+                    D5 = 587.33,
+                    E5 = 659.25,
+                    E3 = 164.81;
+
+                // Melody [freq, beats]: gentle 8-bar tune
+                var MEL = [
+                    [E4, 1],
+                    [G4, 1],
+                    [A4, 1],
+                    [G4, 1],
+                    [E4, 2],
+                    [D4, 1],
+                    [C4, 1],
+                    [D4, 1],
+                    [F4, 1],
+                    [G4, 1],
+                    [A4, 1],
+                    [G4, 3],
+                    [E4, 1],
+                    [C5, 1],
+                    [B4, 1],
+                    [A4, 1],
+                    [G4, 1],
+                    [A4, 1],
+                    [G4, 1],
+                    [E4, 2],
+                    [F4, 1],
+                    [E4, 1],
+                    [D4, 1],
+                    [C4, 1],
+                    [C4, 4],
+                ];
+                // Harmony (a third below)
+                var HAR = [
+                    [C4, 1],
+                    [E4, 1],
+                    [F4, 1],
+                    [E4, 1],
+                    [C4, 2],
+                    [B3, 1],
+                    [A3, 1],
+                    [B3, 1],
+                    [D4, 1],
+                    [E4, 1],
+                    [F4, 1],
+                    [E4, 3],
+                    [C4, 1],
+                    [A4, 1],
+                    [G4, 1],
+                    [F4, 1],
+                    [E4, 1],
+                    [F4, 1],
+                    [E4, 1],
+                    [C4, 2],
+                    [D4, 1],
+                    [C4, 1],
+                    [B3, 1],
+                    [A3, 1],
+                    [A3, 4],
+                ];
+                // Bass (one note per 2 beats)
+                var BAS = [
+                    [C3, 2],
+                    [C3, 2],
+                    [C3, 2],
+                    [G3, 2],
+                    [G3, 2],
+                    [G3, 2],
+                    [G3, 2],
+                    [G3, 2],
+                    [A3, 2],
+                    [A3, 2],
+                    [A3, 2],
+                    [E3, 2],
+                    [F3, 2],
+                    [F3, 2],
+                    [C3, 2],
+                    [C3, 2],
+                ];
+
+                function note(freq, t, beats, vol, type) {
+                    var dur = beats * Q;
+                    var o = ctx.createOscillator(),
+                        g = ctx.createGain();
+                    o.connect(g);
+                    g.connect(ctx.destination);
+                    o.type = type || "sine";
+                    o.frequency.value = freq;
+                    // soft ADSR
+                    g.gain.setValueAtTime(0, t);
+                    g.gain.linearRampToValueAtTime(vol, t + 0.025);
+                    g.gain.setValueAtTime(vol * 0.78, t + 0.1);
+                    g.gain.setValueAtTime(vol * 0.78, t + dur - 0.08);
+                    g.gain.linearRampToValueAtTime(0.0001, t + dur + 0.06);
+                    o.start(t);
+                    o.stop(t + dur + 0.1);
+                }
+
+                function scheduleLoop() {
+                    var t = nextAt;
+                    // Melody (sine, louder)
+                    MEL.forEach(function (n) {
+                        note(n[0], t, n[1], 0.22, "sine");
+                        t += n[1] * Q;
+                    });
+                    var len = MEL.reduce(function (s, n) {
+                        return s + n[1] * Q;
+                    }, 0);
+
+                    // Harmony (sine, softer, slight offset for warmth)
+                    var th = nextAt + 0.01;
+                    HAR.forEach(function (n) {
+                        note(n[0], th, n[1], 0.1, "sine");
+                        th += n[1] * Q;
+                    });
+
+                    // Bass (sine, very soft)
+                    var tb = nextAt;
+                    BAS.forEach(function (n) {
+                        note(n[0], tb, n[1], 0.08, "sine");
+                        tb += n[1] * Q;
+                    });
+
+                    nextAt += len;
+                    var ms = (nextAt - ctx.currentTime) * 1000 - 200;
+                    timer = setTimeout(scheduleLoop, Math.max(ms, 0));
+                }
+
+                function start() {
+                    if (ctx) return;
+                    ctx = new (
+                        window.AudioContext || window.webkitAudioContext
+                    )();
+                    nextAt = ctx.currentTime + 0.15;
+                    scheduleLoop();
+                }
+
+                // Start on first interaction (browser autoplay policy)
+                ["touchstart", "click", "keydown"].forEach(function (ev) {
+                    document.addEventListener(ev, function handler() {
+                        start();
+                        document.removeEventListener(ev, handler);
+                    });
+                });
+            })();
+
+            // &#9472;&#9472; Entry point &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+            window.addEventListener("DOMContentLoaded", () => {
+                document
+                    .getElementById("allFixturesBtn")
+                    .addEventListener("click", renderAllFixtures);
+
+                // Date filter
+                document
+                    .getElementById("dateFilterBtn")
+                    .addEventListener("click", () => {
+                        const wrap = document.getElementById("datePickerWrap");
+                        wrap.classList.remove("hidden");
+                        wrap.classList.add("flex");
+                    });
+                document
+                    .getElementById("datePickerCancel")
+                    .addEventListener("click", () => {
+                        const wrap = document.getElementById("datePickerWrap");
+                        wrap.classList.add("hidden");
+                        wrap.classList.remove("flex");
+                    });
+                document
+                    .getElementById("datePickerInput")
+                    .addEventListener("change", (e) => {
+                        if (e.target.value) {
+                            const wrap =
+                                document.getElementById("datePickerWrap");
+                            wrap.classList.add("hidden");
+                            wrap.classList.remove("flex");
+                            showDateFixtures(e.target.value);
+                        }
+                    });
+                document
+                    .getElementById("dateModalClose")
+                    .addEventListener("click", closeDateModal);
+                document
+                    .getElementById("dateModal")
+                    .addEventListener("click", (e) => {
+                        if (e.target === e.currentTarget) closeDateModal();
+                    });
+                document
+                    .getElementById("allFixturesClose")
+                    .addEventListener("click", closeAllFixtures);
+                document
+                    .getElementById("allFixturesModal")
+                    .addEventListener("click", (e) => {
+                        if (e.target === e.currentTarget) closeAllFixtures();
+                    });
+                boot();
+            });
+        </script>
+
+        <!-- All Fixtures Modal -->
+        <div
+            id="allFixturesModal"
+            class="hidden fixed inset-0 z-50 bg-black/80 flex items-end sm:items-center justify-center p-0 sm:p-4"
+        >
+            <div
+                class="bg-slate-900 border border-slate-700 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg max-h-[90vh] flex flex-col shadow-2xl"
+            >
+                <!-- Modal Header -->
+                <div
+                    class="flex items-center justify-between px-5 py-4 border-b border-slate-700 sticky top-0 bg-slate-900 rounded-t-2xl sm:rounded-t-2xl z-10"
+                >
+                    <div>
+                        <h2
+                            class="text-base font-extrabold text-amber-400 tracking-wide"
+                        >
+                            &#128203; All 2026 Fixtures
+                        </h2>
+                        <p class="text-xs text-slate-500">
+                            Groups A &#8211; L &#183; Live scores in
+                            <span id="tzLabelAll"></span>
+                        </p>
+                    </div>
+                    <button
+                        id="allFixturesClose"
+                        class="text-slate-400 hover:text-white transition text-xl leading-none px-2"
+                    >
+                        &#10005;
+                    </button>
+                </div>
+                <!-- Scrollable Body -->
+                <div
+                    id="allFixturesContainer"
+                    class="overflow-y-auto px-5 py-4 flex-1"
+                ></div>
+            </div>
+        </div>
+
+        <!-- Date Picker Overlay -->
+        <div
+            id="datePickerWrap"
+            class="hidden fixed inset-0 z-50 bg-black/70 items-center justify-center p-6"
+        >
+            <div
+                class="bg-slate-900 border border-slate-700 rounded-2xl p-6 w-full max-w-xs shadow-2xl space-y-4"
+            >
+                <h2 class="text-base font-extrabold text-amber-400 text-center">
+                    &#128197; Pick a Match Day
+                </h2>
+                <p class="text-xs text-slate-400 text-center">
+                    World Cup: 11 Jun &ndash; 19 Jul 2026
+                </p>
+                <input
+                    id="datePickerInput"
+                    type="date"
+                    min="2026-06-11"
+                    max="2026-07-19"
+                    class="w-full bg-slate-800 border border-slate-600 rounded-xl p-3 text-slate-200 focus:border-amber-500 focus:outline-none text-center text-sm"
+                    value=""
+                />
+                <button
+                    id="datePickerCancel"
+                    class="w-full text-slate-400 hover:text-white text-sm py-2 transition"
+                >
+                    Cancel
+                </button>
+            </div>
+        </div>
+
+        <!-- Date Fixtures Modal -->
+        <div
+            id="dateModal"
+            class="hidden fixed inset-0 z-50 bg-black/80 flex items-end sm:items-center justify-center p-0 sm:p-4"
+        >
+            <div
+                class="bg-slate-900 border border-slate-700 rounded-t-2xl sm:rounded-2xl w-full sm:max-w-lg max-h-[90vh] flex flex-col shadow-2xl"
+            >
+                <div
+                    class="flex items-center justify-between px-5 py-4 border-b border-slate-700 sticky top-0 bg-slate-900 rounded-t-2xl z-10"
+                >
+                    <div>
+                        <h2
+                            id="dateModalTitle"
+                            class="text-base font-extrabold text-amber-400 tracking-wide"
+                        ></h2>
+                        <p class="text-xs text-slate-500">
+                            Kick-off times in <span id="tzLabelDate"></span>
+                        </p>
+                    </div>
+                    <button
+                        id="dateModalClose"
+                        class="text-slate-400 hover:text-white transition text-xl leading-none px-2"
+                    >
+                        &#10005;
+                    </button>
+                </div>
+                <div
+                    id="dateContainer"
+                    class="overflow-y-auto px-5 py-4 flex-1"
+                ></div>
+            </div>
+        </div>
+    </body>
+</html>
