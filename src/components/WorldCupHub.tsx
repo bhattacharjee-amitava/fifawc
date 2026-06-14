@@ -1255,12 +1255,14 @@ function DateDialog({
   // date is always visible and its fixtures render beneath the picker.
   const [selected, setSelected] = useState("");
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [hasPicked, setHasPicked] = useState(false);
 
   useEffect(() => {
     if (!open) {
       setPickerOpen(false);
       return;
     }
+    setHasPicked(false);
     // Seed from the incoming value if it's a real in-window date, otherwise
     // default to tomorrow (clamped into the tournament window).
     if (value && value !== "PICK" && value >= TOURNAMENT_START && value <= TOURNAMENT_END) {
@@ -1296,7 +1298,11 @@ function DateDialog({
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className="w-full justify-between font-normal"
+              autoFocus
+              className={cn(
+                "w-full justify-between font-normal transition-all",
+                !hasPicked && "border-primary/60 ring-[3px] ring-primary/30",
+              )}
             >
               {selectedDate ? format(selectedDate, "PPP") : "Pick a date"}
               <ChevronDown className="opacity-50" />
@@ -1313,6 +1319,7 @@ function DateDialog({
                 // days in the UI; guard keyboard entry too.
                 if (iso < TOURNAMENT_START || iso > TOURNAMENT_END) return;
                 setSelected(iso);
+                setHasPicked(true);
                 setPickerOpen(false);
               }}
               defaultMonth={selectedDate ?? windowStart}
