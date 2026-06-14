@@ -2,12 +2,14 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'CopaKick 2026 Hub',
+    name: 'CopaKick · FIFA World Cup 2026',
     short_name: 'CopaKick',
+    description:
+      'FIFA World Cup 2026 fixtures and kickoff times in your local timezone.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#0f172a',
-    theme_color: '#f59e08',
+    background_color: '#0a0b09',
+    theme_color: '#0a0b09',
     icons: [
       {
         src: '/android-chrome-192x192.png',
