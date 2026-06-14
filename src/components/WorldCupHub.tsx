@@ -1254,6 +1254,51 @@ function AllFixturesDialog({
   tz: string;
 }) {
   const grouped = useMemo(() => groupMatches(matches), [matches]);
+  const isMobile = useIsMobile();
+
+  const body = (
+    <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+      {grouped.length === 0 ? (
+        <p className="py-8 text-center text-sm text-muted-foreground">
+          No fixtures yet.
+        </p>
+      ) : (
+        grouped.map(([label, list]) => (
+          <div key={label} className="mb-5">
+            <h3 className="mb-1.5 font-mono text-xs font-bold uppercase tracking-widest text-primary">
+              {label}
+            </h3>
+            {list.map((m) => (
+              <FixtureRow key={m.id} match={m} />
+            ))}
+          </div>
+        ))
+      )}
+    </div>
+  );
+
+  // Bottom sheet on phones, centred dialog on larger screens.
+  if (isMobile) {
+    return (
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent
+          side="bottom"
+          className="flex max-h-[88vh] flex-col gap-0 overflow-hidden rounded-t-2xl p-0"
+        >
+          <SheetHeader className="shrink-0 border-b border-border px-5 py-4 text-left">
+            <SheetTitle className="font-display text-base">
+              All 2026 fixtures
+            </SheetTitle>
+            <SheetDescription className="font-mono text-[11px]">
+              Groups A–L · knockouts · times in {tz}
+            </SheetDescription>
+          </SheetHeader>
+          {body}
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex max-h-[88vh] flex-col gap-0 overflow-hidden p-0 sm:max-w-lg">
@@ -1265,24 +1310,7 @@ function AllFixturesDialog({
             Groups A–L · knockouts · times in {tz}
           </DialogDescription>
         </DialogHeader>
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
-          {grouped.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">
-              No fixtures yet.
-            </p>
-          ) : (
-            grouped.map(([label, list]) => (
-              <div key={label} className="mb-5">
-                <h3 className="mb-1.5 font-mono text-xs font-bold uppercase tracking-widest text-primary">
-                  {label}
-                </h3>
-                {list.map((m) => (
-                  <FixtureRow key={m.id} match={m} />
-                ))}
-              </div>
-            ))
-          )}
-        </div>
+        {body}
       </DialogContent>
     </Dialog>
   );
