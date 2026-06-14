@@ -2,14 +2,19 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  ArrowRight,
+  Brain,
   CalendarDays,
+  Check,
   ChevronDown,
   Clock,
   ListTree,
   MapPin,
   RefreshCw,
+  RotateCcw,
   Search,
   Star,
+  Timer,
   Trophy,
   X,
 } from "lucide-react";
@@ -65,11 +70,20 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  OPTION_KEYS,
+  QUIZ_QUESTIONS,
+  type OptionKey,
+  type QuizQuestion,
+} from "@/lib/quiz";
 
 const CACHE_MATCHES = "copakick_matches_v3";
 const CACHE_TS = "copakick_ts_v3";
 const CACHE_TTL = 3 * 60 * 1000;
 const FOLLOW_KEY = "copakick_following_v1";
+const QUIZ_SEEN_KEY = "copakick_quiz_seen_v1";
+const QUIZ_ROUND_SIZE = 10;
+const QUIZ_TIMER_SECONDS = 20;
 
 type Status = "loading" | "ready" | "error";
 
@@ -161,7 +175,6 @@ function LocalClock() {
     <span className="flex items-center gap-1.5 font-mono text-[11px] tabular-nums text-muted-foreground">
       <Clock className="size-3 shrink-0 text-primary/70" />
       <span>{localClock(now)}</span>
-      <span className="text-muted-foreground/60">(YOUR LOCAL TIME)</span>
     </span>
   );
 }
@@ -404,6 +417,7 @@ export default function WorldCupHub() {
   const [following, setFollowing] = useState<Fav[]>([]);
   const [tz, setTz] = useState("");
   const [allOpen, setAllOpen] = useState(false);
+  const [quizOpen, setQuizOpen] = useState(false);
   const [dateISO, setDateISO] = useState<string | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchWrapRef = useRef<HTMLDivElement>(null);
@@ -510,7 +524,8 @@ export default function WorldCupHub() {
   // An active search that matches no team — show an empty state rather than
   // falling back to the default feed.
   const noMatches = useMemo(
-    () => query.trim().length >= 2 && getSuggestions(teamIndex, query).length === 0,
+    () =>
+      query.trim().length >= 2 && getSuggestions(teamIndex, query).length === 0,
     [teamIndex, query],
   );
 
@@ -609,6 +624,14 @@ export default function WorldCupHub() {
           </button>
 
           <div className="flex items-center gap-2 sm:gap-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setQuizOpen(true)}
+              className="h-8 gap-1.5 px-2 text-muted-foreground hover:text-primary"
+            >
+              <Brain className="size-4" /> Quiz
+            </Button>
             <LocalClock />
             {totals.live > 0 && (
               <span className="hidden items-center gap-1.5 rounded-md bg-live/15 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-live sm:inline-flex">
@@ -637,7 +660,9 @@ export default function WorldCupHub() {
           {showHero && (
             <div className="mb-6">
               <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-primary/80">
-                11 Jun – 19 Jul 2026 · USA · Canada · Mexico
+                <span>11 Jun – 19 Jul 2026</span>
+                <span className="hidden sm:inline"> · </span>
+                <span className="block sm:inline">USA · Canada · Mexico</span>
               </p>
               <h1 className="mt-2 font-display text-4xl font-extrabold leading-[0.95] tracking-tight sm:text-6xl">
                 The World Cup,
@@ -794,6 +819,7 @@ export default function WorldCupHub() {
         matches={matches}
         tz={tz}
       />
+      <QuizDialog open={quizOpen} onOpenChange={setQuizOpen} />
     </div>
   );
 }
@@ -1295,14 +1321,22 @@ function DateDialog({
     setHasPicked(false);
     // Seed from the incoming value if it's a real in-window date, otherwise
     // default to tomorrow (clamped into the tournament window).
-    if (value && value !== "PICK" && value >= TOURNAMENT_START && value <= TOURNAMENT_END) {
+    if (
+      value &&
+      value !== "PICK" &&
+      value >= TOURNAMENT_START &&
+      value <= TOURNAMENT_END
+    ) {
       setSelected(value);
       return;
     }
     const t = new Date();
     t.setDate(t.getDate() + 1);
     const clamped = new Date(
-      Math.min(Math.max(t.getTime(), windowStart.getTime()), windowEnd.getTime()),
+      Math.min(
+        Math.max(t.getTime(), windowStart.getTime()),
+        windowEnd.getTime(),
+      ),
     );
     setSelected(
       `2026-${String(clamped.getMonth() + 1).padStart(2, "0")}-${String(clamped.getDate()).padStart(2, "0")}`,
@@ -1406,6 +1440,321 @@ function DateDialog({
           </DialogDescription>
         </DialogHeader>
         {body}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// ── Quiz ─────────────────────────────────────────────────────────────────────
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+type QuizPhase = "playing" | "results" | "done";
+
+/** A 10-question round drawn from the unseen pool. Questions don't repeat until
+ *  the whole 100-bank has been answered (tracked in localStorage). A 20s timer
+ *  per question auto-locks it — keeps players from googling/AI-ing answers. */
+function QuizDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const isMobile = useIsMobile();
+
+  const [round, setRound] = useState<QuizQuestion[]>([]);
+  const [idx, setIdx] = useState(0);
+  const [selected, setSelected] = useState<OptionKey | null>(null);
+  const [locked, setLocked] = useState(false);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(QUIZ_TIMER_SECONDS);
+  const [seen, setSeen] = useState<number[]>([]);
+  const [phase, setPhase] = useState<QuizPhase>("playing");
+
+  const current = round[idx];
+
+  const markSeen = useCallback((id: number) => {
+    setSeen((prev) => {
+      if (prev.includes(id)) return prev;
+      const next = [...prev, id];
+      safeSave(QUIZ_SEEN_KEY, next);
+      return next;
+    });
+  }, []);
+
+  const startRound = useCallback(() => {
+    const s = safeJSON<number[]>(QUIZ_SEEN_KEY, []);
+    setSeen(s);
+    const unseen = QUIZ_QUESTIONS.filter((q) => !s.includes(q.id));
+    setSelected(null);
+    setLocked(false);
+    setCorrectCount(0);
+    setIdx(0);
+    setTimeLeft(QUIZ_TIMER_SECONDS);
+    if (unseen.length === 0) {
+      setRound([]);
+      setPhase("done");
+      return;
+    }
+    setRound(shuffle(unseen).slice(0, QUIZ_ROUND_SIZE));
+    setPhase("playing");
+  }, []);
+
+  // Fresh round each time the dialog opens.
+  useEffect(() => {
+    if (open) startRound();
+  }, [open, startRound]);
+
+  // Countdown — ticks only while a question is live and unanswered.
+  useEffect(() => {
+    if (!open || phase !== "playing" || locked || timeLeft <= 0) return;
+    const id = setTimeout(() => setTimeLeft((t) => t - 1), 1000);
+    return () => clearTimeout(id);
+  }, [open, phase, locked, timeLeft]);
+
+  // Time ran out → lock the question as missed.
+  useEffect(() => {
+    if (phase === "playing" && !locked && timeLeft === 0 && current) {
+      setLocked(true);
+      markSeen(current.id);
+    }
+  }, [timeLeft, phase, locked, current, markSeen]);
+
+  const choose = (key: OptionKey) => {
+    if (locked || !current) return;
+    setSelected(key);
+    setLocked(true);
+    if (key === current.correct_answer) setCorrectCount((c) => c + 1);
+    markSeen(current.id);
+  };
+
+  const next = () => {
+    if (idx + 1 < round.length) {
+      setIdx((i) => i + 1);
+      setSelected(null);
+      setLocked(false);
+      setTimeLeft(QUIZ_TIMER_SECONDS);
+    } else {
+      setPhase("results");
+    }
+  };
+
+  const restartBank = () => {
+    safeSave(QUIZ_SEEN_KEY, []);
+    startRound();
+  };
+
+  const remaining = QUIZ_QUESTIONS.length - seen.length;
+  const lowTime = timeLeft <= 5;
+
+  let content: React.ReactNode = null;
+
+  if (phase === "done") {
+    content = (
+      <div className="flex flex-col items-center px-6 py-12 text-center">
+        <Trophy className="size-9 text-primary" />
+        <p className="mt-4 font-display text-2xl font-extrabold">
+          You&rsquo;ve cleared all {QUIZ_QUESTIONS.length}!
+        </p>
+        <p className="mt-2 max-w-xs text-sm text-muted-foreground">
+          You&rsquo;ve answered every question in the bank. Reset to play
+          through them again.
+        </p>
+        <Button onClick={restartBank} className="mt-6 w-full">
+          <RotateCcw /> Restart the bank
+        </Button>
+      </div>
+    );
+  } else if (phase === "results") {
+    content = (
+      <div className="flex flex-col items-center px-6 py-10 text-center">
+        <Trophy className="size-8 text-primary" />
+        <p className="mt-3 font-display text-4xl font-extrabold tabular-nums">
+          {correctCount}
+          <span className="text-muted-foreground">/{round.length}</span>
+        </p>
+        <p className="mt-1 text-sm text-muted-foreground">correct this round</p>
+        <div className="mt-6 flex w-full flex-col gap-2.5">
+          {remaining > 0 ? (
+            <Button onClick={startRound} className="w-full">
+              Try another quiz <ArrowRight />
+            </Button>
+          ) : (
+            <Button onClick={restartBank} className="w-full">
+              <RotateCcw /> Restart the bank
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            onClick={() => onOpenChange(false)}
+            className="w-full"
+          >
+            Done
+          </Button>
+        </div>
+      </div>
+    );
+  } else if (current) {
+    content = (
+      <div className="flex min-h-0 flex-1 flex-col">
+        {/* Progress + timer */}
+        <div className="shrink-0 px-5 pt-4">
+          <div className="mb-2 flex items-center justify-between">
+            <Badge variant="secondary" className="font-mono text-[10px]">
+              {current.category}
+            </Badge>
+            <div
+              className={cn(
+                "flex items-center gap-1.5 font-mono text-sm tabular-nums",
+                lowTime ? "text-destructive" : "text-muted-foreground",
+              )}
+            >
+              <Timer className="size-4" />
+              {timeLeft}s
+            </div>
+          </div>
+          <div className="h-1 w-full overflow-hidden rounded-full bg-secondary">
+            <div
+              className={cn(
+                "h-full transition-all duration-1000 ease-linear",
+                lowTime ? "bg-destructive" : "bg-primary",
+              )}
+              style={{ width: `${(timeLeft / QUIZ_TIMER_SECONDS) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Question + options (scrollable) */}
+        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+          <p className="font-mono text-[11px] text-muted-foreground">
+            Question {idx + 1} of {round.length}
+          </p>
+          <h2 className="mt-1.5 font-display text-lg font-bold leading-snug">
+            {current.question}
+          </h2>
+
+          <div className="mt-4 flex flex-col gap-2.5">
+            {OPTION_KEYS.map((key) => {
+              const isCorrect = key === current.correct_answer;
+              const isChosen = key === selected;
+              return (
+                <button
+                  key={key}
+                  disabled={locked}
+                  onClick={() => choose(key)}
+                  className={cn(
+                    "flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left text-sm transition",
+                    !locked &&
+                      "border-border bg-card/60 hover:border-primary/50 hover:bg-secondary",
+                    locked && isCorrect && "border-primary/60 bg-primary/15",
+                    locked &&
+                      isChosen &&
+                      !isCorrect &&
+                      "border-destructive/60 bg-destructive/15",
+                    locked && !isCorrect && !isChosen && "opacity-50",
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "grid size-7 shrink-0 place-items-center rounded-md font-mono text-xs font-bold",
+                      locked && isCorrect
+                        ? "bg-primary text-primary-foreground"
+                        : locked && isChosen && !isCorrect
+                          ? "bg-destructive text-white"
+                          : "bg-secondary text-muted-foreground",
+                    )}
+                  >
+                    {locked && isCorrect ? (
+                      <Check className="size-4" />
+                    ) : locked && isChosen && !isCorrect ? (
+                      <X className="size-4" />
+                    ) : (
+                      key
+                    )}
+                  </span>
+                  <span className="font-medium">{current.options[key]}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {locked && (
+            <div className="mt-4 rounded-xl border border-border bg-secondary/40 px-4 py-3 text-sm text-muted-foreground">
+              {selected === null && (
+                <p className="mb-1 font-semibold text-destructive">
+                  Time&rsquo;s up!
+                </p>
+              )}
+              {current.explanation}
+            </div>
+          )}
+        </div>
+
+        {/* Advance */}
+        {locked && (
+          <div className="shrink-0 border-t border-border px-5 py-4">
+            <Button onClick={next} className="w-full">
+              {idx + 1 < round.length ? "Next question" : "See results"}
+              <ArrowRight />
+            </Button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  const header = (
+    <>
+      <div className="flex items-center gap-2 font-display text-base font-bold">
+        <Brain className="size-4 text-primary" /> World Cup Quiz
+      </div>
+      <p className="font-mono text-[11px] text-muted-foreground">
+        20s per question
+      </p>
+    </>
+  );
+
+  if (isMobile) {
+    return (
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent
+          side="bottom"
+          className="flex max-h-[90vh] flex-col gap-0 rounded-t-2xl p-0"
+        >
+          <SheetHeader className="shrink-0 border-b border-border px-5 py-4 text-left">
+            <SheetTitle asChild>
+              <div>{header}</div>
+            </SheetTitle>
+            <SheetDescription className="sr-only">
+              World Cup trivia quiz
+            </SheetDescription>
+          </SheetHeader>
+          {content}
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="flex max-h-[88vh] flex-col gap-0 p-0 sm:max-w-md">
+        <DialogHeader className="shrink-0 border-b border-border px-5 py-4 text-left">
+          <DialogTitle asChild>
+            <div>{header}</div>
+          </DialogTitle>
+          <DialogDescription className="sr-only">
+            World Cup trivia quiz
+          </DialogDescription>
+        </DialogHeader>
+        {content}
       </DialogContent>
     </Dialog>
   );

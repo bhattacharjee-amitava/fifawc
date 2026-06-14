@@ -1,0 +1,1315 @@
+{
+  "quiz_title": "FIFA World Cup Ultimate Quiz",
+  "total_questions": 100,
+  "categories": [
+    "Tournament History",
+    "Legends & Icons",
+    "Never Won But All-Time Greats",
+    "Records & Stats",
+    "Iconic Moments",
+    "Host Nations",
+    "2026 World Cup"
+  ],
+  "questions": [
+    {
+      "id": 1,
+      "category": "Tournament History",
+      "question": "Which country hosted the very first FIFA World Cup in 1930?",
+      "options": {
+        "A": "Brazil",
+        "B": "Argentina",
+        "C": "Uruguay",
+        "D": "Italy"
+      },
+      "correct_answer": "C",
+      "explanation": "Uruguay hosted the inaugural FIFA World Cup in 1930 and also won it, defeating Argentina 4-2 in the final."
+    },
+    {
+      "id": 2,
+      "category": "Tournament History",
+      "question": "Which nation was the first to successfully defend the FIFA World Cup title?",
+      "options": {
+        "A": "Brazil",
+        "B": "Germany",
+        "C": "Argentina",
+        "D": "Italy"
+      },
+      "correct_answer": "D",
+      "explanation": "Italy won consecutive World Cups in 1934 and 1938, becoming the first nation to defend the title."
+    },
+    {
+      "id": 3,
+      "category": "Tournament History",
+      "question": "What is the name given to Uruguay's shock 2-1 win over Brazil in the 1950 World Cup final round?",
+      "options": {
+        "A": "El Clasico",
+        "B": "Maracanazo",
+        "C": "La Final Grande",
+        "D": "Copa Milagro"
+      },
+      "correct_answer": "B",
+      "explanation": "The term 'Maracanazo' refers to Uruguay's stunning upset over host nation Brazil at the Maracanã Stadium in 1950, widely considered one of the greatest shocks in football history."
+    },
+    {
+      "id": 4,
+      "category": "Tournament History",
+      "question": "Which country has won the most FIFA World Cup titles?",
+      "options": {
+        "A": "Germany",
+        "B": "Italy",
+        "C": "Argentina",
+        "D": "Brazil"
+      },
+      "correct_answer": "D",
+      "explanation": "Brazil leads all nations with five World Cup titles — 1958, 1962, 1970, 1994, and 2002."
+    },
+    {
+      "id": 5,
+      "category": "Tournament History",
+      "question": "In what year did England win their only FIFA World Cup?",
+      "options": {
+        "A": "1962",
+        "B": "1966",
+        "C": "1970",
+        "D": "1974"
+      },
+      "correct_answer": "B",
+      "explanation": "England won their one and only World Cup in 1966 on home soil at Wembley, defeating West Germany 4-2 in the final."
+    },
+    {
+      "id": 6,
+      "category": "Tournament History",
+      "question": "Which World Cup final saw Zinedine Zidane infamously headbutt Marco Materazzi?",
+      "options": {
+        "A": "2002",
+        "B": "2010",
+        "C": "2006",
+        "D": "1998"
+      },
+      "correct_answer": "C",
+      "explanation": "In the 2006 World Cup final between France and Italy, Zidane headbutted Materazzi in extra time and was sent off. Italy won on penalties."
+    },
+    {
+      "id": 7,
+      "category": "Tournament History",
+      "question": "Which two World Cups were cancelled due to World War II?",
+      "options": {
+        "A": "1938 and 1942",
+        "B": "1942 and 1946",
+        "C": "1940 and 1944",
+        "D": "1944 and 1948"
+      },
+      "correct_answer": "B",
+      "explanation": "The 1942 and 1946 World Cups were cancelled due to World War II, leaving Italy as world champions for 12 years from 1938 to 1950."
+    },
+    {
+      "id": 8,
+      "category": "Tournament History",
+      "question": "Which country won the 2022 FIFA World Cup in Qatar?",
+      "options": {
+        "A": "France",
+        "B": "Brazil",
+        "C": "Argentina",
+        "D": "Croatia"
+      },
+      "correct_answer": "C",
+      "explanation": "Argentina defeated France in the 2022 final in Qatar, winning 4-2 on penalties after a 3-3 draw — one of the greatest finals in World Cup history."
+    },
+    {
+      "id": 9,
+      "category": "Tournament History",
+      "question": "What was the scoreline in the 2022 World Cup final between Argentina and France after full-time (90 minutes)?",
+      "options": {
+        "A": "1-1",
+        "B": "2-2",
+        "C": "3-3",
+        "D": "2-1"
+      },
+      "correct_answer": "B",
+      "explanation": "The 2022 final was 2-2 after 90 minutes, with Mbappé scoring twice in 90 seconds late on to cancel out Argentina's 2-0 lead. It reached 3-3 in extra time before Argentina won 4-2 on penalties."
+    },
+    {
+      "id": 10,
+      "category": "Tournament History",
+      "question": "Which country won the first FIFA World Cup held in Africa?",
+      "options": {
+        "A": "Argentina",
+        "B": "Spain",
+        "C": "Germany",
+        "D": "Italy"
+      },
+      "correct_answer": "B",
+      "explanation": "Spain won the 2010 World Cup hosted in South Africa — the first held on the African continent — defeating the Netherlands 1-0 in the final."
+    },
+    {
+      "id": 11,
+      "category": "Legends & Icons",
+      "question": "Pelé is the only player to have won how many FIFA World Cups?",
+      "options": {
+        "A": "2",
+        "B": "3",
+        "C": "4",
+        "D": "1"
+      },
+      "correct_answer": "B",
+      "explanation": "Pelé won three FIFA World Cups with Brazil — in 1958, 1962, and 1970 — making him the only player ever to achieve this feat."
+    },
+    {
+      "id": 12,
+      "category": "Legends & Icons",
+      "question": "Who scored the famous 'Hand of God' goal in the 1986 World Cup?",
+      "options": {
+        "A": "Pelé",
+        "B": "Ronaldo",
+        "C": "Diego Maradona",
+        "D": "Zico"
+      },
+      "correct_answer": "C",
+      "explanation": "Diego Maradona scored the infamous 'Hand of God' goal against England in the 1986 World Cup quarter-final, using his hand to punch the ball into the net."
+    },
+    {
+      "id": 13,
+      "category": "Legends & Icons",
+      "question": "Which player scored what Maradona himself called the 'Goal of the Century' at the 1986 World Cup?",
+      "options": {
+        "A": "Pelé",
+        "B": "Diego Maradona",
+        "C": "Ronaldo",
+        "D": "Zidane"
+      },
+      "correct_answer": "B",
+      "explanation": "Maradona scored both the 'Hand of God' and the 'Goal of the Century' against England in 1986 — the latter involved him dribbling past five English players and the goalkeeper."
+    },
+    {
+      "id": 14,
+      "category": "Legends & Icons",
+      "question": "Which player is the all-time leading scorer in FIFA World Cup history?",
+      "options": {
+        "A": "Pelé",
+        "B": "Ronaldo Nazario",
+        "C": "Miroslav Klose",
+        "D": "Gerd Müller"
+      },
+      "correct_answer": "C",
+      "explanation": "Germany's Miroslav Klose scored 16 goals across four World Cups (2002-2014), making him the tournament's all-time leading scorer."
+    },
+    {
+      "id": 15,
+      "category": "Legends & Icons",
+      "question": "How many World Cup goals did Ronaldo Nazario of Brazil score in his career?",
+      "options": {
+        "A": "12",
+        "B": "15",
+        "C": "16",
+        "D": "13"
+      },
+      "correct_answer": "B",
+      "explanation": "Ronaldo Nazario scored 15 World Cup goals across three tournaments (1998, 2002, 2006), making him second only to Miroslav Klose on the all-time list."
+    },
+    {
+      "id": 16,
+      "category": "Legends & Icons",
+      "question": "Geoff Hurst is the only player to score a hat-trick in a World Cup final. Which year was this?",
+      "options": {
+        "A": "1962",
+        "B": "1966",
+        "C": "1970",
+        "D": "1974"
+      },
+      "correct_answer": "B",
+      "explanation": "Geoff Hurst scored three goals in the 1966 World Cup final as England defeated West Germany 4-2, making him the only player to score a hat-trick in a World Cup final."
+    },
+    {
+      "id": 17,
+      "category": "Legends & Icons",
+      "question": "Lionel Messi won the Golden Ball (best player award) at how many World Cups?",
+      "options": {
+        "A": "1",
+        "B": "2",
+        "C": "3",
+        "D": "4"
+      },
+      "correct_answer": "B",
+      "explanation": "Messi won the Golden Ball at both the 2014 and 2022 World Cups, making him the only player to win the award more than once."
+    },
+    {
+      "id": 18,
+      "category": "Legends & Icons",
+      "question": "Which Brazilian legend scored in every single match at the 1970 World Cup?",
+      "options": {
+        "A": "Pelé",
+        "B": "Rivellino",
+        "C": "Jairzinho",
+        "D": "Tostão"
+      },
+      "correct_answer": "C",
+      "explanation": "Jairzinho scored in all six matches Brazil played at the 1970 World Cup, a unique feat that has never been repeated."
+    },
+    {
+      "id": 19,
+      "category": "Legends & Icons",
+      "question": "West Germany's Franz Beckenbauer won the World Cup as both a player and a manager. In which years?",
+      "options": {
+        "A": "1970 (player) and 1990 (manager)",
+        "B": "1974 (player) and 1990 (manager)",
+        "C": "1974 (player) and 1986 (manager)",
+        "D": "1966 (player) and 1990 (manager)"
+      },
+      "correct_answer": "B",
+      "explanation": "Franz Beckenbauer won the World Cup as a player in 1974 and then as the West Germany manager in 1990, one of only two people to achieve this."
+    },
+    {
+      "id": 20,
+      "category": "Legends & Icons",
+      "question": "Which goalkeeper won the Golden Glove (best goalkeeper award) at the 2018 FIFA World Cup?",
+      "options": {
+        "A": "Manuel Neuer",
+        "B": "Hugo Lloris",
+        "C": "Kasper Schmeichel",
+        "D": "Thibaut Courtois"
+      },
+      "correct_answer": "D",
+      "explanation": "Thibaut Courtois of Belgium won the Golden Glove at the 2018 World Cup with a string of outstanding performances, including a brilliant display in Belgium's quarter-final win over Brazil."
+    },
+    {
+      "id": 21,
+      "category": "Never Won But All-Time Greats",
+      "question": "Johan Cruyff's Netherlands lost the 1974 World Cup final to which nation?",
+      "options": {
+        "A": "Brazil",
+        "B": "Argentina",
+        "C": "West Germany",
+        "D": "England"
+      },
+      "correct_answer": "C",
+      "explanation": "Johan Cruyff led the Netherlands to the 1974 World Cup final, where they lost 2-1 to hosts West Germany, ending Cruyff's only chance of World Cup glory."
+    },
+    {
+      "id": 22,
+      "category": "Never Won But All-Time Greats",
+      "question": "Eusébio of Portugal scored how many goals at the 1966 World Cup — his only World Cup?",
+      "options": {
+        "A": "6",
+        "B": "7",
+        "C": "9",
+        "D": "11"
+      },
+      "correct_answer": "C",
+      "explanation": "Eusébio scored nine goals at the 1966 World Cup, finishing as the tournament's top scorer and helping Portugal finish third."
+    },
+    {
+      "id": 23,
+      "category": "Never Won But All-Time Greats",
+      "question": "Which legendary Hungarian player scored in the 1954 World Cup final but still finished on the losing side?",
+      "options": {
+        "A": "Nándor Hidegkuti",
+        "B": "Ferenc Puskás",
+        "C": "Zoltán Czibor",
+        "D": "Sándor Kocsis"
+      },
+      "correct_answer": "B",
+      "explanation": "Ferenc Puskás scored in the 1954 World Cup final as Hungary took an early 2-0 lead, but West Germany came back to win 3-2 in what became known as the 'Miracle of Bern'."
+    },
+    {
+      "id": 24,
+      "category": "Never Won But All-Time Greats",
+      "question": "Roberto Baggio missed the decisive penalty in which World Cup final?",
+      "options": {
+        "A": "1990",
+        "B": "1994",
+        "C": "1998",
+        "D": "2002"
+      },
+      "correct_answer": "B",
+      "explanation": "Roberto Baggio missed the decisive penalty in the 1994 World Cup final shootout against Brazil, handing Brazil their fourth title."
+    },
+    {
+      "id": 25,
+      "category": "Never Won But All-Time Greats",
+      "question": "George Best, widely considered one of the greatest footballers ever, never played in a World Cup because his country never qualified. Which country did he play for?",
+      "options": {
+        "A": "Republic of Ireland",
+        "B": "Scotland",
+        "C": "Northern Ireland",
+        "D": "Wales"
+      },
+      "correct_answer": "C",
+      "explanation": "George Best played for Northern Ireland, who never qualified for the World Cup during his active international career."
+    },
+    {
+      "id": 26,
+      "category": "Never Won But All-Time Greats",
+      "question": "Alfredo Di Stéfano, widely rated among the greatest players of all time, never played in a World Cup. Why?",
+      "options": {
+        "A": "He was banned by FIFA",
+        "B": "He was always injured during qualifying",
+        "C": "Neither Argentina nor Spain qualified during his peak years",
+        "D": "He refused to play international football"
+      },
+      "correct_answer": "C",
+      "explanation": "Di Stéfano represented both Argentina and Spain but neither country qualified for the World Cup during his peak years, one of football's great 'what ifs'."
+    },
+    {
+      "id": 27,
+      "category": "Never Won But All-Time Greats",
+      "question": "Zico, one of Brazil's greatest players, was knocked out at which stage at the 1982 World Cup — the tournament where his team was considered the best?",
+      "options": {
+        "A": "Quarter-final",
+        "B": "Second group stage",
+        "C": "Semi-final",
+        "D": "Round of 16"
+      },
+      "correct_answer": "B",
+      "explanation": "Brazil's brilliant 1982 team, with Zico at its heart, was eliminated in the second group stage by eventual champions Italy in a match that produced one of the World Cup's greatest upsets."
+    },
+    {
+      "id": 28,
+      "category": "Never Won But All-Time Greats",
+      "question": "Paolo Maldini, one of the greatest defenders ever, won everything at club level but the World Cup eluded him. How many World Cups did he appear in?",
+      "options": {
+        "A": "2",
+        "B": "3",
+        "C": "4",
+        "D": "5"
+      },
+      "correct_answer": "C",
+      "explanation": "Paolo Maldini appeared in four World Cups (1990, 1994, 1998, 2002) with Italy but never won the trophy, despite his country reaching the final twice in that span."
+    },
+    {
+      "id": 29,
+      "category": "Never Won But All-Time Greats",
+      "question": "Michel Platini won three consecutive Ballon d'Or awards but never won a World Cup. What was France's best result during his era?",
+      "options": {
+        "A": "Runner-up in 1982",
+        "B": "Third place in 1986",
+        "C": "Quarter-final in 1978",
+        "D": "Runner-up in 1978"
+      },
+      "correct_answer": "B",
+      "explanation": "France under Michel Platini finished third at the 1986 World Cup in Mexico — his best result at the tournament."
+    },
+    {
+      "id": 30,
+      "category": "Never Won But All-Time Greats",
+      "question": "Cristiano Ronaldo has scored in how many different FIFA World Cup editions?",
+      "options": {
+        "A": "3",
+        "B": "4",
+        "C": "5",
+        "D": "6"
+      },
+      "correct_answer": "C",
+      "explanation": "Cristiano Ronaldo scored in five different World Cup editions — 2006, 2010, 2014, 2018, and 2022 — a remarkable consistency over two decades."
+    },
+    {
+      "id": 31,
+      "category": "Records & Stats",
+      "question": "What is the highest-scoring match in World Cup history?",
+      "options": {
+        "A": "Hungary 10-1 El Salvador (1982)",
+        "B": "Austria 7-5 Switzerland (1954)",
+        "C": "Germany 8-0 Saudi Arabia (2002)",
+        "D": "Yugoslavia 9-0 Zaire (1974)"
+      },
+      "correct_answer": "B",
+      "explanation": "Austria's 7-5 win over Switzerland in 1954 produced 12 goals, the most in a single World Cup match to this day."
+    },
+    {
+      "id": 32,
+      "category": "Records & Stats",
+      "question": "Who scored the fastest goal in World Cup history?",
+      "options": {
+        "A": "Oleg Salenko",
+        "B": "Hakan Şükür",
+        "C": "Just Fontaine",
+        "D": "Gerd Müller"
+      },
+      "correct_answer": "B",
+      "explanation": "Turkey's Hakan Şükür scored after just 10.89 seconds against South Korea in the 2002 third-place play-off, the fastest goal in World Cup history."
+    },
+    {
+      "id": 33,
+      "category": "Records & Stats",
+      "question": "Who is the youngest player ever to appear in a World Cup match?",
+      "options": {
+        "A": "Pelé",
+        "B": "Cesc Fàbregas",
+        "C": "Norman Whiteside",
+        "D": "Wayne Rooney"
+      },
+      "correct_answer": "C",
+      "explanation": "Norman Whiteside of Northern Ireland was 17 years and 41 days old when he appeared at the 1982 World Cup in Spain, making him the youngest player in tournament history."
+    },
+    {
+      "id": 34,
+      "category": "Records & Stats",
+      "question": "Who is the oldest player to appear in a World Cup match?",
+      "options": {
+        "A": "Roger Milla",
+        "B": "Faryd Mondragón",
+        "C": "Essam El-Hadary",
+        "D": "Dino Zoff"
+      },
+      "correct_answer": "C",
+      "explanation": "Egypt's goalkeeper Essam El-Hadary was 45 years and 161 days old when he played against Saudi Arabia at the 2018 World Cup, making him the oldest player in tournament history."
+    },
+    {
+      "id": 35,
+      "category": "Records & Stats",
+      "question": "Who is the oldest player to score a World Cup goal?",
+      "options": {
+        "A": "Dino Zoff",
+        "B": "Roger Milla",
+        "C": "Pelé",
+        "D": "Lothar Matthäus"
+      },
+      "correct_answer": "B",
+      "explanation": "Cameroon's Roger Milla scored at age 42 at the 1994 World Cup in the USA, making him the oldest scorer in World Cup history."
+    },
+    {
+      "id": 36,
+      "category": "Records & Stats",
+      "question": "Just Fontaine of France holds the record for most goals in a single World Cup tournament. How many did he score?",
+      "options": {
+        "A": "11",
+        "B": "13",
+        "C": "10",
+        "D": "15"
+      },
+      "correct_answer": "B",
+      "explanation": "Just Fontaine scored 13 goals at the 1958 World Cup in Sweden, a record for a single tournament that has never been broken."
+    },
+    {
+      "id": 37,
+      "category": "Records & Stats",
+      "question": "Which player scored five goals in a single World Cup match in 1994?",
+      "options": {
+        "A": "Davor Šuker",
+        "B": "Hristo Stoichkov",
+        "C": "Oleg Salenko",
+        "D": "Romário"
+      },
+      "correct_answer": "C",
+      "explanation": "Russia's Oleg Salenko scored five goals against Cameroon at the 1994 World Cup, the most goals scored by one player in a single World Cup match."
+    },
+    {
+      "id": 38,
+      "category": "Records & Stats",
+      "question": "Germany famously beat Brazil 7-1 in the 2014 World Cup semi-final. What is this result commonly known as?",
+      "options": {
+        "A": "Das Wunder",
+        "B": "Mineirazo",
+        "C": "Die Tragödie",
+        "D": "Gelbe Wand"
+      },
+      "correct_answer": "B",
+      "explanation": "The 7-1 semi-final defeat of Brazil by Germany at the Estádio Mineirão in Belo Horizonte is widely referred to as the 'Mineirazo'."
+    },
+    {
+      "id": 39,
+      "category": "Records & Stats",
+      "question": "Haiti returned to the FIFA World Cup at the 2026 edition after how many years away from the tournament?",
+      "options": {
+        "A": "24 years",
+        "B": "40 years",
+        "C": "32 years",
+        "D": "52 years"
+      },
+      "correct_answer": "D",
+      "explanation": "Haiti last appeared at the 1974 World Cup in West Germany, making their return at 2026 an absence of 52 years — one of the longest gaps in World Cup history."
+    },
+    {
+      "id": 40,
+      "category": "Records & Stats",
+      "question": "The 2026 World Cup expanded the tournament to how many teams?",
+      "options": {
+        "A": "32",
+        "B": "36",
+        "C": "40",
+        "D": "48"
+      },
+      "correct_answer": "D",
+      "explanation": "The 2026 World Cup expanded from 32 to 48 teams, making it the largest edition ever and featuring 104 matches across three host nations."
+    },
+    {
+      "id": 41,
+      "category": "Iconic Moments",
+      "question": "Which World Cup match saw Diego Maradona score both the 'Hand of God' and the 'Goal of the Century'?",
+      "options": {
+        "A": "Argentina vs. England, Quarter-final, 1986",
+        "B": "Argentina vs. West Germany, Final, 1986",
+        "C": "Argentina vs. Belgium, Semi-final, 1986",
+        "D": "Argentina vs. Brazil, Quarter-final, 1986"
+      },
+      "correct_answer": "A",
+      "explanation": "Both iconic goals were scored in the 1986 World Cup quarter-final between Argentina and England in Mexico City."
+    },
+    {
+      "id": 42,
+      "category": "Iconic Moments",
+      "question": "The 2002 World Cup produced a historic double shock. Which two powerhouses — one the reigning world champions, the other the reigning Copa América champions — were both eliminated at the group stage?",
+      "options": {
+        "A": "Brazil and Italy",
+        "B": "France and Argentina",
+        "C": "Germany and Spain",
+        "D": "Portugal and England"
+      },
+      "correct_answer": "B",
+      "explanation": "In one of the most shocking group-stage collapses in history, reigning World Cup holders France (who didn't score a single goal) and reigning Copa América holders Argentina were both eliminated in the group stage of the 2002 World Cup."
+    },
+    {
+      "id": 43,
+      "category": "Iconic Moments",
+      "question": "Which nation stunned Argentina 2-1 in the group stage at the 2022 World Cup?",
+      "options": {
+        "A": "Mexico",
+        "B": "Poland",
+        "C": "Saudi Arabia",
+        "D": "UAE"
+      },
+      "correct_answer": "C",
+      "explanation": "Saudi Arabia produced one of the biggest upsets in World Cup history, defeating reigning Copa América champions Argentina 2-1 in the group stage of the 2022 World Cup."
+    },
+    {
+      "id": 44,
+      "category": "Iconic Moments",
+      "question": "Which World Cup saw the USA famously beat England 1-0 in the group stage?",
+      "options": {
+        "A": "1950",
+        "B": "1966",
+        "C": "1994",
+        "D": "2010"
+      },
+      "correct_answer": "A",
+      "explanation": "The USA stunned England 1-0 at the 1950 World Cup in Brazil in what is considered one of the greatest upsets in the tournament's history."
+    },
+    {
+      "id": 45,
+      "category": "Iconic Moments",
+      "question": "At the 1966 World Cup, the Jules Rimet trophy was stolen before the tournament began. Where was it later found?",
+      "options": {
+        "A": "Hidden in a church",
+        "B": "Under a hedge by a dog named Pickles",
+        "C": "In a river in London",
+        "D": "In a pawnshop in Birmingham"
+      },
+      "correct_answer": "B",
+      "explanation": "The Jules Rimet trophy was recovered from under a garden hedge in London by a dog named Pickles, just seven days after it was stolen from an exhibition."
+    },
+    {
+      "id": 46,
+      "category": "Iconic Moments",
+      "question": "Pelé was the first person to score a goal in a World Cup final as a teenager. How old was he?",
+      "options": {
+        "A": "16",
+        "B": "17",
+        "C": "18",
+        "D": "19"
+      },
+      "correct_answer": "B",
+      "explanation": "Pelé scored in the 1958 World Cup final against Sweden at just 17 years old, becoming the youngest goalscorer in a World Cup final."
+    },
+    {
+      "id": 47,
+      "category": "Iconic Moments",
+      "question": "Argentina were the defending World Cup champions going into 1990. How far did they go under Maradona?",
+      "options": {
+        "A": "Quarter-final",
+        "B": "Semi-final",
+        "C": "Runner-up",
+        "D": "Group stage"
+      },
+      "correct_answer": "C",
+      "explanation": "Argentina reached the 1990 World Cup final as defending champions but lost 1-0 to West Germany through an Andreas Brehme penalty — denying Maradona a second title."
+    },
+    {
+      "id": 48,
+      "category": "Iconic Moments",
+      "question": "Which African nation produced one of the biggest World Cup upsets by beating defending champions Argentina 1-0 in the opening match of the 1990 tournament?",
+      "options": {
+        "A": "Nigeria",
+        "B": "Cameroon",
+        "C": "Senegal",
+        "D": "Morocco"
+      },
+      "correct_answer": "B",
+      "explanation": "Cameroon beat defending champions Argentina 1-0 in the opening match of the 1990 World Cup in Milan — one of the greatest upsets in tournament history. Roger Milla came off the bench to inspire them to the quarter-finals."
+    },
+    {
+      "id": 49,
+      "category": "Iconic Moments",
+      "question": "In which year did Morocco become the first African nation to reach the World Cup semi-finals?",
+      "options": {
+        "A": "2002",
+        "B": "2010",
+        "C": "2018",
+        "D": "2022"
+      },
+      "correct_answer": "D",
+      "explanation": "Morocco made history at the 2022 World Cup in Qatar by becoming the first African nation to reach the semi-finals, defeating heavyweights Belgium, Spain, and Portugal along the way."
+    },
+    {
+      "id": 50,
+      "category": "Iconic Moments",
+      "question": "Which player scored the winning goal in extra time in the 2014 World Cup final for Germany against Argentina?",
+      "options": {
+        "A": "Thomas Müller",
+        "B": "Toni Kroos",
+        "C": "Mario Götze",
+        "D": "Miroslav Klose"
+      },
+      "correct_answer": "C",
+      "explanation": "Mario Götze scored a stunning extra-time winner in the 2014 World Cup final — controlling a cross on his chest and volleying it past Sergio Romero from close range to give Germany a 1-0 win."
+    },
+    {
+      "id": 51,
+      "category": "Host Nations",
+      "question": "How many host nations have won the FIFA World Cup on home soil?",
+      "options": {
+        "A": "4",
+        "B": "5",
+        "C": "6",
+        "D": "7"
+      },
+      "correct_answer": "C",
+      "explanation": "Six nations have won the World Cup as hosts: Uruguay (1930), Italy (1934), England (1966), West Germany (1974), Argentina (1978), and France (1998)."
+    },
+    {
+      "id": 52,
+      "category": "Host Nations",
+      "question": "Which was the first World Cup hosted in Asia?",
+      "options": {
+        "A": "1994 USA",
+        "B": "2002 Japan/South Korea",
+        "C": "2010 South Africa",
+        "D": "2022 Qatar"
+      },
+      "correct_answer": "B",
+      "explanation": "The 2002 World Cup in Japan and South Korea was the first held in Asia and also the first to be co-hosted by two nations."
+    },
+    {
+      "id": 53,
+      "category": "Host Nations",
+      "question": "Which three countries are co-hosting the 2026 FIFA World Cup?",
+      "options": {
+        "A": "USA, Mexico and Canada",
+        "B": "USA, Brazil and Canada",
+        "C": "Mexico, Colombia and USA",
+        "D": "Canada, Argentina and USA"
+      },
+      "correct_answer": "A",
+      "explanation": "The 2026 FIFA World Cup is hosted by the USA, Mexico, and Canada — the first World Cup to have three host nations."
+    },
+    {
+      "id": 54,
+      "category": "Host Nations",
+      "question": "Which stadium hosted the 2026 FIFA World Cup opening ceremony?",
+      "options": {
+        "A": "Rose Bowl, Los Angeles",
+        "B": "Azteca Stadium, Mexico City",
+        "C": "BMO Field, Toronto",
+        "D": "MetLife Stadium, New Jersey"
+      },
+      "correct_answer": "B",
+      "explanation": "The 2026 FIFA World Cup opening ceremony was held at the Azteca Stadium in Mexico City, with Mexico playing the first match."
+    },
+    {
+      "id": 55,
+      "category": "Host Nations",
+      "question": "Brazil hosted the World Cup in which two years?",
+      "options": {
+        "A": "1938 and 1970",
+        "B": "1950 and 2014",
+        "C": "1962 and 1994",
+        "D": "1950 and 1970"
+      },
+      "correct_answer": "B",
+      "explanation": "Brazil hosted the FIFA World Cup in 1950 (when they were upset by Uruguay in the final match) and in 2014 (when they lost 7-1 to Germany in the semi-final)."
+    },
+    {
+      "id": 56,
+      "category": "Host Nations",
+      "question": "Which was the first Middle Eastern nation to host the FIFA World Cup?",
+      "options": {
+        "A": "UAE",
+        "B": "Saudi Arabia",
+        "C": "Qatar",
+        "D": "Bahrain"
+      },
+      "correct_answer": "C",
+      "explanation": "Qatar hosted the 2022 FIFA World Cup, becoming the first Middle Eastern nation to host the tournament. The timing was also changed to November-December due to the extreme summer heat."
+    },
+    {
+      "id": 57,
+      "category": "Host Nations",
+      "question": "Argentina won the 1978 World Cup on home soil. Who did they beat in the final?",
+      "options": {
+        "A": "Brazil",
+        "B": "Italy",
+        "C": "Netherlands",
+        "D": "West Germany"
+      },
+      "correct_answer": "C",
+      "explanation": "Argentina defeated the Netherlands 3-1 in the 1978 World Cup final in Buenos Aires to win their first World Cup title on home soil."
+    },
+    {
+      "id": 58,
+      "category": "Host Nations",
+      "question": "France won the 1998 World Cup at home. Who scored a brace in the final?",
+      "options": {
+        "A": "Thierry Henry",
+        "B": "David Trezeguet",
+        "C": "Zinedine Zidane",
+        "D": "Patrick Vieira"
+      },
+      "correct_answer": "C",
+      "explanation": "Zinedine Zidane scored twice — both with headers — in France's 3-0 defeat of Brazil in the 1998 World Cup final at the Stade de France."
+    },
+    {
+      "id": 59,
+      "category": "Host Nations",
+      "question": "How many World Cups has Germany/West Germany hosted?",
+      "options": {
+        "A": "1",
+        "B": "2",
+        "C": "3",
+        "D": "0"
+      },
+      "correct_answer": "B",
+      "explanation": "Germany hosted the World Cup twice — West Germany in 1974 (which they won) and Germany again in 2006."
+    },
+    {
+      "id": 60,
+      "category": "Host Nations",
+      "question": "Which stadium is scheduled to host the 2026 FIFA World Cup final?",
+      "options": {
+        "A": "Rose Bowl, Los Angeles",
+        "B": "Azteca Stadium, Mexico City",
+        "C": "MetLife Stadium, New Jersey",
+        "D": "SoFi Stadium, Los Angeles"
+      },
+      "correct_answer": "C",
+      "explanation": "MetLife Stadium in East Rutherford, New Jersey (near New York City) is scheduled to host the 2026 FIFA World Cup final on July 19, 2026."
+    },
+    {
+      "id": 61,
+      "category": "Legends & Icons",
+      "question": "Which German midfielder scored twice in injury time to dramatically rescue Germany from a group-stage exit against Sweden at the 2018 World Cup?",
+      "options": {
+        "A": "Mesut Özil",
+        "B": "Toni Kroos",
+        "C": "Mario Götze",
+        "D": "Thomas Müller"
+      },
+      "correct_answer": "B",
+      "explanation": "Toni Kroos scored twice in the final two minutes — including a sublime free-kick in the 95th minute — to complete Germany's comeback from 0-1 to win 2-1 against Sweden at the 2018 World Cup."
+    },
+    {
+      "id": 62,
+      "category": "Legends & Icons",
+      "question": "Which player won the Golden Boot at the 2018 FIFA World Cup in Russia?",
+      "options": {
+        "A": "Cristiano Ronaldo",
+        "B": "Kylian Mbappé",
+        "C": "Harry Kane",
+        "D": "Antoine Griezmann"
+      },
+      "correct_answer": "C",
+      "explanation": "Harry Kane won the Golden Boot at the 2018 World Cup with six goals, helping England reach the semi-finals."
+    },
+    {
+      "id": 63,
+      "category": "Legends & Icons",
+      "question": "Ronaldo Nazário wore which shirt number for Brazil at the 2002 World Cup when he finished as top scorer?",
+      "options": {
+        "A": "9",
+        "B": "10",
+        "C": "11",
+        "D": "7"
+      },
+      "correct_answer": "A",
+      "explanation": "Ronaldo wore the iconic number 9 shirt for Brazil at the 2002 World Cup, where he scored eight goals including two in the final against Germany."
+    },
+    {
+      "id": 64,
+      "category": "Legends & Icons",
+      "question": "Dino Zoff of Italy became the oldest captain to win a World Cup. In which year and at what age?",
+      "options": {
+        "A": "1978, age 36",
+        "B": "1982, age 40",
+        "C": "1974, age 32",
+        "D": "1982, age 38"
+      },
+      "correct_answer": "B",
+      "explanation": "Dino Zoff captained Italy to the 1982 World Cup title at the age of 40, making him the oldest World Cup-winning captain in history."
+    },
+    {
+      "id": 65,
+      "category": "Legends & Icons",
+      "question": "Which Argentine striker was the top scorer and player of the tournament at the 1978 World Cup on home soil?",
+      "options": {
+        "A": "Daniel Passarella",
+        "B": "Leopoldo Luque",
+        "C": "Mario Kempes",
+        "D": "Osvaldo Ardiles"
+      },
+      "correct_answer": "C",
+      "explanation": "Mario Kempes scored six goals at the 1978 World Cup to win the Golden Boot, including two in the final against the Netherlands, leading Argentina to their first World Cup title."
+    },
+    {
+      "id": 66,
+      "category": "Legends & Icons",
+      "question": "Which player is known for performing the 'Cruyff Turn' at the 1974 World Cup — a skill now universally used in football?",
+      "options": {
+        "A": "Franz Beckenbauer",
+        "B": "Johan Cruyff",
+        "C": "Gerd Müller",
+        "D": "Rivelino"
+      },
+      "correct_answer": "B",
+      "explanation": "Johan Cruyff unveiled the 'Cruyff Turn' at the 1974 World Cup against Sweden, dazzling defenders worldwide and creating one of football's most replicated moves."
+    },
+    {
+      "id": 67,
+      "category": "Records & Stats",
+      "question": "Which player holds the record for the most appearances in FIFA World Cup history with 26 matches?",
+      "options": {
+        "A": "Miroslav Klose",
+        "B": "Lothar Matthäus",
+        "C": "Lionel Messi",
+        "D": "Cafu"
+      },
+      "correct_answer": "C",
+      "explanation": "Lionel Messi overtook Lothar Matthäus's previous record of 25 appearances when he played his 26th World Cup match in the 2022 final against France, cementing his record across five tournaments."
+    },
+    {
+      "id": 68,
+      "category": "Records & Stats",
+      "question": "How many goals did Gerd Müller score for West Germany at the 1970 World Cup, winning the Golden Boot?",
+      "options": {
+        "A": "8",
+        "B": "10",
+        "C": "7",
+        "D": "12"
+      },
+      "correct_answer": "B",
+      "explanation": "Gerd Müller scored 10 goals at the 1970 World Cup in Mexico, winning the Golden Boot and cementing his reputation as one of the greatest goal scorers of all time."
+    },
+    {
+      "id": 69,
+      "category": "Records & Stats",
+      "question": "Which nation went unbeaten throughout the entire 1970 World Cup to win the title?",
+      "options": {
+        "A": "Brazil",
+        "B": "Italy",
+        "C": "West Germany",
+        "D": "Uruguay"
+      },
+      "correct_answer": "A",
+      "explanation": "Brazil's 1970 World Cup campaign under Pelé was flawless — they won all six matches without a single draw, widely considered the greatest World Cup-winning performance ever."
+    },
+    {
+      "id": 70,
+      "category": "Records & Stats",
+      "question": "Which team has scored the most goals in a single World Cup tournament?",
+      "options": {
+        "A": "Hungary (1954) — 27 goals",
+        "B": "West Germany (1954) — 25 goals",
+        "C": "Brazil (1970) — 19 goals",
+        "D": "France (1958) — 23 goals"
+      },
+      "correct_answer": "A",
+      "explanation": "Hungary scored 27 goals at the 1954 World Cup in Switzerland — a record that still stands today — though they controversially lost the final to West Germany."
+    },
+    {
+      "id": 71,
+      "category": "Tournament History",
+      "question": "Which team is the only one to have appeared in two consecutive World Cup finals as the runner-up — in 1974 and 1978?",
+      "options": {
+        "A": "West Germany",
+        "B": "Brazil",
+        "C": "Netherlands",
+        "D": "Argentina"
+      },
+      "correct_answer": "C",
+      "explanation": "The Netherlands (Holland) were runners-up at both the 1974 and 1978 World Cups, losing to West Germany and Argentina respectively, but never winning the tournament."
+    },
+    {
+      "id": 72,
+      "category": "Tournament History",
+      "question": "France won the 2018 World Cup. Which country did they beat in the final and what was the score?",
+      "options": {
+        "A": "England 2-1",
+        "B": "Croatia 4-2",
+        "C": "Belgium 3-0",
+        "D": "Argentina 3-1"
+      },
+      "correct_answer": "B",
+      "explanation": "France beat Croatia 4-2 in the 2018 World Cup final in Moscow, with goals from Mandžukić (OG), Griezmann, Pogba, and Mbappé."
+    },
+    {
+      "id": 73,
+      "category": "Tournament History",
+      "question": "How many World Cup titles has Italy won in total?",
+      "options": {
+        "A": "3",
+        "B": "4",
+        "C": "5",
+        "D": "2"
+      },
+      "correct_answer": "B",
+      "explanation": "Italy has won four World Cup titles — in 1934, 1938, 1982, and 2006 — making them joint second with Germany on the all-time list."
+    },
+    {
+      "id": 74,
+      "category": "Tournament History",
+      "question": "Which country did Uruguay beat in the 1950 World Cup final group match to win the title?",
+      "options": {
+        "A": "Argentina",
+        "B": "Sweden",
+        "C": "Brazil",
+        "D": "Spain"
+      },
+      "correct_answer": "C",
+      "explanation": "Uruguay's 2-1 win over host Brazil in the final match of the 1950 tournament's final group stage gave them the title in the famous Maracanazo."
+    },
+    {
+      "id": 75,
+      "category": "Tournament History",
+      "question": "Spain won the 2010 World Cup with a particular tactical system. What was their style widely known as?",
+      "options": {
+        "A": "Catenaccio",
+        "B": "Total Football",
+        "C": "Tiki-Taka",
+        "D": "Gegenpressing"
+      },
+      "correct_answer": "C",
+      "explanation": "Spain's 2010 World Cup-winning side, featuring Xavi, Iniesta, and Busquets, became synonymous with 'Tiki-Taka' — a possession-based short-passing style that dominated football for a decade."
+    },
+    {
+      "id": 76,
+      "category": "Legends & Icons",
+      "question": "Who scored the winning goal in the 2010 World Cup final for Spain against the Netherlands?",
+      "options": {
+        "A": "David Villa",
+        "B": "Fernando Torres",
+        "C": "Andrés Iniesta",
+        "D": "Xavi"
+      },
+      "correct_answer": "C",
+      "explanation": "Andrés Iniesta scored Spain's winning goal in the 116th minute of extra time in the 2010 World Cup final, one of the most celebrated goals in tournament history."
+    },
+    {
+      "id": 77,
+      "category": "Legends & Icons",
+      "question": "Which Italian striker was the top scorer at the 1982 World Cup with six goals?",
+      "options": {
+        "A": "Roberto Baggio",
+        "B": "Salvatore Schillaci",
+        "C": "Paolo Rossi",
+        "D": "Alessandro Del Piero"
+      },
+      "correct_answer": "C",
+      "explanation": "Paolo Rossi scored six goals at the 1982 World Cup including a hat-trick against Brazil and two against West Germany in the final, winning the Golden Boot and Golden Ball."
+    },
+    {
+      "id": 78,
+      "category": "Legends & Icons",
+      "question": "Salvatore Schillaci won the Golden Boot at the 1990 World Cup with six goals. Which country did he play for?",
+      "options": {
+        "A": "Spain",
+        "B": "Italy",
+        "C": "Argentina",
+        "D": "Portugal"
+      },
+      "correct_answer": "B",
+      "explanation": "Salvatore Schillaci scored six goals for Italy at the 1990 World Cup on home soil, winning both the Golden Boot and Golden Ball."
+    },
+    {
+      "id": 79,
+      "category": "Never Won But All-Time Greats",
+      "question": "Kevin De Bruyne, one of the best midfielders of his generation, reached what was Belgium's best-ever World Cup result in 2018. What was it?",
+      "options": {
+        "A": "Runner-up",
+        "B": "Semi-final exit",
+        "C": "Third place",
+        "D": "Quarter-final exit"
+      },
+      "correct_answer": "C",
+      "explanation": "Belgium finished third at the 2018 World Cup — their best-ever World Cup result — with Kevin De Bruyne playing a key role in what FIFA ranked as the best squad at the tournament."
+    },
+    {
+      "id": 80,
+      "category": "Never Won But All-Time Greats",
+      "question": "Which brilliant Dutch striker, winner of three Ballon d'Or awards, never won the World Cup despite Netherlands reaching the 1994 quarter-final?",
+      "options": {
+        "A": "Ruud Gullit",
+        "B": "Marco van Basten",
+        "C": "Dennis Bergkamp",
+        "D": "Frank Rijkaard"
+      },
+      "correct_answer": "B",
+      "explanation": "Marco van Basten won three Ballon d'Or awards (1988, 1989, 1992) and the 1988 European Championship with the Netherlands, but a severe ankle injury forced him to retire at 28, and he never won the World Cup."
+    },
+    {
+      "id": 81,
+      "category": "Never Won But All-Time Greats",
+      "question": "Neymar of Brazil has never won the World Cup. What is the furthest Brazil reached in tournaments he appeared in?",
+      "options": {
+        "A": "Winners in 2002",
+        "B": "Fourth place in 2014",
+        "C": "Runner-up in 2018",
+        "D": "Semi-final in 2022"
+      },
+      "correct_answer": "B",
+      "explanation": "Brazil's best result with Neymar at the World Cup was fourth place in 2014 on home soil, after the infamous 7-1 semi-final loss to Germany (Neymar was injured before that match)."
+    },
+    {
+      "id": 82,
+      "category": "Never Won But All-Time Greats",
+      "question": "Eric Cantona of France never played in a World Cup Final. Why did he miss the 1998 France squad that won the tournament?",
+      "options": {
+        "A": "He was injured",
+        "B": "He had already retired from football",
+        "C": "He was banned by FIFA",
+        "D": "He was dropped by the national team manager"
+      },
+      "correct_answer": "B",
+      "explanation": "Eric Cantona retired from all football in 1997, a year before France won the 1998 World Cup, meaning he never had the chance to win the ultimate prize."
+    },
+    {
+      "id": 83,
+      "category": "Records & Stats",
+      "question": "England drew all three of their group stage games at the 1958 World Cup and still failed to qualify. How were they eliminated?",
+      "options": {
+        "A": "On goal difference",
+        "B": "They lost a play-off match against the Soviet Union",
+        "C": "By the toss of a coin",
+        "D": "They were disqualified for fielding an ineligible player"
+      },
+      "correct_answer": "B",
+      "explanation": "England drew all three group games at the 1958 World Cup and faced the Soviet Union in a play-off, losing 1-0. It was an ill-fated campaign, with the squad still affected by the Munich air disaster earlier that year which had killed three England internationals."
+    },
+    {
+      "id": 84,
+      "category": "Records & Stats",
+      "question": "Which country has participated in the most World Cups without ever winning the title?",
+      "options": {
+        "A": "Mexico",
+        "B": "Argentina",
+        "C": "Netherlands",
+        "D": "England"
+      },
+      "correct_answer": "C",
+      "explanation": "The Netherlands has never won the World Cup despite three final appearances (1974, 1978, 2010), making them arguably the greatest nation never to lift the trophy."
+    },
+    {
+      "id": 85,
+      "category": "Records & Stats",
+      "question": "Kylian Mbappé became the second player in history to score a hat-trick in a World Cup final in 2022. Who was the first?",
+      "options": {
+        "A": "Pelé",
+        "B": "Ronaldo Nazário",
+        "C": "Geoff Hurst",
+        "D": "Gerd Müller"
+      },
+      "correct_answer": "C",
+      "explanation": "Geoff Hurst scored a hat-trick for England in the 1966 World Cup final — the first player to do so. Mbappé became only the second in 2022, yet France still lost on penalties."
+    },
+    {
+      "id": 86,
+      "category": "Tournament History",
+      "question": "Which country hosted the 1994 FIFA World Cup?",
+      "options": {
+        "A": "Canada",
+        "B": "Mexico",
+        "C": "USA",
+        "D": "Colombia"
+      },
+      "correct_answer": "C",
+      "explanation": "The United States hosted the 1994 FIFA World Cup, which was won by Brazil. It set attendance records that stood for decades and helped launch the MLS."
+    },
+    {
+      "id": 87,
+      "category": "Tournament History",
+      "question": "Germany/West Germany has won the World Cup how many times?",
+      "options": {
+        "A": "3",
+        "B": "4",
+        "C": "5",
+        "D": "2"
+      },
+      "correct_answer": "B",
+      "explanation": "Germany has won four World Cups — West Germany in 1954, 1974, and 1990, and unified Germany in 2014."
+    },
+    {
+      "id": 88,
+      "category": "Legends & Icons",
+      "question": "Who is the only player to have appeared in five FIFA World Cups?",
+      "options": {
+        "A": "Lothar Matthäus",
+        "B": "Cafu",
+        "C": "Gianluigi Buffon",
+        "D": "Antonio Carbajal and Lothar Matthäus"
+      },
+      "correct_answer": "D",
+      "explanation": "Mexico's Antonio Carbajal (1950-1966) and Germany's Lothar Matthäus (1982-1998) are the only players to have appeared in five FIFA World Cup tournaments."
+    },
+    {
+      "id": 89,
+      "category": "Tournament History",
+      "question": "Which country did Cameroon famously defeat in the opening match of the 1990 World Cup?",
+      "options": {
+        "A": "Brazil",
+        "B": "Italy",
+        "C": "Argentina",
+        "D": "West Germany"
+      },
+      "correct_answer": "C",
+      "explanation": "Cameroon beat defending champions Argentina 1-0 in the opening match of the 1990 World Cup in Milan, one of the greatest upsets in tournament history."
+    },
+    {
+      "id": 90,
+      "category": "Legends & Icons",
+      "question": "Who is the only person to have won the FIFA World Cup as both captain and manager of France?",
+      "options": {
+        "A": "Zinedine Zidane",
+        "B": "Thierry Henry",
+        "C": "Didier Deschamps",
+        "D": "Patrick Vieira"
+      },
+      "correct_answer": "C",
+      "explanation": "Didier Deschamps captained France to the World Cup title in 1998 and then managed them to a second title in 2018 — one of only two people in history to win the World Cup as both captain and manager, alongside Brazil's Mário Zagallo."
+    },
+    {
+      "id": 91,
+      "category": "2026 World Cup",
+      "question": "Which group did the USA play in at the 2026 FIFA World Cup?",
+      "options": {
+        "A": "Group A",
+        "B": "Group B",
+        "C": "Group D",
+        "D": "Group C"
+      },
+      "correct_answer": "C",
+      "explanation": "The USA were placed in Group D at the 2026 World Cup, where they beat Paraguay 4-1 in their opening match."
+    },
+    {
+      "id": 92,
+      "category": "2026 World Cup",
+      "question": "What was the result of Canada's opening match at the 2026 World Cup against Bosnia-Herzegovina?",
+      "options": {
+        "A": "Canada won 2-1",
+        "B": "It ended 1-1",
+        "C": "Bosnia-Herzegovina won 2-0",
+        "D": "Canada won 1-0"
+      },
+      "correct_answer": "B",
+      "explanation": "Canada's opener against Bosnia-Herzegovina at the 2026 World Cup ended 1-1, with Sead Kolašinac setting up Bosnia's equaliser."
+    },
+    {
+      "id": 93,
+      "category": "2026 World Cup",
+      "question": "South Korea beat which European side 2-1 in a Group A match on Day 1 of the 2026 World Cup?",
+      "options": {
+        "A": "Poland",
+        "B": "Czechia",
+        "C": "Slovakia",
+        "D": "Serbia"
+      },
+      "correct_answer": "B",
+      "explanation": "South Korea defeated Czechia 2-1 in a Group A match on Day 1 of the 2026 World Cup, with goals from Oh Hyeon-gyu and Hwang In-beom."
+    },
+    {
+      "id": 94,
+      "category": "2026 World Cup",
+      "question": "The 2026 FIFA World Cup final is scheduled to take place at which venue and on what date?",
+      "options": {
+        "A": "Rose Bowl, Los Angeles — July 10, 2026",
+        "B": "MetLife Stadium, New Jersey — July 19, 2026",
+        "C": "Azteca Stadium, Mexico City — July 15, 2026",
+        "D": "Arrowhead Stadium, Kansas City — July 12, 2026"
+      },
+      "correct_answer": "B",
+      "explanation": "The 2026 FIFA World Cup final is scheduled to be played at MetLife Stadium in East Rutherford, New Jersey on July 19, 2026."
+    },
+    {
+      "id": 95,
+      "category": "2026 World Cup",
+      "question": "How many matches will be played in total at the 2026 FIFA World Cup due to the expanded format?",
+      "options": {
+        "A": "64",
+        "B": "80",
+        "C": "96",
+        "D": "104"
+      },
+      "correct_answer": "D",
+      "explanation": "The 2026 World Cup features 104 matches across 48 teams — a significant increase from the 64 matches played in the previous 32-team format."
+    },
+    {
+      "id": 96,
+      "category": "Tournament History",
+      "question": "Which player was awarded the Golden Ball (best player) at the 2014 World Cup despite his team losing the final?",
+      "options": {
+        "A": "Toni Kroos",
+        "B": "Lionel Messi",
+        "C": "Arjen Robben",
+        "D": "Neymar"
+      },
+      "correct_answer": "B",
+      "explanation": "Lionel Messi won the Golden Ball at the 2014 World Cup despite Argentina losing the final to Germany 1-0 — a controversial decision at the time."
+    },
+    {
+      "id": 97,
+      "category": "Records & Stats",
+      "question": "Which World Cup saw the introduction of the penalty shootout as a tiebreaker for the first time?",
+      "options": {
+        "A": "1970",
+        "B": "1978",
+        "C": "1974",
+        "D": "1982"
+      },
+      "correct_answer": "D",
+      "explanation": "Penalty shootouts were used for the first time at the 1982 World Cup in Spain, with West Germany defeating France in the semi-final in the tournament's first ever shootout."
+    },
+    {
+      "id": 98,
+      "category": "Legends & Icons",
+      "question": "Which German striker won the Golden Boot at the 2006 World Cup, hosted in Germany?",
+      "options": {
+        "A": "Michael Ballack",
+        "B": "Lukas Podolski",
+        "C": "Miroslav Klose",
+        "D": "Oliver Neuville"
+      },
+      "correct_answer": "C",
+      "explanation": "Miroslav Klose scored five goals to win the Golden Boot at the 2006 World Cup on home soil in Germany, part of a run of four consecutive tournaments in which he scored."
+    },
+    {
+      "id": 99,
+      "category": "Never Won But All-Time Greats",
+      "question": "Davor Šuker won the Golden Boot at the 1998 World Cup with Croatia finishing third. How many goals did he score?",
+      "options": {
+        "A": "4",
+        "B": "5",
+        "C": "6",
+        "D": "7"
+      },
+      "correct_answer": "C",
+      "explanation": "Davor Šuker scored six goals at the 1998 World Cup, winning the Golden Boot as Croatia, in their very first World Cup appearance as an independent nation, finished a remarkable third."
+    },
+    {
+      "id": 100,
+      "category": "2026 World Cup",
+      "question": "The 2026 FIFA World Cup is the 23rd edition of the tournament. Which edition was the first?",
+      "options": {
+        "A": "1926",
+        "B": "1930",
+        "C": "1932",
+        "D": "1934"
+      },
+      "correct_answer": "B",
+      "explanation": "The first FIFA World Cup was held in 1930 in Uruguay, making it the inaugural (1st) edition. The 2026 tournament in USA/Canada/Mexico is the 23rd edition."
+    }
+  ]
+}
