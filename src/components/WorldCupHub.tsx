@@ -507,6 +507,13 @@ export default function WorldCupHub() {
     [showSuggestions, teamIndex, query],
   );
 
+  // An active search that matches no team — show an empty state rather than
+  // falling back to the default feed.
+  const noMatches = useMemo(
+    () => query.trim().length >= 2 && getSuggestions(teamIndex, query).length === 0,
+    [teamIndex, query],
+  );
+
   const openTeam = useCallback(
     (key: string) => {
       const team = teamIndex[key];
@@ -687,22 +694,24 @@ export default function WorldCupHub() {
               )}
             </div>
 
-            <div className="flex gap-2.5">
-              <Button
-                variant="outline"
-                onClick={() => setDateISO("PICK")}
-                className="h-12 flex-1 rounded-xl border-border bg-card/70 backdrop-blur-sm hover:border-primary/50 hover:text-primary sm:flex-none"
-              >
-                <CalendarDays /> By date
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setAllOpen(true)}
-                className="h-12 flex-1 rounded-xl border-border bg-card/70 backdrop-blur-sm hover:border-primary/50 hover:text-primary sm:flex-none"
-              >
-                <ListTree /> All fixtures
-              </Button>
-            </div>
+            {!selected && (
+              <div className="flex gap-2.5">
+                <Button
+                  variant="outline"
+                  onClick={() => setDateISO("PICK")}
+                  className="h-12 flex-1 rounded-xl border-border bg-card/70 backdrop-blur-sm hover:border-primary/50 hover:text-primary sm:flex-none"
+                >
+                  <CalendarDays /> By date
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setAllOpen(true)}
+                  className="h-12 flex-1 rounded-xl border-border bg-card/70 backdrop-blur-sm hover:border-primary/50 hover:text-primary sm:flex-none"
+                >
+                  <ListTree /> All fixtures
+                </Button>
+              </div>
+            )}
           </div>
 
           {errorMsg && status !== "error" && (
@@ -739,7 +748,26 @@ export default function WorldCupHub() {
             <ChampionNote name={champion} />
           )}
 
-          {status === "ready" && !selected && !champion && (
+          {status === "ready" && !selected && !champion && noMatches && (
+            <div className="rounded-2xl border border-border bg-card/60 px-6 py-16 text-center backdrop-blur-sm">
+              <Search className="mx-auto size-6 text-muted-foreground/60" />
+              <p className="mt-3 font-display text-lg font-semibold">
+                No team matches “{query.trim()}”
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Check the spelling, or browse{" "}
+                <button
+                  onClick={() => setAllOpen(true)}
+                  className="text-primary underline-offset-2 hover:underline"
+                >
+                  all fixtures
+                </button>
+                .
+              </p>
+            </div>
+          )}
+
+          {status === "ready" && !selected && !champion && !noMatches && (
             <DefaultFeed
               following={following}
               live={liveNow}
