@@ -760,16 +760,21 @@ function SectionHeading({
   icon,
   label,
   accent,
+  count,
 }: {
   icon?: React.ReactNode;
   label: string;
   accent?: string;
+  count?: number;
 }) {
   return (
     <div className="mb-4 flex items-center gap-2">
       {icon}
       <h2 className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
         {label}
+        {count != null && (
+          <span className="ml-1.5 text-muted-foreground/60">({count})</span>
+        )}
       </h2>
       {accent && (
         <span className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-primary">
@@ -818,7 +823,7 @@ function FollowPill({
     >
       <button
         onClick={() => onPick(fav.key)}
-        className="flex w-full min-w-0 items-center gap-2 py-1.5 pl-1.5 pr-3.5 transition-[padding] group-hover:pr-9"
+        className="flex w-full min-w-0 items-center gap-2 py-1.5 pl-1.5 pr-3.5 transition-[padding] group-hover:pr-9 [@media(hover:none)]:pr-9"
       >
         <Crest url={fav.crest} alt={fav.name} size={24} />
         <span className="truncate font-display text-sm font-medium">
@@ -830,7 +835,7 @@ function FollowPill({
           <button
             onClick={() => onUnfollow(fav.key)}
             aria-label={`Unfollow ${fav.name}`}
-            className="absolute right-1.5 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded text-muted-foreground opacity-0 transition hover:bg-secondary hover:text-foreground focus-visible:opacity-100 group-hover:opacity-100"
+            className="absolute right-1.5 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded text-muted-foreground opacity-0 transition hover:bg-secondary hover:text-foreground focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
           >
             <X className="size-3.5" />
           </button>
@@ -856,6 +861,7 @@ function FollowingRow({
       <SectionHeading
         icon={<Star className="size-3.5 fill-primary text-primary" />}
         label="Following"
+        count={following.length}
       />
       <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [-ms-overflow-style:none] scrollbar-none [&::-webkit-scrollbar]:hidden">
         {following.map((f) => (
