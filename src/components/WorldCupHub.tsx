@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   CalendarDays,
+  ChevronDown,
   Clock,
   ListTree,
   MapPin,
@@ -12,6 +13,7 @@ import {
   Trophy,
   X,
 } from "lucide-react";
+import { format } from "date-fns";
 import type { NormMatch } from "@/lib/football/types";
 import {
   buildTeamIndex,
@@ -36,6 +38,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
@@ -49,6 +57,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const CACHE_MATCHES = "copakick_matches_v3";
 const CACHE_TS = "copakick_ts_v3";
@@ -578,9 +594,9 @@ export default function WorldCupHub() {
               alt="CopaKick"
               width={28}
               height={28}
-              className="size-7 shrink-0 rounded-lg object-contain"
+              className="size-5 shrink-0 rounded-lg object-contain sm:size-7"
             />
-            <span className="font-display text-lg font-extrabold uppercase leading-none tracking-tight">
+            <span className="font-display text-sm font-extrabold uppercase leading-none tracking-tight sm:text-lg">
               Copa<span className="text-primary">kick</span>
             </span>
           </button>
@@ -1228,103 +1244,131 @@ function DateDialog({
   tz: string;
 }) {
   const open = value !== null;
-  const picking = value === "PICK";
-  const onDate = useMemo(() => {
-    if (!value || picking) return [];
-    return matches
-      .filter((m) => localDateKey(m.kickoff) === value)
-      .sort((a, b) => a.kickoff - b.kickoff);
-  }, [matches, value, picking]);
 
-  // Day / month fields — year is always 2026, so we don't show it at all.
-  const [day, setDay] = useState("");
-  const [month, setMonth] = useState("");
+  // Tournament window (ISO yyyy-mm-dd). Year is always 2026.
+  const TOURNAMENT_START = "2026-06-11";
+  const TOURNAMENT_END = "2026-07-19";
+  const windowStart = new Date(TOURNAMENT_START + "T12:00:00");
+  const windowEnd = new Date(TOURNAMENT_END + "T12:00:00");
+
+  // The currently selected day (ISO). Always set while the dialog is open so a
+  // date is always visible and its fixtures render beneath the picker.
+  const [selected, setSelected] = useState("");
+  const [pickerOpen, setPickerOpen] = useState(false);
+
   useEffect(() => {
-    if (picking) {
-      // Default to tomorrow (clamped into the tournament window).
-      const t = new Date();
-      t.setDate(t.getDate() + 1);
-      const clamped = new Date(
-        Math.min(
-          Math.max(t.getTime(), Date.parse("2026-06-11T12:00:00")),
-          Date.parse("2026-07-19T12:00:00"),
-        ),
-      );
-      setDay(String(clamped.getDate()).padStart(2, "0"));
-      setMonth(String(clamped.getMonth() + 1).padStart(2, "0"));
+    if (!open) {
+      setPickerOpen(false);
+      return;
     }
-  }, [picking]);
-  // Commit only when dd/mm form a real date inside the tournament window.
-  const commit = (d: string, m: string) => {
-    const dn = parseInt(d, 10);
-    const mn = parseInt(m, 10);
-    if (!dn || !mn) return;
-    const iso = `2026-${String(mn).padStart(2, "0")}-${String(dn).padStart(2, "0")}`;
-    if (iso < "2026-06-11" || iso > "2026-07-19") return;
-    const dt = new Date(iso + "T12:00:00");
-    if (dt.getUTCMonth() + 1 !== mn || dt.getUTCDate() !== dn) return;
-    onChange(iso);
-  };
+    // Seed from the incoming value if it's a real in-window date, otherwise
+    // default to tomorrow (clamped into the tournament window).
+    if (value && value !== "PICK" && value >= TOURNAMENT_START && value <= TOURNAMENT_END) {
+      setSelected(value);
+      return;
+    }
+    const t = new Date();
+    t.setDate(t.getDate() + 1);
+    const clamped = new Date(
+      Math.min(Math.max(t.getTime(), windowStart.getTime()), windowEnd.getTime()),
+    );
+    setSelected(
+      `2026-${String(clamped.getMonth() + 1).padStart(2, "0")}-${String(clamped.getDate()).padStart(2, "0")}`,
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
-  const label =
-    value && !picking
-      ? new Date(value + "T12:00:00").toLocaleDateString(undefined, {
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-        })
-      : "Pick a match day";
+  const onDate = useMemo(() => {
+    if (!selected) return [];
+    return matches
+      .filter((m) => localDateKey(m.kickoff) === selected)
+      .sort((a, b) => a.kickoff - b.kickoff);
+  }, [matches, selected]);
+
+  const selectedDate = selected ? new Date(selected + "T12:00:00") : undefined;
+  const isMobile = useIsMobile();
+
+  // Shared body: the persistent date trigger + the selected day's fixtures.
+  const body = (
+    <>
+      <div className="flex shrink-0 flex-col gap-1 border-b border-border px-5 py-4">
+        <Popover open={pickerOpen} onOpenChange={setPickerOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full justify-between font-normal"
+            >
+              {selectedDate ? format(selectedDate, "PPP") : "Pick a date"}
+              <ChevronDown className="opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={(d) => {
+                if (!d) return;
+                const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+                // Backstop: the disabled matcher already blocks out-of-window
+                // days in the UI; guard keyboard entry too.
+                if (iso < TOURNAMENT_START || iso > TOURNAMENT_END) return;
+                setSelected(iso);
+                setPickerOpen(false);
+              }}
+              defaultMonth={selectedDate ?? windowStart}
+              startMonth={windowStart}
+              endMonth={windowEnd}
+              disabled={{ before: windowStart, after: windowEnd }}
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
+      <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+        {onDate.length === 0 ? (
+          <p className="py-8 text-center text-sm text-muted-foreground">
+            No matches on this day.
+          </p>
+        ) : (
+          onDate.map((m) => <FixtureRow key={m.id} match={m} />)
+        )}
+      </div>
+    </>
+  );
+
+  // Bottom sheet on phones, centred dialog on larger screens.
+  if (isMobile) {
+    return (
+      <Sheet open={open} onOpenChange={(v) => !v && onChange(null)}>
+        <SheetContent
+          side="bottom"
+          className="flex max-h-[88vh] flex-col gap-0 rounded-t-2xl p-0"
+        >
+          <SheetHeader className="shrink-0 border-b border-border px-5 py-4 text-left">
+            <SheetTitle className="font-display text-base">
+              Fixtures by date
+            </SheetTitle>
+            <SheetDescription className="font-mono text-[11px]">
+              Kick-off times in {tz}
+            </SheetDescription>
+          </SheetHeader>
+          {body}
+        </SheetContent>
+      </Sheet>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onChange(null)}>
       <DialogContent className="flex max-h-[88vh] flex-col gap-0 p-0 sm:max-w-md">
         <DialogHeader className="shrink-0 border-b border-border px-5 py-4 text-left">
-          <DialogTitle className="font-display text-base">{label}</DialogTitle>
+          <DialogTitle className="font-display text-base">
+            Fixtures by date
+          </DialogTitle>
           <DialogDescription className="font-mono text-[11px]">
-            {picking
-              ? "World Cup: 11 Jun – 19 Jul 2026"
-              : `Kick-off times in ${tz}`}
+            Kick-off times in {tz}
           </DialogDescription>
         </DialogHeader>
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
-          {picking ? (
-            <div className="flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-secondary p-3 font-mono text-sm focus-within:border-primary">
-              <input
-                inputMode="numeric"
-                maxLength={2}
-                placeholder="dd"
-                value={day}
-                onChange={(e) => {
-                  const d = e.target.value.replace(/\D/g, "").slice(0, 2);
-                  setDay(d);
-                  commit(d, month);
-                }}
-                className="w-10 bg-transparent text-center tabular-nums placeholder:text-muted-foreground focus:outline-none"
-                aria-label="Day"
-              />
-              <span className="text-muted-foreground">/</span>
-              <input
-                inputMode="numeric"
-                maxLength={2}
-                placeholder="mm"
-                value={month}
-                onChange={(e) => {
-                  const m = e.target.value.replace(/\D/g, "").slice(0, 2);
-                  setMonth(m);
-                  commit(day, m);
-                }}
-                className="w-10 bg-transparent text-center tabular-nums placeholder:text-muted-foreground focus:outline-none"
-                aria-label="Month"
-              />
-            </div>
-          ) : onDate.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">
-              No matches on this day.
-            </p>
-          ) : (
-            onDate.map((m) => <FixtureRow key={m.id} match={m} />)
-          )}
-        </div>
+        {body}
       </DialogContent>
     </Dialog>
   );
