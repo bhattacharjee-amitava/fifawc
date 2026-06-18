@@ -49,14 +49,29 @@ function normalizeTeam(raw: RawTeam | undefined, fallbackLabel: string): NormTea
   };
 }
 
-export function normalizeMatch(raw: RawMatch): NormMatch {
-  const kickoff = Date.parse(raw.utcDate);
+/**
+ * Longest a match can plausibly stay "in play" end-to-end: 2×45 + halftime +
+ * generous stoppage, then extra time + the penalty shootout. ~3h is a safe ceiling.
+ */
+const MAX_LIVE_MS = 3 * 60 * 60 * 1000;
+
+export function normalizeMatch(raw: RawMatch, now = Date.now()): NormMatch {
+  const parsed = Date.parse(raw.utcDate);
+  const kickoff = Number.isNaN(parsed) ? 0 : parsed;
+
+  let phase = phaseFromStatus(raw.status);
+  // Free-tier upstream sometimes leaves a finished match stuck at IN_PLAY/PAUSED
+  // (status lags long after the final whistle). If it's been "live" far longer
+  // than any real match could run, trust the clock over the stale status.
+  if (phase === 'live' && kickoff > 0 && now - kickoff > MAX_LIVE_MS) {
+    phase = 'finished';
+  }
 
   return {
     id: raw.id,
-    kickoff: Number.isNaN(kickoff) ? 0 : kickoff,
+    kickoff,
     utcDate: raw.utcDate,
-    phase: phaseFromStatus(raw.status),
+    phase,
     rawStatus: raw.status,
     stage: raw.stage,
     group: prettyGroup(raw.group),
@@ -74,5 +89,8 @@ export function normalizeMatch(raw: RawMatch): NormMatch {
 
 /** Normalize + sort chronologically by kickoff. */
 export function normalizeMatches(raw: RawMatch[]): NormMatch[] {
-  return raw.map(normalizeMatch).sort((a, b) => a.kickoff - b.kickoff);
+  const now = Date.now();
+  return raw
+    .map((m) => normalizeMatch(m, now))
+    .sort((a, b) => a.kickoff - b.kickoff);
 }
