@@ -640,14 +640,14 @@ export default function WorldCupHub() {
               </span>
             )}
             <Button
-              variant="ghost"
+              variant="outline"
               size="icon-sm"
               onClick={() => load(true)}
               title="Refresh fixtures"
-              className="text-muted-foreground hover:text-primary"
+              className="size-8 border-primary/40 text-primary hover:border-primary/60 hover:bg-primary/10 hover:text-primary"
             >
               <RefreshCw
-                className={cn(status === "loading" && "animate-spin")}
+                className={cn("size-4", status === "loading" && "animate-spin")}
               />
             </Button>
           </div>
