@@ -68,11 +68,13 @@ async function get<T>(path: string, { revalidate }: FetchOpts): Promise<T> {
 /**
  * Full tournament schedule + results in one call (~104 matches).
  *
- * `revalidate` defaults differ by intent:
- *  - schedule view: long (kickoff times rarely change) — 1 hour
- *  - live view: short (delayed scores still move) — callers pass a small value
+ * Both routes call this with the SAME default revalidate so they share ONE entry
+ * in Next's (Vercel-shared, persistent) Data Cache — meaning the whole app makes
+ * at most ~one upstream request per minute, globally, regardless of traffic.
+ * 60s is a good balance: delayed-source scores don't move faster than that anyway,
+ * and it sits comfortably under the 10 req/min free-tier limit.
  */
-export function getWorldCupMatches(revalidate = 3600): Promise<RawMatchesResponse> {
+export function getWorldCupMatches(revalidate = 60): Promise<RawMatchesResponse> {
   return get<RawMatchesResponse>(`/competitions/${COMPETITION}/matches`, {
     revalidate,
   });

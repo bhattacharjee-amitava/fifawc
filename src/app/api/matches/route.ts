@@ -1,41 +1,38 @@
 import { NextResponse } from 'next/server';
-import { ensureSnapshot } from '@/lib/football/store';
+import { FootballDataError, getWorldCupMatches } from '@/lib/football/client';
 import { normalizeMatches } from '@/lib/football/normalize';
 
 /**
  * Schedule endpoint: the full tournament, normalized and chronologically sorted.
  *
- * This route only ever *reads* the in-process snapshot (see lib/football/store) —
- * it never calls upstream. The snapshot is refreshed on a fixed background cadence,
- * so device count and refresh-spam can't affect our upstream request rate.
+ * Upstream is reached only through Next's Data Cache (see client.ts). On Vercel
+ * that cache is shared + persistent across every function instance and region, so
+ * football-data is hit ~once per `revalidate` window *globally* — independent of
+ * how many devices connect or how often they refresh. That's what keeps us inside
+ * the free tier (10 req/min) with no cron, no KV, and no paid plan.
+ *
+ * Note: /api/live fetches the SAME upstream URL with the SAME revalidate, so both
+ * routes share a single cache entry and a single upstream call.
  */
 
-// Always run the handler so it reflects current in-memory snapshot state.
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export async function GET() {
-  const snap = await ensureSnapshot();
+  try {
+    const raw = await getWorldCupMatches();
+    const matches = normalizeMatches(raw.matches ?? []);
 
-  if (!snap.data) {
-    // Cold start and upstream is failing — nothing to serve yet.
     return NextResponse.json(
-      { error: snap.error?.message ?? 'Data not available yet.' },
-      { status: snap.error?.status ?? 503 },
+      { matches, count: matches.length, updatedAt: new Date().toISOString() },
+      {
+        headers: {
+          'Cache-Control': 's-maxage=60, stale-while-revalidate=300',
+        },
+      },
     );
+  } catch (err) {
+    const status = err instanceof FootballDataError ? err.status : 500;
+    const error = err instanceof Error ? err.message : 'Unknown error';
+    return NextResponse.json({ error }, { status });
   }
-
-  const matches = normalizeMatches(snap.data.matches ?? []);
-
-  return NextResponse.json(
-    {
-      matches,
-      count: matches.length,
-      updatedAt: new Date(snap.fetchedAt).toISOString(),
-      stale: snap.stale,
-    },
-    {
-      // Harmless on a bare droplet; lets a reverse proxy/CDN coalesce bursts if added.
-      headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60' },
-    },
-  );
 }

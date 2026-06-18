@@ -1,41 +1,40 @@
 import { NextResponse } from 'next/server';
-import { ensureSnapshot } from '@/lib/football/store';
+import { FootballDataError, getWorldCupMatches } from '@/lib/football/client';
 import { normalizeMatches } from '@/lib/football/normalize';
 
 /**
  * Live endpoint: only the matches in-play (or just finished), for the live strip.
  *
- * Reads the same in-process snapshot as /api/matches (see lib/football/store) —
- * no separate upstream call. Honesty note: football-data's free tier scores are
- * *delayed*, not real-time; `delayedSource` lets the UI show a "may lag" hint, and
- * `stale` tells it when the snapshot itself is overdue for a refresh.
+ * Shares one Data Cache entry with /api/matches (same upstream URL + revalidate),
+ * so it adds zero extra upstream calls. Honesty note: football-data's free tier
+ * scores are *delayed*, not real-time; `delayedSource` lets the UI show a "may
+ * lag" hint rather than implying instantaneous data.
  */
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export async function GET() {
-  const snap = await ensureSnapshot();
+  try {
+    const raw = await getWorldCupMatches();
+    const all = normalizeMatches(raw.matches ?? []);
+    const live = all.filter((m) => m.phase === 'live' || m.phase === 'finished');
 
-  if (!snap.data) {
     return NextResponse.json(
-      { error: snap.error?.message ?? 'Data not available yet.' },
-      { status: snap.error?.status ?? 503 },
+      {
+        matches: live,
+        liveCount: live.filter((m) => m.phase === 'live').length,
+        updatedAt: new Date().toISOString(),
+        delayedSource: true,
+      },
+      {
+        headers: {
+          'Cache-Control': 's-maxage=60, stale-while-revalidate=300',
+        },
+      },
     );
+  } catch (err) {
+    const status = err instanceof FootballDataError ? err.status : 500;
+    const error = err instanceof Error ? err.message : 'Unknown error';
+    return NextResponse.json({ error }, { status });
   }
-
-  const all = normalizeMatches(snap.data.matches ?? []);
-  const live = all.filter((m) => m.phase === 'live' || m.phase === 'finished');
-
-  return NextResponse.json(
-    {
-      matches: live,
-      liveCount: live.filter((m) => m.phase === 'live').length,
-      updatedAt: new Date(snap.fetchedAt).toISOString(),
-      stale: snap.stale,
-      delayedSource: true,
-    },
-    {
-      headers: { 'Cache-Control': 'public, s-maxage=15, stale-while-revalidate=30' },
-    },
-  );
 }
