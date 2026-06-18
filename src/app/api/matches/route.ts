@@ -1,34 +1,41 @@
 import { NextResponse } from 'next/server';
-import { FootballDataError, getWorldCupMatches } from '@/lib/football/client';
+import { ensureSnapshot } from '@/lib/football/store';
 import { normalizeMatches } from '@/lib/football/normalize';
 
 /**
  * Schedule endpoint: the full tournament, normalized and chronologically sorted.
  *
- * Kickoff times and bracket structure change slowly, so we cache hard (1h at the
- * data layer + shared CDN cache). This is the feed that drives the fixture list,
- * countdowns, and — later — push reminders.
+ * This route only ever *reads* the in-process snapshot (see lib/football/store) —
+ * it never calls upstream. The snapshot is refreshed on a fixed background cadence,
+ * so device count and refresh-spam can't affect our upstream request rate.
  */
 
-export const revalidate = 3600; // 1 hour
+// Always run the handler so it reflects current in-memory snapshot state.
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  try {
-    const raw = await getWorldCupMatches(revalidate);
-    const matches = normalizeMatches(raw.matches ?? []);
+  const snap = await ensureSnapshot();
 
+  if (!snap.data) {
+    // Cold start and upstream is failing — nothing to serve yet.
     return NextResponse.json(
-      { matches, count: matches.length, updatedAt: new Date().toISOString() },
-      {
-        headers: {
-          // Shared CDN cache: serve cached for 1h, refresh in background for 5m.
-          'Cache-Control': 's-maxage=3600, stale-while-revalidate=300',
-        },
-      },
+      { error: snap.error?.message ?? 'Data not available yet.' },
+      { status: snap.error?.status ?? 503 },
     );
-  } catch (err) {
-    const status = err instanceof FootballDataError ? err.status : 500;
-    const error = err instanceof Error ? err.message : 'Unknown error';
-    return NextResponse.json({ error }, { status });
   }
+
+  const matches = normalizeMatches(snap.data.matches ?? []);
+
+  return NextResponse.json(
+    {
+      matches,
+      count: matches.length,
+      updatedAt: new Date(snap.fetchedAt).toISOString(),
+      stale: snap.stale,
+    },
+    {
+      // Harmless on a bare droplet; lets a reverse proxy/CDN coalesce bursts if added.
+      headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60' },
+    },
+  );
 }
